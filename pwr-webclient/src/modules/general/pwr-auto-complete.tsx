@@ -46,6 +46,8 @@ export interface PwrAutoCompleteProps {
     disabled?: boolean;
     label: string;
     validationError?: ValidationError;
+    /** The cursor goes into the field when it appears, e.g. when a dialog opens */
+    autoFocus?: boolean;
     disableFiltering?: boolean;
 
     /**
@@ -235,6 +237,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         const basicInputProps = {
             classes,
             placeholder: this.props.label,
+            autoFocus: this.props.autoFocus,
             value: this.props.searchTerm || '',
             chips: this.props.chips,
             onChange: (event, {newValue, method}) => this.handleChange(event, newValue, method),

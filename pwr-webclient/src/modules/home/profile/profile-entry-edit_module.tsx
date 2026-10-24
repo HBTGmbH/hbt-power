@@ -58,20 +58,21 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
 
     constructor(props) {
         super(props);
-        this.resetState(props);
+        this.state = this.formFor(props);
     }
 
-    private resetState = (props) => {
-        this.state = this.defaultState(props);
-    };
-
-    private defaultState = (props) => {
+    /**
+     * The form of the entry; empty with the defaults for a new one. A qualification has a date instead of a start.
+     */
+    private formFor = (props: ProfileEntryDialogLocalProps): ProfileEntryDialogState => {
+        const entry = props.entry;
+        const start = entry && (props.type === 'QUALIFICATION' ? entry['date'] : entry['startDate']);
         return {
-            searchText: !!(props.entry) ? props.entry.nameEntity.name : '',
-            startDate: !!(props.entry) && !!(props.entry['startDate']) ? props.entry['startDate'] : today(),
-            endDate: !!(props.entry) && !!(props.entry['endDate']) ? props.entry['endDate'] : today(),
-            degree: !!(props.entry) && !!(props.entry['degree']) ? props.entry['degree'] : EducationDegree.BACHELOR,
-            langLevel: !!(props.entry) && !!(props.entry['level']) ? props.entry['level'] : LanguageLevel.BASIC,
+            searchText: entry ? entry.nameEntity.name : '',
+            startDate: start || today(),
+            endDate: (entry && entry['endDate']) || today(),
+            degree: (entry && entry['degree']) || EducationDegree.BACHELOR,
+            langLevel: (entry && entry['level']) || LanguageLevel.BASIC,
         };
     };
 
@@ -99,23 +100,9 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
 
 
     public componentDidUpdate(oldProps: ProfileEntryDialogLocalProps) {
-        if (!!oldProps.entry && !this.props.entry) {
-            this.setState(this.defaultState({}));
-        } else if (this.props.entry != oldProps.entry) {
-            let date: LocalDate;
-            if (oldProps.type === 'QUALIFICATION') {
-                date = this.props.entry && this.props.entry['date'] ? this.props.entry['date'] : today();
-            } else {
-                date = this.props.entry && this.props.entry['startDate'] ? this.props.entry['startDate'] : today();
-            }
-
-            this.setState({
-                searchText: this.props.entry ? this.props.entry.nameEntity.name : '',
-                startDate: date,
-                endDate: this.props.entry && this.props.entry['endDate'] ? this.props.entry['endDate'] : today(),
-                degree: this.props.entry && this.props.entry['degree'] ? this.props.entry['degree'] : EducationDegree.BACHELOR,
-                langLevel: this.props.entry && this.props.entry['level'] ? this.props.entry['level'] : LanguageLevel.BASIC
-            });
+        // Every opening shows the form of the entry, empty for a new one, not what the last one left (#285)
+        if ((this.props.open && !oldProps.open) || this.props.entry !== oldProps.entry) {
+            this.setState(this.formFor(this.props));
         }
     }
 
@@ -188,6 +175,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         <Grid item md={12} xs={12}>
                             <PwrAutoComplete
                                 validationError={error}
+                                autoFocus
                                 fullWidth
                                 label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
                                 id={'id'}
