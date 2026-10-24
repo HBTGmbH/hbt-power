@@ -478,6 +478,8 @@
   "Generator.DescriptionPlaceholder": "Wähle ein Template für den Export.",
   "Login.Title": "HBT Power",
   "App.Name": "Power",
+  "App.NewVersion.Message": "Eine neue Version von Power ist verfügbar.",
+  "App.NewVersion.Reload": "Neu laden",
   "Login.LoginAzure": "Login mit Microsoft365",
   "Login.AdminSpace": "Admin-Bereich",
   "ProfileSelect.Title": "Profil wählen",

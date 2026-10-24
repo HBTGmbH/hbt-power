@@ -17,8 +17,10 @@ module.exports = function (app) {
         return;
     }
     app.get('/config.js', (req, res) => res.sendFile(path.resolve(__dirname, '../config.local.js')));
-    // The image gets build_info.json from the CI build; locally it describes the working copy
-    app.get('/build_info.json', (req, res) => res.json(buildInfo()));
+    // The image gets build_info.json from the CI build; locally it describes the working copy at the start of the dev
+    // server, like the commit in the bundle (withCommit.js), so a local commit doesn't announce a new version (#247)
+    const info = buildInfo();
+    app.get('/build_info.json', (req, res) => res.json(info));
     // The edge itself only publishes its app info, under its own prefix (management.endpoints.web.base-path)
     app.use('/api/pwr-edge-service', createProxyMiddleware({
         target: 'http://localhost:9000',

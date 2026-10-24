@@ -89,9 +89,9 @@
   },
   "scripts": {
     "compileInfo": "node ./compileBuildInfo.js",
-    "start": "react-scripts start",
-    "start:local": "cross-env REACT_APP_LOCAL_DEV=true react-scripts start",
-    "build": "cross-env CI=false react-scripts build",
+    "start": "node ./withCommit.js react-scripts start",
+    "start:local": "cross-env REACT_APP_LOCAL_DEV=true node ./withCommit.js react-scripts start",
+    "build": "cross-env CI=false node ./withCommit.js react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
