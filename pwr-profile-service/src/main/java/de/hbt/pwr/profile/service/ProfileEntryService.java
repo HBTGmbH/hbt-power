@@ -18,9 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -71,6 +74,7 @@ public class ProfileEntryService {
         if (trimmedName(profileEntry.getNameEntity()) == null) {
             throw new WebApplicationException(HttpStatus.BAD_REQUEST, "A profile entry needs a name");
         }
+        requireInProfile(profileEntry.getId(), nameEntityType.<Entry>getEntryCollection(profile), ProfileEntry::getId);
         // Every change counts as a profile update, not only the description and projects (#139)
         profile.setLastEdited(LocalDateTime.now());
         NameEntity nameEntity = validateNameEntity(profileEntry.getNameEntity(), nameEntityType);
@@ -90,6 +94,7 @@ public class ProfileEntryService {
     }
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
+        requireInProfile(skill.getId(), skillsOf(profile), Skill::getId);
         skillsEdited(profile);
         Optional<Skill> concurrent = profile.getSkills()
                 .stream().filter(s -> hasEqualName(s, skill))
@@ -134,6 +139,7 @@ public class ProfileEntryService {
         Skill inPro = profileSkills.stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny().orElse(null);
         if (inPro == null) {
             // nicht im profil
+            requireInProfile(skill.getId(), skillsOf(profile), Skill::getId);
             skill.setName(treeNameIgnoringCase(skill.getName()));
             if (skill.getId() == null) {
                 skill = skillRepository.save(skill);
@@ -165,6 +171,27 @@ public class ProfileEntryService {
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Skill with id: " + id + " was not found!"));
         p.getSkills().remove(toRemove);
         skillsEdited(p);
+    }
+
+    /**
+     * An id in a request must be one of the profile in the path (#255): saving under the id of another profile would
+     * change that profile's entry, skill or project and move it over
+     *
+     * @throws WebApplicationException 404 otherwise
+     */
+    private static <T> void requireInProfile(Long id, Collection<T> ofProfile, Function<T, Long> idOf) {
+        if (id != null && ofProfile.stream().noneMatch(element -> id.equals(idOf.apply(element)))) {
+            throw new WebApplicationException(HttpStatus.NOT_FOUND, "Nothing with id " + id + " in this profile");
+        }
+    }
+
+    /**
+     * The skills of the profile and of its projects: a skill deleted from the profile stays in its projects (#254)
+     */
+    private static Set<Skill> skillsOf(Profile profile) {
+        Set<Skill> skills = new HashSet<>(profile.getSkills());
+        profile.getProjects().forEach(project -> skills.addAll(project.getSkills()));
+        return skills;
     }
 
     /**
@@ -215,6 +242,7 @@ public class ProfileEntryService {
         if (project == null) {
             return null;
         }
+        requireInProfile(project.getId(), profile.getProjects(), Project::getId);
         Optional<Project> repoProject = project.getId() != null ? projectRepository.findById(project.getId()) : Optional.empty();
 
         // clean up data / relations; an emptied broker, client or role is none (#215)

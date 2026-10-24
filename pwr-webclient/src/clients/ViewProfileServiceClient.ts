@@ -37,8 +37,12 @@ export class ViewProfileServiceClient extends PowerHttpClient {
      */
 
 
-    public getParentCategories(skillName: string): Promise<Map<number, ViewCategory>> {
-        const url = this.base() + '/tst/view/0/parent/' + skillName;
+    /**
+     * In the path of the view profile, as the service checks the consultant in the path (#255)
+     */
+    public getParentCategories(initials: string, viewProfileId: string, skillName: string): Promise<Map<number, ViewCategory>> {
+        const url = this.base() + '/' + encodeURIComponent(initials) + '/view/' + encodeURIComponent(viewProfileId)
+            + '/parent/' + encodeURIComponent(skillName);
         this.beginRequest();
         return this.get(url);
     }

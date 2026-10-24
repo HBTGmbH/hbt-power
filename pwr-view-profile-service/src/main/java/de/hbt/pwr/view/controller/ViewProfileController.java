@@ -10,6 +10,7 @@ import de.hbt.pwr.view.service.ReportTemplateService;
 import de.hbt.pwr.view.service.ViewProfileCreatorService;
 import de.hbt.pwr.view.service.ViewProfileMergeService;
 import de.hbt.pwr.view.service.ViewProfileOperationService;
+import de.hbt.pwr.view.security.ConsultantAccess;
 import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -166,6 +167,8 @@ public class ViewProfileController {
 
     @PostMapping("/dataConversion")
     public ResponseEntity convertDataModelVersion() {
+        // Changes the view profiles of everyone (#255); goes away with #250
+        ConsultantAccess.checkAdmin();
 
         viewProfileService.migrateViewProfiles();
         return ResponseEntity.ok().build();

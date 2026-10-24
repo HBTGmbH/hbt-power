@@ -1,10 +1,7 @@
 package de.hbt.pwr.controller;
 
 import de.hbt.pwr.model.*;
-import de.hbt.pwr.model.clustering.ClusteredNetwork;
 import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
-import de.hbt.pwr.model.profile.Consultant;
-import de.hbt.pwr.model.profile.NameEntityType;
 import de.hbt.pwr.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static de.hbt.pwr.model.StatisticsConfig.DEFAULT_MAX_SKILLS;
 
@@ -74,28 +70,8 @@ public class ProfileStatisticsController {
         return ResponseEntity.ok(statisticsService.calculateRatedSkillFrequency());
     }
 
-    @RequestMapping(value = "/network/kmed", produces = "application/json")
-    public ResponseEntity<ClusteredNetwork> getClusteredNetwork() {
-        return ResponseEntity.ok(statisticsService.getClusteredNetwork());
-    }
-
     @RequestMapping(value = "/network/consultant/{initials}", produces = "application/json")
     public ResponseEntity<ConsultantClusteringInfo> getConsultantClusteringInfo(@PathVariable("initials") String initials){
         return ResponseEntity.ok(statisticsService.getConsultantInfo(initials));
-    }
-
-    @GetMapping(value = "/entries/referencing", produces = "application/json")
-    public ResponseEntity<List<ConsultantInfo>> getConsultantsReferencingNameEntity(
-            @RequestParam(value = "name-entity") String nameEntityName,
-            @RequestParam(value = "type") NameEntityType type) {
-        List<Consultant> consultantLost = statisticsService.getAllConsultantsReferencingNameEntity(nameEntityName, type);
-        return ResponseEntity.ok(consultantLost.stream().map(ConsultantInfo::new).collect(Collectors.toList()));
-    }
-
-    @GetMapping(value = "/skill/referencing", produces = "application/json")
-    public ResponseEntity<List<ConsultantInfo>> getConsultantsReferencingSkill(
-            @RequestParam(value = "skill") String skillName) {
-        List<Consultant> consultants = statisticsService.getAllConsultantsReferencingSkill(skillName);
-        return ResponseEntity.ok(consultants.stream().map(ConsultantInfo::new).collect(Collectors.toList()));
     }
 }

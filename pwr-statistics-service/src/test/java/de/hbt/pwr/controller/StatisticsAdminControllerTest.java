@@ -10,6 +10,7 @@ import de.hbt.pwr.repo.ConsultantRepository;
 import de.hbt.pwr.service.AsyncInformationService;
 import de.hbt.pwr.service.SkillNameNormalizer;
 import de.hbt.pwr.service.SkillNames;
+import de.hbt.pwr.service.StatisticsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class StatisticsAdminControllerTest {
         skillTreeClient = mock(SkillTreeClient.class);
         AsyncInformationService service = new AsyncInformationService(consultantRepository, powerProfileClient,
                 mock(ClusteredNetworkRepo.class), new SkillNameNormalizer(skillTreeClient));
-        mockMvc = MockMvcBuilders.standaloneSetup(new StatisticsAdminController(service)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new StatisticsAdminController(service, mock(StatisticsService.class))).build();
     }
 
     @Test

@@ -19,8 +19,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.net.URI;
 import java.time.LocalDate;
 
+import static de.hbt.pwr.view.security.ConsultantAccess.USER_ADMIN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,6 +30,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -145,5 +148,20 @@ public class ReportTemplateAdminControllerTest {
         ArgumentCaptor<ReportTemplate> captor = ArgumentCaptor.forClass(ReportTemplate.class);
         verify(reportTemplateService).saveTemplate(captor.capture());
         return captor.getValue();
+    }
+
+    /**
+     * The service lets only admins reach /admin itself, however the path is written (#260)
+     */
+    @Test
+    public void onlyAnAdminReachesTheAdminEndpoints() throws Exception {
+        mockMvc.perform(get("/admin/template/files").header(USER_ADMIN_HEADER, "false"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin;x/template/files").header(USER_ADMIN_HEADER, "false"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get(URI.create("/%61dmin/template/files")).header(USER_ADMIN_HEADER, "false"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin/template/files").header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
+        mockMvc.perform(get("/admin/template/files")).andExpect(status().isOk());
     }
 }

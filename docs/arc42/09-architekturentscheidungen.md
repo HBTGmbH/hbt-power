@@ -73,7 +73,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 
 ## ADR-04: Anmeldung und Rollen nur in der Edge, Identität über Header
 
-- **Status:** gilt
+- **Status:** gilt, ergänzt durch die Prüfung je Berater in den Services (#255)
 - **Kontext:**
   - Die Anmeldung über MSAL gibt es seit 2023; seit #129 läuft sie automatisch.
   - Die Services hatten nie eine eigene Anmeldung.
@@ -84,8 +84,10 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - Die Services lesen den angemeldeten Benutzer nur aus diesen Headern, nie aus Body, Pfad oder Query.
   - Ein Service, der im Auftrag des Benutzers einen anderen ruft, gibt die Header weiter.
   - Binärdaten lädt der Webclient mit Token als Blob.
+  - Die Pfadregeln der Edge sehen den Pfad, wie er ankommt; die Services normalisieren ihn selbst. Deshalb lässt die Edge nur normalisierte Pfade durch, und jeder Service weist `/admin` für Nicht-Admins zusätzlich selbst ab (#260).
+  - Seit #255 setzt die Edge auch `X-Pwr-User-Admin`, auf jede Anfrage. Die Services mit Daten zu Beratern prüfen damit selbst, dass ein Benutzer nur seine eigenen Daten liest und ändert (`ConsultantAccess`): Die Edge kennt nur Pfade, nicht wem ein Dokument oder View-Profil gehört.
 - **Konsequenzen:**
-  - Ein Ort für die Sicherheitsregeln, getestet in `SecurityConfigTest` und `AccountHeadersFilterTest`.
+  - Ein Ort für die Rollenregeln, getestet in `SecurityConfigTest` und `AccountHeadersFilterTest`; die Prüfung je Berater liegt in jedem Service und ist dort getestet.
   - Die Backend-Services dürfen nur über die Edge und das Container-Netz erreichbar sein.
   - Lokal ohne Edge fehlen die Header.
 

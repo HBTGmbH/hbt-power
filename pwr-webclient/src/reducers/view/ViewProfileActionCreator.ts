@@ -303,9 +303,10 @@ export class ViewProfileActionCreator {
         };
     }
 
-    public static AsyncGetParentCategories(skill: ViewSkill) {
-        return function (dispatch: redux.Dispatch) {
-            viewProfileClient.getParentCategories(skill.name)
+    public static AsyncGetParentCategories(viewProfileId: string, skill: ViewSkill) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+            let initials = getState().profileStore.consultant.initials;
+            viewProfileClient.getParentCategories(initials, viewProfileId, skill.name)
                 .then((response) => dispatch(ViewProfileActionCreator.SetParentForSkill(response)))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))

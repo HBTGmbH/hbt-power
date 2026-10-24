@@ -217,7 +217,10 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
                                 ? <div className="vertical-align">
                                     <Typography color="textSecondary">{PowerLocalize.get('ProfileSelect.OpeningOwnProfile')}</Typography>
                                 </div>
-                                : <>
+                                : !this.mayChoose
+                                    // A user opens only the own profile (#255): nothing to choose, only why it didn't open
+                                    ? this.renderMessage()
+                                    : <>
                                     <div className="vertical-align">
                                         <div className="fittingContainer">
                                             <div className="vertical-align">

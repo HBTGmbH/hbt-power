@@ -13,4 +13,6 @@ public interface ConsultantRepository extends JpaRepository<Consultant, Long> {
     Optional<Consultant> findByInitials(String initials);
 
     Optional<Consultant> findByProfileId(Long profileId);
+
+    Optional<Consultant> findFirstByProfilePictureId(String profilePictureId);
 }

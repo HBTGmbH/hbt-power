@@ -13,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.net.URI;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -190,6 +191,31 @@ class SecurityConfigTest {
     }
 
     /**
+     * Personal data of other consultants and changing profile pictures, only for the admin area (#255)
+     */
+    static Stream<Arguments> adminOnlyPersonalData() {
+        return Stream.of(
+                Arguments.of(HttpMethod.POST, "/pwr-profile-service/admin/profile-pictures"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-profile-service/admin/profile-pictures/some-id"),
+                Arguments.of(HttpMethod.GET, "/pwr-statistics-service/admin/statistics/skill/referencing?skill=Java"),
+                Arguments.of(HttpMethod.GET, "/pwr-statistics-service/admin/statistics/entries/referencing?name-entity=x&type=SECTOR"),
+                Arguments.of(HttpMethod.GET, "/pwr-statistics-service/admin/statistics/network/kmed"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("adminOnlyPersonalData")
+    void adminOnlyPersonalDataAsUserIsForbidden(HttpMethod method, String path) {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .method(method).uri(path).exchange().expectStatus().isForbidden();
+    }
+
+    @ParameterizedTest
+    @MethodSource("adminOnlyPersonalData")
+    void adminOnlyPersonalDataAsAdminPassesSecurity(HttpMethod method, String path) {
+        assertPassesSecurity("Power.Admin", method, path);
+    }
+
+    /**
      * Listing and managing the consultants (#218)
      */
     static Stream<Arguments> consultantManagement() {
@@ -221,6 +247,53 @@ class SecurityConfigTest {
     void consultantAndNamesAsUserPassSecurity() {
         assertPassesSecurity("Power.User", "/pwr-profile-service/consultants/abc");
         assertPassesSecurity("Power.User", "/pwr-profile-service/consultants/names");
+    }
+
+    /**
+     * Paths the edge reads differently than the service behind, which normalizes them (#260): rejected before the
+     * path rules, also for an admin
+     */
+    static Stream<String> pathsThatAreNotNormalized() {
+        return Stream.of(
+                "/pwr-profile-service/profile/../admin/consultants",
+                "/pwr-profile-service/profile/./../admin/consultants",
+                "/pwr-profile-service/profile/%2e%2e/admin/consultants",
+                "/pwr-profile-service/profile/%2E%2E/admin/consultants",
+                "/pwr-profile-service/profile/.%2e/admin/consultants",
+                "/pwr-profile-service/profile/%252e%252e/admin/consultants",
+                "/pwr-profile-service/profile%2f..%2fadmin/consultants",
+                "/pwr-profile-service/profile/..%5cadmin/consultants",
+                "/pwr-profile-service//admin/consultants",
+                "/pwr-profile-service/admin;x/consultants",
+                "/pwr-profile-service/admin%3bx/consultants",
+                "/pwr-profile-service/%61dmin/consultants",
+                "/pwr-statistics-service/statistics/../admin/consultants/refresh",
+                "/pwr-skill-service/skill/../admin/skill/lucene/index");
+    }
+
+    @ParameterizedTest
+    @MethodSource("pathsThatAreNotNormalized")
+    void pathThatIsNotNormalizedIsRejected(String rawPath) {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .get().uri(URI.create(rawPath)).exchange().expectStatus().isBadRequest();
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.Admin")))
+                .get().uri(URI.create(rawPath)).exchange().expectStatus().isBadRequest();
+    }
+
+    @Test
+    void encodedCharactersInNamesStillPass() {
+        assertPassesSecurity("Power.User", URI.create("/pwr-view-profile-service/view/abc/view/1/parent/C%23"));
+        assertPassesSecurity("Power.User", URI.create("/pwr-skill-service/skill/search?searchterm=C%23&maxResults=10"));
+        assertPassesSecurity("Power.User", URI.create("/pwr-view-profile-service/view/abc/view/1/parent/.NET"));
+        assertPassesSecurity("Power.User", URI.create("/pwr-view-profile-service/view/abc/view/1/parent/Visual%20Basic"));
+        assertPassesSecurity("Power.Admin", URI.create("/pwr-profile-service/admin/skills?name=C%23"));
+    }
+
+    private void assertPassesSecurity(String role, URI uri) {
+        var status = webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority(role)))
+                .get().uri(uri).exchange()
+                .returnResult(Void.class).getStatus();
+        assertThat(status.value()).as("GET " + uri).isNotIn(400, 401, 403);
     }
 
     private void assertPassesSecurity(String role, String path) {

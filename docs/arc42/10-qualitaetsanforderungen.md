@@ -16,6 +16,7 @@ mindmap
     Sicherheit
       Zugriff nur mit Rolle
       Akteur nicht fälschbar
+      Nur eigene Daten
       Datensparsamkeit
       Keine Betriebsdetails öffentlich
     Bedienbarkeit
@@ -48,9 +49,10 @@ mindmap
 | Q3 | Korrektheit | Ein Admin löscht einen inaktiven Berater. | Danach gibt es in keinem Service mehr Daten zu ihm (Profil, Bild, View-Profile, Dokumente). Die Statistik kennt ihn nach dem Commit nicht mehr. | #240, #243, [6.7](06-laufzeitsicht.md#67-berater-löschen-admin) |
 | Q4 | Korrektheit | Beim Löschen eines Beraters antwortet der Report Service nicht. | Der Berater bleibt, die Meldung nennt den Fehler (`502`). Erneutes Löschen löscht den Rest. Was liegen blieb, zeigt das Housekeeping. | #240, #242 |
 | Q5 | Korrektheit | Ein Admin führt zwei Skills zusammen. | Alle Profile tragen den Zielskill, die Statistik zeigt ihn nach dem Commit, Nutzungsangaben im Webclient werden neu geladen. | #205, [6.6](06-laufzeitsicht.md#66-einen-skill-in-allen-profilen-umbenennen-admin) |
-| Q6 | Sicherheit | Ein `Power.User` ruft einen Endpunkt unter `/pwr-<service>/admin/**` direkt auf. | Die Edge antwortet `403`. | #178, #203, #218, `SecurityConfigTest` |
+| Q6 | Sicherheit | Ein `Power.User` ruft einen Endpunkt unter `/pwr-<service>/admin/**` direkt auf, auch anders geschrieben (`x/../admin`, `%61dmin`, `admin;x`). | Die Edge antwortet `403` bzw. `400`; käme die Anfrage am Filter vorbei, antwortet der Service selbst `403`. | #178, #203, #218, #260, `SecurityConfigTest`, `SkillAdminAccessITest` |
 | Q7 | Sicherheit | Ein Client schickt einen eigenen Header `X-Pwr-User-Login`. | Die Edge verwirft ihn und setzt den Wert aus dem Token; „Exportiert von“ zeigt den echten Benutzer. | #214, `AccountHeadersFilterTest` |
 | Q8 | Sicherheit | Jemand ruft ein Profilbild ohne Token ab. | `401`; der Webclient lädt Bilder nur mit Token. | #67 |
+| Q8a | Sicherheit | Ein `Power.User` fragt Profil, Dokumente, View-Profile oder Statistik eines anderen Beraters ab, über das Kürzel im Pfad oder eine ID. | `403`; ein Admin bekommt die Daten. Der Webclient öffnet das fremde Profil gar nicht erst und zeigt eine Meldung. | #255, `ConsultantAccessITest` u. a. |
 | Q9 | Bedienbarkeit | Ein Berater hat ein Projekt geändert und klickt im Menü auf einen anderen Bereich. | Ein Dialog fragt, ob die Änderungen verworfen werden sollen. | #44, #62 |
 | Q10 | Bedienbarkeit | Ein Admin lädt die Seite eines ausgewählten Skills neu oder schickt den Link weiter. | Dieselbe Auswahl erscheint wieder (ID und Slug in der URL). | #182, #212 |
 | Q11 | Barrierefreiheit | Text, Warnungen, Fehler und Symbole auf dem Theme-Hintergrund | Text mit mindestens 4,5:1, bedeutungstragende Grafik mit mindestens 3:1 | #201 |

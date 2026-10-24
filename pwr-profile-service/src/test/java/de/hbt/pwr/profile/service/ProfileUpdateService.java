@@ -21,6 +21,9 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * Service that allows various update operations on a {@link Profile}
+ *
+ * Only the tests use it, to import whole sample profiles: the endpoint that replaced a whole profile from the
+ * request body is gone (#261), the app changes profiles entry by entry ({@code ProfileEntryService}).
  */
 @Transactional
 @Service

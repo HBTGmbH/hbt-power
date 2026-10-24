@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.fixture.ViewProfileFixtures;
+import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.model.LanguageLevel;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Career;
@@ -25,9 +26,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static de.hbt.pwr.view.client.profile.model.NameEntityType.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -43,6 +46,7 @@ public class ViewProfileMergeServiceTest {
     private Project p1;
     private Project p2;
     private ViewProfile.ViewProfileMergeOptions options;
+    private ViewProfileRepository viewProfileRepository;
 
     private ViewProfile makeViewProfile() {
         ViewProfile view = new ViewProfile();
@@ -86,10 +90,26 @@ public class ViewProfileMergeServiceTest {
         options.name = "test";
         options.viewDescription = "test description";
         options.keepOld = true;
-        ViewProfileRepository viewProfileRepository = mock(ViewProfileRepository.class);
+        viewProfileRepository = mock(ViewProfileRepository.class);
         when(viewProfileRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
         viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null, viewProfileLocalizationService,
                 skillServiceClient, profileServiceClient);
+    }
+
+    @Test
+    public void shouldOnlyTakeOverAnOwnViewProfile() {
+        oldView.getViewProfileInfo().setOwnerInitials("xyz");
+        when(viewProfileRepository.findById("old")).thenReturn(Optional.of(oldView));
+        assertThatThrownBy(() -> viewProfileMergeService.updateViewProfile("old", "tst", options))
+                .isInstanceOf(InvalidOwnerException.class);
+    }
+
+    @Test
+    public void ownerIsComparedIgnoringCase() {
+        oldView.getViewProfileInfo().setOwnerInitials("tst");
+        assertThat(ViewProfileOperationService.isOwner(oldView, "TST")).isTrue();
+        assertThat(ViewProfileOperationService.isOwner(oldView, "xyz")).isFalse();
+        assertThat(ViewProfileOperationService.isOwner(oldView, null)).isFalse();
     }
 
     @Test

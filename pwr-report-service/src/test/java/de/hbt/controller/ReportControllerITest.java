@@ -14,17 +14,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import static de.hbt.security.ConsultantAccess.USER_ADMIN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,7 +47,8 @@ class ReportControllerITest {
 
     private static final String REPORT_INFO = "{"
             + "\"initials\": \"tst\","
-            + "\"viewProfile\": {\"viewProfileInfo\": {\"name\": \"Anfrage A\", \"viewDescription\": \"Für Kunde X\"}},"
+            + "\"viewProfile\": {\"viewProfileInfo\": {\"name\": \"Anfrage A\", \"viewDescription\": \"Für Kunde X\","
+            + " \"owner\": \"tst\"}},"
             + "\"reportTemplate\": {\"id\": \"template-1\", \"name\": \"Standard\"},"
             // Not taken over: who exports is no part of the body
             + "\"exportedByInitials\": \"fake\", \"exportedByName\": \"Jemand Anderes\""
@@ -134,5 +141,92 @@ class ReportControllerITest {
                 .andExpect(status().isOk());
 
         assertThat(theOnlyReport().getViewProfileDescription()).hasSize(ReportController.MAX_DESCRIPTION_LENGTH);
+    }
+
+    // ------------------------------------------------------------------------------- own documents only (#255)
+
+    private ReportData storedReport(String initials) {
+        ReportData report = new ReportData(initials, "Anfrage A", null, initials + "_Anfrage A_Standard",
+                "template-1", null, null);
+        report.setData(new byte[]{1, 2, 3});
+        return reportDataRepository.save(report);
+    }
+
+    private static MockHttpServletRequestBuilder asUser(MockHttpServletRequestBuilder request, String initials) {
+        return request.header(USER_ADMIN_HEADER, "false").header(ReportController.USER_INITIALS_HEADER, initials);
+    }
+
+    @Test
+    void userSeesAndChangesOnlyTheOwnDocuments() throws Exception {
+        ReportData own = storedReport("tst");
+        ReportData other = storedReport("xyz");
+
+        mockMvc.perform(asUser(get("/report/tst"), "TST")).andExpect(status().isOk());
+        mockMvc.perform(asUser(get("/report/file/" + own.getId()), "tst")).andExpect(status().isOk());
+        mockMvc.perform(asUser(get("/report/xyz"), "tst")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get("/report/file/" + other.getId()), "tst")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(delete("/report/delete/" + other.getId()), "tst")).andExpect(status().isForbidden());
+        assertThat(reportDataRepository.findById(other.getId())).isPresent();
+
+        mockMvc.perform(asUser(delete("/report/delete/" + own.getId()), "tst")).andExpect(status().isOk());
+        assertThat(reportDataRepository.findById(own.getId())).isEmpty();
+    }
+
+    /**
+     * Only the view-profile service makes documents, from a view profile it loaded by its id (#262): through the edge
+     * nobody does, not even an admin
+     */
+    @Test
+    void throughTheEdgeNoDocumentIsMade() throws Exception {
+        mockMvc.perform(asUser(generate(), "tst")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(post("/report/preview"), "tst")
+                        .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(generate().header(USER_ADMIN_HEADER, "true")).andExpect(status().isForbidden());
+        mockMvc.perform(post("/report/preview").header(USER_ADMIN_HEADER, "true")
+                        .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
+                .andExpect(status().isForbidden());
+        assertThat(reportDataRepository.findAll()).isEmpty();
+        verify(profileReportService, never()).renderPdfPreview(any());
+    }
+
+    @Test
+    void noDocumentFromAViewProfileOfAnotherConsultant() throws Exception {
+        String ofAnother = REPORT_INFO.replace("\"owner\": \"tst\"", "\"owner\": \"xyz\"");
+        mockMvc.perform(post("/report").param("type", "DOC").contentType(MediaType.APPLICATION_JSON).content(ofAnother))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/report/preview").contentType(MediaType.APPLICATION_JSON).content(ofAnother))
+                .andExpect(status().isForbidden());
+        assertThat(reportDataRepository.findAll()).isEmpty();
+
+        // The owner compares ignoring case, like the initials everywhere
+        mockMvc.perform(post("/report").param("type", "DOC").contentType(MediaType.APPLICATION_JSON)
+                        .content(REPORT_INFO.replace("\"owner\": \"tst\"", "\"owner\": \"TST\"")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void adminSeesAndChangesTheDocumentsOfEveryone() throws Exception {
+        ReportData other = storedReport("xyz");
+
+        mockMvc.perform(get("/report/file/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
+                .andExpect(status().isOk());
+        mockMvc.perform(delete("/report/delete/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
+                .andExpect(status().isOk());
+    }
+
+    /**
+     * The service lets only admins reach /admin itself, however the path is written (#260)
+     */
+    @Test
+    void onlyAnAdminReachesTheAdminEndpoints() throws Exception {
+        mockMvc.perform(get("/admin/file").header(USER_ADMIN_HEADER, "false")).andExpect(status().isForbidden());
+        // The firewall of Spring Security in this service rejects a ';' before anything else
+        assertThatThrownBy(() -> mockMvc.perform(get("/admin;x/file").header(USER_ADMIN_HEADER, "false")))
+                .isInstanceOf(RequestRejectedException.class);
+        mockMvc.perform(get(URI.create("/%61dmin/file")).header(USER_ADMIN_HEADER, "false"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin/file").header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
+        mockMvc.perform(get("/admin/file")).andExpect(status().isOk());
     }
 }

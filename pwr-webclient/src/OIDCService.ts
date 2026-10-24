@@ -158,6 +158,21 @@ export class OIDCService {
         return {name: account.name, username: account.username, roles, initials: initialsClaim(account.idTokenClaims)};
     }
 
+    /**
+     * Whether the logged-in account may open the profile with these initials: an admin every one, a user only the own
+     * (#255). The services check the same; this spares the user their errors.
+     */
+    public mayOpenProfile(initials: string): boolean {
+        const account = this.getCurrentAccount();
+        if (!account) {
+            return false;
+        }
+        if (account.roles.includes('Power.Admin')) {
+            return true;
+        }
+        return !!account.initials && !!initials && account.initials.toLowerCase() === initials.toLowerCase();
+    }
+
     public getCurrentUserName(): string {
         if (CONFIG.LOCAL_DEV) {
             return LOCAL_DEV_USER_NAME;

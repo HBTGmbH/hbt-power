@@ -16,32 +16,40 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Tells the services who is logged in (#139). They have no authentication of their own, so the account comes from the
- * token this service verified: headers of the same name sent by a client are removed first, so nobody can pretend to
- * be someone else.
+ * Tells the services who is logged in (#139) and whether the account is an admin (#255). They have no authentication
+ * of their own, so the account comes from the token this service verified: headers of the same name sent by a client
+ * are removed first, so nobody can pretend to be someone else. The admin header is set on every request, so a service
+ * can tell a request through this service from a call of another service, which never has it.
  */
 @Component
 public class AccountHeadersFilter implements GlobalFilter, Ordered {
 
     public static final String USER_LOGIN_HEADER = "X-Pwr-User-Login";
     public static final String USER_INITIALS_HEADER = "X-Pwr-User-Initials";
+    public static final String USER_ADMIN_HEADER = "X-Pwr-User-Admin";
+    static final String ADMIN_ROLE = "Power.Admin";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .filter(JwtAuthenticationToken.class::isInstance)
-                .map(authentication -> ((JwtAuthenticationToken) authentication).getToken())
+                .map(JwtAuthenticationToken.class::cast)
                 .map(Optional::of)
                 .defaultIfEmpty(Optional.empty())
-                .flatMap(token -> chain.filter(withAccount(exchange, token)));
+                .flatMap(authentication -> chain.filter(withAccount(exchange, authentication)));
     }
 
-    private static ServerWebExchange withAccount(ServerWebExchange exchange, Optional<Jwt> token) {
+    private static ServerWebExchange withAccount(ServerWebExchange exchange, Optional<JwtAuthenticationToken> authentication) {
+        Optional<Jwt> token = authentication.map(JwtAuthenticationToken::getToken);
+        boolean admin = authentication.stream()
+                .flatMap(auth -> auth.getAuthorities().stream())
+                .anyMatch(authority -> ADMIN_ROLE.equals(authority.getAuthority()));
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .headers(headers -> {
                     headers.remove(USER_LOGIN_HEADER);
                     headers.remove(USER_INITIALS_HEADER);
+                    headers.set(USER_ADMIN_HEADER, Boolean.toString(admin));
                     token.flatMap(jwt -> claim(jwt, "preferred_username", "upn", "email"))
                             .ifPresent(login -> headers.set(USER_LOGIN_HEADER, login));
                     token.flatMap(jwt -> claim(jwt, "mailnickname"))

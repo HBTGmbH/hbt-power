@@ -11,23 +11,38 @@ flowchart LR
         R1{"Pfad /pwr-&lt;svc&gt;/admin/**?"}
         R1 -->|ja| A["Power.Admin"]
         R1 -->|nein| U["Power.User oder Power.Admin"]
-        H["X-Pwr-User-* entfernen<br/>und aus dem Token setzen"]
+        H["X-Pwr-User-* entfernen<br/>und aus dem Token setzen<br/>(Login, Kürzel, Admin)"]
         A --> H
         U --> H
     end
-    H --> S["Service<br/>liest den Benutzer nur aus X-Pwr-User-*"]
+    H --> S
+    subgraph S[Service]
+        C{"Admin oder<br/>eigenes Kürzel?"}
+        C -->|ja| OK["Antwort"]
+        C -->|nein| F["403"]
+    end
 ```
 
 - **Anmeldung:** Der Webclient meldet über MSAL (OIDC, Redirect) an Entra ID an. Jeder Aufruf trägt das Access-Token als `Authorization: Bearer` (`PowerHttpClient`).
 - **Nur die Edge prüft.** Sie validiert das JWT über den Issuer. Die Rollen kommen aus dem Claim `roles` ohne Präfix.
+  - Vorher weist sie jeden nicht normalisierten Pfad mit `400` ab (`NormalizedPathFilter`, #260): Segmente `.` und `..`, `//`, `;`, kodierte `/`, `\` oder `%` und unnötig kodierte Zeichen wie `%2e`. Die Services normalisieren den Pfad selbst; sonst könnte ein Pfad, den die Edge nicht als `/admin` erkennt, beim Service auf einem Admin-Endpunkt landen.
   - Erste Regel: `/pwr-<service>/admin/**` verlangt `Power.Admin`.
   - Danach: alles andere verlangt `Power.User` oder `Power.Admin`.
-  - Die Backend-Services haben keine eigene Anmeldung. Sie sind nur im Container-Netz erreichbar.
-- **Admin-Funktionen liegen unter `/admin/**`** des jeweiligen Service (#178, #203, #218). Wer einen Endpunkt anlegt oder verschiebt, prüft ihn gegen die Regeln der Edge (Definition of Done).
-- **Wer angemeldet ist**, erfahren die Services nur aus den Headern `X-Pwr-User-Login` und `X-Pwr-User-Initials`. Die Edge setzt sie aus dem geprüften Token, nachdem sie gleichnamige Header des Clients entfernt hat.
+  - Die Backend-Services haben keine eigene Anmeldung. Sie sind nur im Container-Netz erreichbar. Ob sie Spring Security nutzen sollen, klärt #256.
+- **Admin-Funktionen liegen unter `/admin/**`** des jeweiligen Service (#178, #203, #218). Wer einen Endpunkt anlegt oder verschiebt, prüft ihn gegen die Regeln der Edge (Definition of Done). Als zweite Schicht weist jeder Service mit Admin-Endpunkten `/admin` selbst ab, wenn `X-Pwr-User-Admin` `false` ist (`AdminAccessInterceptor`, #260). Er richtet sich nach dem Mapping, das Spring MVC gewählt hat, nicht nach dem Text des Pfads.
+- **Wer angemeldet ist**, erfahren die Services nur aus den Headern `X-Pwr-User-Login`, `X-Pwr-User-Initials` und `X-Pwr-User-Admin`. Die Edge setzt sie aus dem geprüften Token, nachdem sie gleichnamige Header des Clients entfernt hat; `X-Pwr-User-Admin` setzt sie auf jede Anfrage (#255).
   - Ein Akteur (Ersteller, Exporteur, Bestätiger) kommt nie aus Body, Pfad oder Query.
   - Ruft ein Service einen anderen im Auftrag des Benutzers, gibt er die Header weiter (Export, #214).
   - Kürzel im Pfad sagen nur, um welches Profil es geht.
+- **Nur eigene Daten** (#255): Ein `Power.User` liest und ändert nur die Daten zu seinem Kürzel, ein `Power.Admin` alle. Profile, Report, View-Profile und Statistics Service prüfen das selbst (`security/ConsultantAccess`):
+  - Ein Interceptor vergleicht die Pfadvariable `{initials}` jedes Endpunkts mit `X-Pwr-User-Initials`, ohne Groß-/Kleinschreibung.
+  - Was über eine ID geladen wird (Dokument, Profilbild, View-Profil), prüft der Endpunkt am Besitzer.
+  - Dokumente entstehen nur über den View-Profile Service (#262): Er lädt das View-Profil über seine ID und prüft den Besitzer. `POST /report` und `/report/preview` des Report Service weisen jede Anfrage über die Edge ab, auch eines Admins, und ebenso ein View-Profil, dessen Besitzer nicht zu den Kürzeln im Body passt.
+  - Ein ganzes Profil wird nur gelesen (`GET /profiles/{initials}`), nie aus einem Body ersetzt (#261).
+  - Eine Anfrage ohne `X-Pwr-User-Admin` kam nicht über die Edge (Aufruf eines anderen Service, lokal) und darf alles.
+  - Eine ID im Body muss zum Profil im Pfad gehören, auch für Admins.
+  - Für alle offen bleiben nach Entscheidung: Beratersuche, Namensliste, Cluster-Info und Angaben ohne Personenbezug. Personenbezogenes über andere, das nur der Admin-Bereich braucht, liegt unter `/admin`.
+  - Der Webclient öffnet einem Benutzer kein fremdes Profil (`OIDCService.mayOpenProfile`).
 - **Binärdaten** (Profilbilder, Vorschauen) lädt der Webclient mit Token als Blob. Profilbilder dürfen privat lange gecacht werden (`Cache-Control: private, max-age=365d, immutable`, #67).
 - **Datensparsamkeit:** `GET /consultants/names` gibt allen Benutzern nur Kürzel, Kurz- und vollen Namen (#216).
 - **Lokal** gibt es keine Edge und keine Anmeldung: Man ist Admin, die Header fehlen (z. B. bleibt „Exportiert von“ leer).
