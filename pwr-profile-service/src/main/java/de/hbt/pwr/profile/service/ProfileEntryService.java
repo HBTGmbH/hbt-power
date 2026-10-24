@@ -1,6 +1,7 @@
 package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.client.SkillProfileClient;
+import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ public class ProfileEntryService {
     private ProjectRepository projectRepository;
     private SkillProfileClient skillProfileClient;
     private NameEntityFormerNameRepository formerNameRepository;
+    private AdminNotificationRepository adminNotificationRepository;
 
     @Autowired
     public ProfileEntryService(NameEntityRepository nameEntityRepository,
@@ -39,7 +42,8 @@ public class ProfileEntryService {
                                ProfileRepository profileRepository,
                                SkillRepository skillRepository,
                                ProjectRepository projectRepository, SkillProfileClient skillProfileClient,
-                               NameEntityFormerNameRepository formerNameRepository) {
+                               NameEntityFormerNameRepository formerNameRepository,
+                               AdminNotificationRepository adminNotificationRepository) {
         this.nameEntityRepository = nameEntityRepository;
         this.profileEntryDAO = profileEntryDAO;
         this.profileRepository = profileRepository;
@@ -47,6 +51,7 @@ public class ProfileEntryService {
         this.projectRepository = projectRepository;
         this.skillProfileClient = skillProfileClient;
         this.formerNameRepository = formerNameRepository;
+        this.adminNotificationRepository = adminNotificationRepository;
     }
 
     public BaseProfile updateBaseProfile(Profile p, BaseProfile baseProfile) {
@@ -267,5 +272,9 @@ public class ProfileEntryService {
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Project with id: " + id + " ws not found!"));
         p.getProjects().remove(remove);
         p.setLastEdited(LocalDateTime.now());
+        // The row goes too, with its links to the skills, which are those of the profile (#243)
+        adminNotificationRepository.deleteAll(adminNotificationRepository.findProjectNotificationsAbout(List.of(remove)));
+        remove.getSkills().clear();
+        projectRepository.delete(remove);
     }
 }
