@@ -1,4 +1,4 @@
-package de.hbt.pwr.model.SimRank;
+package de.hbt.pwr.statistics.legacy;
 
 import lombok.Value;
 

@@ -18,13 +18,21 @@ public class ProfileKMedoidClusterer {
 
     private final int maxIterations;
 
-    private final Random random = new Random();
+    private final Random random;
 
     private final KMedoidMetric metric;
 
     public ProfileKMedoidClusterer(int maxIterations, KMedoidMetric metric) {
+        this(maxIterations, metric, new Random());
+    }
+
+    /**
+     * With a given random, so a test can cluster twice the same way (#292)
+     */
+    ProfileKMedoidClusterer(int maxIterations, KMedoidMetric metric, Random random) {
         this.maxIterations = maxIterations < 0 ? 10 : maxIterations;
         this.metric = metric;
+        this.random = random;
     }
 
     /**

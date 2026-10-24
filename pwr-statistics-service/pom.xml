@@ -81,6 +81,27 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- SimRankHeapLimitTest runs on its own with a small heap (#292) -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludedGroups>heap-limit</excludedGroups>
+				</configuration>
+				<executions>
+					<execution>
+						<id>heap-limit</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<groups>heap-limit</groups>
+							<excludedGroups combine.self="override"/>
+							<argLine>-Xmx64m</argLine>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
