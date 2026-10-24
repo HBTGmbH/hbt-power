@@ -197,6 +197,7 @@ sequenceDiagram
     participant P as Profile Service
     participant R as Report Service
     participant V as View-Profile Service
+    participant S as Skill Service
 
     par jeder Service prüft seine eigenen Daten
         W->>P: GET /admin/housekeeping
@@ -211,6 +212,13 @@ sequenceDiagram
         V->>P: GET /consultants/names
         V->>R: GET /admin/file
         V-->>W: View-Profile ohne Berater, Vorlagen ohne Datei
+    and Rubrik „Unbenutzt“ (#288)
+        W->>P: GET /admin/housekeeping/unused
+        P-->>W: Profil-Elemente ohne Nutzer je Typ
+    and
+        W->>S: GET /admin/housekeeping/unused
+        S->>P: GET /admin/skills/usage
+        S-->>W: eigene Skills ohne Nutzer
     end
     W->>W: Bereinigen? (Rückfrage mit Anzahl)
     W->>R: DELETE /admin/housekeeping/reports-without-consultant

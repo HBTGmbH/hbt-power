@@ -6,6 +6,7 @@ import {APISkillCategory, SkillCategory} from '../model/skill/SkillCategory';
 import {TCategoryNode} from '../model/skill/tree/TCategoryNode';
 import {SkillSuggestion} from '../model/skill/SkillSuggestion';
 import {LocalizationLanguage} from '../model/view/LocalizationLanguage';
+import {HousekeepingFindings} from '../model/admin/HousekeepingFindings';
 
 declare const POWER_SKILL_SERVICE_URL: string;
 
@@ -204,4 +205,19 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.patch(url);
     };
 
+
+    /**
+     * Housekeeping, rubric unused (#288): own skills no profile uses. Quietly, like the other services: the page shows
+     * a service that does not answer next to the others
+     */
+    public getUnusedHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
+        return this.getQuietly(this.base() + '/admin/housekeeping/unused');
+    };
+
+    /** Deletes what the check finds now; the answer says how many */
+    public cleanUnusedHousekeeping = (check: string): Promise<HousekeepingFindings> => {
+        const url = this.base() + '/admin/housekeeping/unused/' + encodeURIComponent(check);
+        this.beginRequest();
+        return this.delete(url);
+    };
 }

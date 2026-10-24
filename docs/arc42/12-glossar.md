@@ -11,7 +11,7 @@
 | **Benachrichtigung** (`AdminNotification`) | Eintrag im Postkorb der Admins, z. B. zu einem unbekannten Skill. Kann in den Papierkorb verschoben werden. |
 | **BIRT** | Eclipse Business Intelligence and Reporting Tools; rendert die Dokumente aus Vorlagen (`.rptdesign`) |
 | **Bereinigen** | Löscht im Housekeeping, was eine Prüfung gerade findet |
-| **Datenleiche** | Datensatz, auf den nichts mehr zeigt oder der auf etwas Gelöschtes zeigt (z. B. ein Dokument zu einem gelöschten Berater). Unbenutzte Profil-Elemente oder eigene Skills sind keine Datenleichen. |
+| **Datenleiche** | Datensatz, auf den nichts mehr zeigt oder der auf etwas Gelöschtes zeigt (z. B. ein Dokument zu einem gelöschten Berater). Unbenutzte Profil-Elemente oder eigene Skills sind keine Datenleichen, sondern gültige Einträge; das Housekeeping führt sie in der eigenen Rubrik *Unbenutzt* (#288). |
 | **DBFile** | Gespeicherte Vorlagen-Datei im Report Service (Tabelle `designfiles`) |
 | **Dokument** (`ReportData`) | Exportiertes Word-Dokument in der Historie des Report Service, mit Status `RUNNING`, `DONE` oder `ERROR` |
 | **Edge** | `pwr-edge-service`, der einzige Eingang zu den Services: Tokenprüfung, Rollen, Identitäts-Header, Routing |
@@ -20,7 +20,7 @@
 | **Export** | Erzeugen eines Word-Dokuments aus einem View-Profil mit einer Vorlage |
 | **Früherer Name** (`NameEntityFormerName`) | Alter Name eines umbenannten oder zusammengeführten Profil-Elements, oder ein Alias, den ein Admin angelegt hat (#270). Wer ihn tippt, bekommt das Element. Innerhalb des Typs eindeutig. |
 | **Hausschrift** | Simplon Norm, lizenziert; in der Produktion als Volume eingebunden |
-| **Housekeeping** | Admin-Seite und Endpunkte `/admin/housekeeping` je Service, die Datenleichen melden und bereinigen (#242) |
+| **Housekeeping** | Admin-Seite und Endpunkte `/admin/housekeeping` je Service, die das System sauber halten: Rubrik *Datenleichen* melden und bereinigen (#242), Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt (#288) |
 | **Identitäts-Header** | `X-Pwr-User-Login`, `X-Pwr-User-Initials` und `X-Pwr-User-Admin`; die Edge setzt sie aus dem geprüften Token |
 | **Ingress** | Der nginx vor allen Containern in der Produktion: TLS, `/` zum Webclient, `/api/` zur Edge |
 | **Kurzname** | Name eines Kollegen in der App, z. B. `Kai B.` (`ConsultantShortNames`, #216) |

@@ -7,6 +7,8 @@ import {HousekeepingFindings} from '../../../model/admin/HousekeepingFindings';
 import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 import {ReportServiceClient} from '../../../clients/ReportServiceClient';
 import {ViewProfileServiceClient} from '../../../clients/ViewProfileServiceClient';
+import {SkillServiceClient} from '../../../clients/SkillServiceClient';
+import {UnusedNameEntitiesDialog} from '../info/name-entity/name-entity-dialogs';
 import {PwrButton} from '../../general/pwr-button';
 import {PwrListTable} from '../../general/pwr-list-table';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
@@ -19,12 +21,47 @@ interface HousekeepingClient {
     cleanHousekeeping(check: string): Promise<HousekeepingFindings>;
 }
 
+interface Section {
+    key: string;
+    /** Localization key of a text below the name */
+    description?: string;
+
+    client(): HousekeepingClient;
+}
+
 /** Every service reports and cleans the data it stores itself (#242); the page asks each one on its own */
-const SERVICES: Array<{ key: string, client(): HousekeepingClient }> = [
+const LEFTOVERS: Array<Section> = [
     {key: 'profile', client: () => ProfileServiceClient.instance()},
     {key: 'report', client: () => ReportServiceClient.instance()},
     {key: 'viewProfile', client: () => ViewProfileServiceClient.instance()},
 ];
+
+/**
+ * Valid entries nobody uses any more (#288): deleting them is a decision of the admin, not a repair. The profile
+ * elements are deleted through the dialog with all their names (UnusedNameEntitiesDialog)
+ */
+const UNUSED: Array<Section> = [
+    {
+        key: 'profileUnused', description: 'AdminClient.Housekeeping.Check.unused-name-entities.Description', client: () => ({
+            getHousekeeping: () => ProfileServiceClient.instance().getUnusedHousekeeping(),
+            cleanHousekeeping: () => Promise.reject(new Error('Deleted through UnusedNameEntitiesDialog')),
+        })
+    },
+    {
+        key: 'skillUnused', client: () => ({
+            getHousekeeping: () => SkillServiceClient.instance().getUnusedHousekeeping(),
+            cleanHousekeeping: check => SkillServiceClient.instance().cleanUnusedHousekeeping(check),
+        })
+    },
+];
+
+const SECTIONS = [...LEFTOVERS, ...UNUSED];
+
+const UNUSED_NAME_ENTITIES = 'unused-name-entities-';
+
+/** The type of a check of unused profile elements, e.g. SECTOR */
+const unusedNameEntityType = (check: string): string | null =>
+    check.startsWith(UNUSED_NAME_ENTITIES) ? check.substring(UNUSED_NAME_ENTITIES.length) : null;
 
 interface ServiceResult {
     loading: boolean;
@@ -60,24 +97,31 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const checkTitle = (check: string) => PowerLocalize.get('AdminClient.Housekeeping.Check.' + check);
-const checkDescription = (check: string) => PowerLocalize.get('AdminClient.Housekeeping.Check.' + check + '.Description');
+const checkTitle = (check: string) => {
+    const type = unusedNameEntityType(check);
+    return type ? PowerLocalize.get('NameEntityType.' + type) : PowerLocalize.get('AdminClient.Housekeeping.Check.' + check);
+};
+/** The unused profile elements share one description, above their list */
+const checkDescription = (check: string) => unusedNameEntityType(check)
+    ? null : PowerLocalize.get('AdminClient.Housekeeping.Check.' + check + '.Description');
 
 /**
  * Finds data nothing points to any more and data that contradicts other data (#242), across the services: the data
- * is spread over several databases and some deletes are not transactional. Checks on request; cleaning asks once,
- * like deleting unused profile elements, and deletes only what is still left over.
+ * is spread over several databases and some deletes are not transactional. Checks on request; cleaning asks once and
+ * deletes only what is still left over. A second rubric lists valid entries nobody uses any more (#288).
  */
 export const Housekeeping = () => {
     const classes = useStyles();
     const [results, setResults] = useState<{ [service: string]: ServiceResult }>({});
     const [selected, setSelected] = useState<Selected | null>(null);
     const [confirming, setConfirming] = useState(false);
+    /** Type of the unused profile elements whose dialog is open */
+    const [unusedType, setUnusedType] = useState<string | null>(null);
 
     const setResult = (service: string, result: ServiceResult) =>
         setResults(previous => ({...previous, [service]: result}));
 
-    const check = (service: typeof SERVICES[number]) => {
+    const check = (service: Section) => {
         setResult(service.key, {loading: true});
         service.client().getHousekeeping()
             .then(findings => setResult(service.key, {loading: false, findings}))
@@ -87,21 +131,26 @@ export const Housekeeping = () => {
             });
     };
 
-    const checkAll = () => SERVICES.forEach(check);
+    const checkAll = () => SECTIONS.forEach(check);
 
     const askToClean = (service: string, findings: HousekeepingFindings) => {
+        const type = unusedNameEntityType(findings.check);
+        if (type) {
+            setUnusedType(type);
+            return;
+        }
         setSelected({service, findings});
         setConfirming(true);
     };
 
     const clean = () => {
         setConfirming(false);
-        const service = SERVICES.find(s => s.key === selected.service);
+        const service = SECTIONS.find(s => s.key === selected.service);
         const key = selected.findings.check;
         // The client shows an error; the service is checked again either way
         service.client().cleanHousekeeping(key)
-            .then(cleaned => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Housekeeping.Clean.Success',
-                checkTitle(key), cleaned.count)))
+            .then(cleaned => Alerts.showSuccess(PowerLocalize.getFormatted(isUnused(selected)
+                ? 'AdminClient.Housekeeping.Delete.Success' : 'AdminClient.Housekeeping.Clean.Success', checkTitle(key), cleaned.count)))
             .catch(console.error)
             .finally(() => check(service));
     };
@@ -125,13 +174,16 @@ export const Housekeeping = () => {
         </span>;
     };
 
-    const renderService = (service: typeof SERVICES[number]) => {
+    const renderService = (service: Section, unused: boolean) => {
         const result = results[service.key];
         const name = PowerLocalize.get('AdminClient.Housekeeping.Service.' + service.key);
         return <React.Fragment key={service.key}>
             <PwrSpacer/>
             <Paper className={classes.service}>
-                <Typography variant="h6" component="h2">{name}</Typography>
+                <Typography variant="subtitle1" component="h3">{name}</Typography>
+                {service.description && <Typography variant="body2" color="textSecondary">
+                    {PowerLocalize.get(service.description)}
+                </Typography>}
                 <PwrSpacer size="tight"/>
                 {!result && <Typography variant="body2" color="textSecondary">
                     {PowerLocalize.get('AdminClient.Housekeeping.NotChecked')}
@@ -149,9 +201,9 @@ export const Housekeeping = () => {
                             header: PowerLocalize.get('AdminClient.Housekeeping.Column.Check'),
                             render: findings => <>
                                 <div>{checkTitle(findings.check)}</div>
-                                <Typography variant="caption" color="textSecondary">
+                                {checkDescription(findings.check) && <Typography variant="caption" color="textSecondary">
                                     {checkDescription(findings.check)}
-                                </Typography>
+                                </Typography>}
                             </>
                         },
                         {
@@ -165,7 +217,7 @@ export const Housekeeping = () => {
                         {
                             header: '', width: 140,
                             render: findings => <PwrButton color="default" className={classes.clean}
-                                                           text={PowerLocalize.get('AdminClient.Housekeeping.Clean')}
+                                                           text={PowerLocalize.get(unused ? 'Action.Delete' : 'AdminClient.Housekeeping.Clean')}
                                                            icon={<Icon className="material-icons">delete_sweep</Icon>}
                                                            disabled={!!findings.error || findings.count === 0}
                                                            onClick={() => askToClean(service.key, findings)}/>
@@ -175,7 +227,9 @@ export const Housekeeping = () => {
         </React.Fragment>;
     };
 
-    const checking = SERVICES.some(service => results[service.key] && results[service.key].loading);
+    const isUnused = (selection: Selected) => UNUSED.some(section => section.key === selection.service);
+
+    const checking = SECTIONS.some(service => results[service.key] && results[service.key].loading);
     return <div>
         <div className={classes.header}>
             <Typography variant="h5" component="h1">{PowerLocalize.get('AdminClient.Menu.Maintenance.Housekeeping')}</Typography>
@@ -183,21 +237,37 @@ export const Housekeeping = () => {
                        icon={<Icon className="material-icons">refresh</Icon>} disabled={checking} onClick={checkAll}/>
         </div>
         <PwrSpacer size="tight"/>
+        <PwrSpacer/>
+        <Typography variant="h6" component="h2">{PowerLocalize.get('AdminClient.Housekeeping.Leftovers')}</Typography>
         <Typography variant="body2">{PowerLocalize.get('AdminClient.Housekeeping.Intro')}</Typography>
-        {SERVICES.map(renderService)}
+        {LEFTOVERS.map(service => renderService(service, false))}
+        <PwrSpacer size="section"/>
+        <Typography variant="h6" component="h2">{PowerLocalize.get('AdminClient.Housekeeping.Unused')}</Typography>
+        <Typography variant="body2">{PowerLocalize.get('AdminClient.Housekeeping.Unused.Intro')}</Typography>
+        {UNUSED.map(service => renderService(service, true))}
+        <UnusedNameEntitiesDialog open={unusedType !== null} type={unusedType || ''}
+                                  typeLabel={unusedType ? PowerLocalize.get('NameEntityType.' + unusedType) : ''}
+                                  onClose={() => setUnusedType(null)}
+                                  onDeleted={() => check(UNUSED[0])}/>
         {/* Forgotten only once the dialog has faded out, so it shows the check until then */}
         <Dialog open={confirming} onClose={() => setConfirming(false)} fullWidth maxWidth="sm"
                 TransitionProps={{onExited: () => setSelected(null)}}>
             {selected && <>
-                <DialogTitle>{PowerLocalize.getFormatted('AdminClient.Housekeeping.Clean.Title',
-                    checkTitle(selected.findings.check))}</DialogTitle>
+                <DialogTitle>{PowerLocalize.getFormatted(isUnused(selected) ? 'AdminClient.Housekeeping.Delete.Title'
+                    : 'AdminClient.Housekeeping.Clean.Title', checkTitle(selected.findings.check))}</DialogTitle>
                 <DialogContent>
                     <Typography variant="body1">
-                        {PowerLocalize.getFormatted('AdminClient.Housekeeping.Clean.Content', selected.findings.count)}
+                        {PowerLocalize.getFormatted(isUnused(selected) ? 'AdminClient.Housekeeping.Delete.Content'
+                            : 'AdminClient.Housekeeping.Clean.Content', selected.findings.count)}
                     </Typography>
+                    {isUnused(selected) && <>
+                        <PwrSpacer size="tight"/>
+                        <Typography variant="body2">{renderExamples(selected.findings)}</Typography>
+                    </>}
                 </DialogContent>
                 <DialogActions>
-                    <PwrConfirmActions destructive confirmText={PowerLocalize.get('AdminClient.Housekeeping.Clean')}
+                    <PwrConfirmActions destructive confirmText={PowerLocalize.get(isUnused(selected) ? 'Action.Delete'
+                        : 'AdminClient.Housekeeping.Clean')}
                                        onConfirm={clean} rejectText={PowerLocalize.get('Action.Cancel')}
                                        onReject={() => setConfirming(false)}/>
                 </DialogActions>
