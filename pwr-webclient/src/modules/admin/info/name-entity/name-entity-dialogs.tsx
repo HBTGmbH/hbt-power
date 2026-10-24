@@ -12,16 +12,22 @@ import {PwrConfirmActions, PwrFormActions} from '../../../general/pwr-form-actio
 import {PwrListTable} from '../../../general/pwr-list-table';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
 import {PwrButton} from '../../../general/pwr-button';
+import {useByShownName} from '../../../general/pwr-consultant-name';
 
 /** Names compare ignoring case and spaces at the ends, like in the database (#207, #215) */
 const sameName = (a: string, b: string) => !!a && !!b && a.trim().toLowerCase() === b.trim().toLowerCase();
 
 /**
- * The short names of the consultants with these initials (#216), the initials of those the app doesn't know
+ * The short names of the consultants with these initials (#216), the initials of those the app doesn't know, in the
+ * order of the names (#238)
  */
 export function useConsultantShortNames(): (initials: Array<string>) => string {
     const names = useSelector((state: ApplicationState) => state.consultantNames.names);
-    return initials => initials.map(value => names[value] ? names[value].shortName : value).join(', ');
+    const byShownName = useByShownName();
+    return initials => initials.map(value => ({initials: value, fullName: value}))
+        .sort(byShownName)
+        .map(consultant => names[consultant.initials] ? names[consultant.initials].shortName : consultant.initials)
+        .join(', ');
 }
 
 interface NameEntityChangeDialogProps {
