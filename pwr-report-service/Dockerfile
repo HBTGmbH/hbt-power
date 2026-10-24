@@ -14,4 +14,7 @@ COPY target/pwr-report-service-*.jar pwr-report-service.jar
 ENV LC_ALL de_DE.UTF-8
 ENV LANG de_DE.UTF-8
 ENV LANGUAGE de_DE.UTF-8
+# Heap limit and giving unused heap back to the OS after a minute without GC (#293). Measured need and headroom:
+# docs/arc42/07-verteilungssicht.md. JAVA_TOOL_OPTIONS from the deployment replaces this as a whole.
+ENV JAVA_TOOL_OPTIONS="-Xmx512m -XX:G1PeriodicGCInterval=60000"
 CMD ["java", "-jar", "pwr-report-service.jar"]

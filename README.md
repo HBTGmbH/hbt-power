@@ -153,6 +153,13 @@ java -jar target/pwr-report-service-*.jar --spring.profiles.active=localDev \
 `--export.fallback-font-directory=<dir>` sets the stand-in fonts (in the image: Noto Sans in
 `/usr/share/fonts/pwr-fallback`). The log shows the mapping at start (`[Fonts] Simplon Norm -> …`).
 
+### Memory
+
+Every image sets a heap limit and lets G1 give unused heap back to the OS (`JAVA_TOOL_OPTIONS` in the `Dockerfile`,
+#293); the limits and how they were measured are in
+[arc42 chapter 7.5](docs/arc42/07-verteilungssicht.md#75-speicher-der-java-services). A `JAVA_TOOL_OPTIONS` in the
+deployment replaces the whole value, so it has to repeat `-XX:G1PeriodicGCInterval=60000`.
+
 ### Stop and reset
 
 ```shell

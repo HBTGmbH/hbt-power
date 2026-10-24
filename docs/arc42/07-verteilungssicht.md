@@ -119,3 +119,27 @@ flowchart LR
 | pwr-report-service | `target/*.jar` | `azul/zulu-openjdk-alpine:13-jre` mit fontconfig, DejaVu, Noto Sans (Ersatzschrift) | Container, Port 9005, `/fonts` nur lesend |
 | pwr-view-profile-service | `target/*.jar` | `azul/zulu-openjdk-alpine:13-jre` | Container, Port 9008 |
 | pwr-statistics-service | `target/*.jar` | `azul/zulu-openjdk-alpine:13-jre` | Container, Port 9007 |
+
+## 7.5 Speicher der Java-Services
+
+Die Container haben kein Speicherlimit. Ohne Optionen nähme sich jede JVM bis zu einem Viertel des RAMs des Hosts als Heap, und G1 gäbe einmal belegten Heap nie zurück. So blieb der Statistik-Service nach seinem stündlichen Lauf über 1 GiB groß (#292). Seit #293 setzt jedes Image deshalb im Dockerfile:
+
+```dockerfile
+ENV JAVA_TOOL_OPTIONS="-Xmx<Limit> -XX:G1PeriodicGCInterval=60000"
+```
+
+`G1PeriodicGCInterval` löst nach einer Minute ohne GC eine aus, und G1 gibt dabei ungenutzten Heap an das Betriebssystem zurück.
+
+| Service | Limit | höchster belegter Heap nach einer GC, lokal gemessen |
+|---|---:|---:|
+| pwr-edge-service | 256 MB | 15 MB |
+| pwr-statistics-service | 256 MB | 28 MB (SimRank in Produktionsgröße: 16 MB, #292) |
+| pwr-view-profile-service | 256 MB | 44 MB |
+| pwr-skill-service | 384 MB | 37 MB (mit Neuaufbau des Lucene-Index) |
+| pwr-profile-service | 384 MB | 38 MB |
+| pwr-report-service | 512 MB | 147 MB (Vorschau und Export) |
+
+- **Gemessen** ist mit den Seed-Daten unter typischer Last: Skill-Baum und Suche, alle Berater laden, Profilprüfung, Housekeeping, View-Profile anlegen, Vorschauen und Exporte. Mit dem jeweiligen Limit lief jeder Service ohne volle GC. Nach einer Minute ohne Last fiel der zugesagte Heap auf 57–85 MB, beim Report-Service auf 224 MB.
+- **Abstand:** Die Produktion hat rund 30-mal so viele Profile. Deshalb liegen die Limits beim Fünf- bis Zehnfachen des gemessenen Bedarfs, beim Report-Service beim Dreifachen.
+- **Überschreiben:** Ein `JAVA_TOOL_OPTIONS` im Deployment ersetzt den Wert aus dem Image ganz. Es muss also beide Optionen enthalten, sonst fehlt die Rückgabe. `java -XX:+PrintFlagsFinal -version` im Container zeigt, was gilt (`MaxHeapSize`, `G1PeriodicGCInterval`).
+- Das Limit gilt nur für den Heap. Metaspace, Code-Cache und Threads kommen dazu, ein Container braucht also mehr als sein Heap-Limit.
