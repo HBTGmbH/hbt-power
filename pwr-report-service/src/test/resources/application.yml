@@ -7,9 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-eureka:
-  client:
-    enabled: false
 # Never called: the clients are mocked
 pwr-profile-service-url: http://localhost:9004
 pwr-view-profile-service-url: http://localhost:9008

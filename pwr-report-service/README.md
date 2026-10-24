@@ -1,23 +1,7 @@
-# About
-Built for HBT's profile management application, pwr-report-service is a microservice wrapper around [Eclipse Birt](https://www.eclipse.org/birt/).
-It transforms the pwr-view-profile-service datamodel into a datamodel the HBT templates understand and renders them as .docx.
+# pwr-report-service
 
-# Technology
-* Spring Boot 
-* Spring Cloud Netflix
-* Eclipse BIRT
-* MySQL
+Renders view profiles with the report templates (Eclipse BIRT): exports as `.docx` into the report history, previews as PDF in memory. Keeps the template files. Port 9005, MariaDB.
 
-# Getting Started
-Please refer to [pwr-profile-service Readme](https://github.com/HBTGmbH/pwr-profile-service) for a setup guide. 
-
-# Run With Docker
-Requirements:
-* Docker
-* Docker-Compose
-
-Steps:
-1. Build the service ```mvn package```
-2. Build the image ``docker image build -t pwr-report-service:master .``
-3. Set the image location in the ``docker-compose.yaml`` to a location on your filesystem (absolute path)
-4. Run the app: ``docker-compuse up``
+- Setup, local run and the sample template: [README.md](../README.md) in the repository root
+- Rules for working on the code, including the fonts in PDFs: [AGENTS.md](../AGENTS.md)
+- Architecture (building blocks, flows, decisions): [docs/arc42](../docs/arc42/README.md)
