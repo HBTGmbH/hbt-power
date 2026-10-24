@@ -34,6 +34,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 | [21](#adr-21-housekeeping-je-service) | Housekeeping je Service | gilt | #242 |
 | [22](#adr-22-löschen-in-der-oberfläche-absichern) | Löschen in der Oberfläche absichern | gilt | #134, #181 |
 | [23](#adr-23-webclient-mit-laufzeitkonfiguration-und-gehashten-dateien) | Webclient mit Laufzeitkonfiguration und gehashten Dateien | gilt | #9, #10, #109 |
+| [24](#adr-24-spring-security-in-den-backend-services-erst-mit-eigener-tokenprüfung) | Spring Security in den Backend-Services erst mit eigener Tokenprüfung | gilt | #255, #256, #260 |
 
 ---
 
@@ -312,3 +313,27 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 - **Konsequenzen:**
   - Nach einem Deployment holt jedes Neuladen den neuen Stand.
   - Ein offener Tab bleibt aber auf dem alten Stand, bis jemand neu lädt (#247).
+
+## ADR-24: Spring Security in den Backend-Services erst mit eigener Tokenprüfung
+
+- **Status:** gilt (#256)
+- **Kontext:**
+  - Nur die Edge nutzt Spring Security: Sie prüft das Token und die Rolle je Pfad und setzt die Identitäts-Header ([ADR-04](#adr-04-anmeldung-und-rollen-nur-in-der-edge-identität-über-header)).
+  - Die Backend-Services glauben diesen Headern. Seit #255 und #260 prüfen sie selbst, dass ein Benutzer nur die eigenen Daten erreicht und nur Admins `/admin`, mit eigenen Interceptoren (`ConsultantAccess`, `AdminAccessInterceptor`), getestet je Service.
+  - Der Report Service bindet `spring-boot-starter-security` ein, erlaubt aber alles. Wirksam sind seine Firewall, die nicht normalisierte Pfade abweist, und die Sicherheits-Header.
+  - Geplant ist der Zugriff auf Salat und HBT Bilder im Namen des Benutzers (On-Behalf-Of). Dafür braucht der aufrufende Service das Token des Benutzers. Der Produktionshost läuft in Azure, eine Managed Identity kann die App-Registrierung ohne Secret ausweisen.
+- **Bewertung:**
+
+  | Stufe | Aufwand | Gewinn an Sicherheit | Lokal, Tests, Aufrufe zwischen Services |
+  |---|---|---|---|
+  | 1. Spring Security mit den Edge-Headern (Pre-Authentication, `@PreAuthorize`) | mittel: Konfiguration in vier Services auf Boot 2.2, alle Zugriffstests umbauen | keiner: dasselbe Vertrauen in die Header, nur deklarativ | lokal ohne Header wie heute; Aufrufe zwischen Services unverändert |
+  | 2. Jeder Service prüft das Token selbst (Resource Server) | hoch: Token durchreichen, Aufrufe zwischen Services mit eigenem Token (Client Credentials über die Managed Identity), lokales Profil ohne Prüfung | hoch: kein Vertrauen mehr in Header und Netz (K2 entfällt) | lokal braucht ein eigenes Profil; Tests mit `spring-security-test` |
+  | 3. Bei den eigenen Interceptoren bleiben | keiner | – | wie heute |
+
+- **Entscheidung:**
+  - Vorerst Stufe 3. Stufe 1 kostet viel und ändert am Vertrauensmodell nichts; die Interceptoren sind klein und je Service getestet.
+  - Stufe 2 kommt mit dem ersten Service, der das Token des Benutzers ohnehin braucht (On-Behalf-Of zu Salat und HBT Bilder), spätestens mit dem Zusammenlegen und Aktualisieren der Services (#50, #51). Dann ersetzt die Prüfung des Tokens die Identitäts-Header, und die Interceptoren lesen Kürzel und Rolle aus dem Token.
+  - Im Report Service bleibt Spring Security ohne Anmeldung, wegen der Firewall; `WebSecurityConfig` sagt das.
+- **Konsequenzen:**
+  - Das Risiko K2 bleibt: Die Sicherheit hängt daran, dass nur der Ingress von außen erreichbar ist.
+  - Neue Endpunkte brauchen weiter `{initials}` im Pfad oder `ConsultantAccess.check` (Definition of Done).

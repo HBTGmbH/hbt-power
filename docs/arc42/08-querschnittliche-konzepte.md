@@ -28,7 +28,7 @@ flowchart LR
   - Vorher weist sie jeden nicht normalisierten Pfad mit `400` ab (`NormalizedPathFilter`, #260): Segmente `.` und `..`, `//`, `;`, kodierte `/`, `\` oder `%` und unnötig kodierte Zeichen wie `%2e`. Die Services normalisieren den Pfad selbst; sonst könnte ein Pfad, den die Edge nicht als `/admin` erkennt, beim Service auf einem Admin-Endpunkt landen.
   - Erste Regel: `/pwr-<service>/admin/**` verlangt `Power.Admin`.
   - Danach: alles andere verlangt `Power.User` oder `Power.Admin`.
-  - Die Backend-Services haben keine eigene Anmeldung. Sie sind nur im Container-Netz erreichbar. Ob sie Spring Security nutzen sollen, klärt #256.
+  - Die Backend-Services haben keine eigene Anmeldung. Sie sind nur im Container-Netz erreichbar. Spring Security nutzen sie erst mit einer eigenen Tokenprüfung ([ADR-24](09-architekturentscheidungen.md#adr-24-spring-security-in-den-backend-services-erst-mit-eigener-tokenprüfung)).
 - **Admin-Funktionen liegen unter `/admin/**`** des jeweiligen Service (#178, #203, #218). Wer einen Endpunkt anlegt oder verschiebt, prüft ihn gegen die Regeln der Edge (Definition of Done). Als zweite Schicht weist jeder Service mit Admin-Endpunkten `/admin` selbst ab, wenn `X-Pwr-User-Admin` `false` ist (`AdminAccessInterceptor`, #260). Er richtet sich nach dem Mapping, das Spring MVC gewählt hat, nicht nach dem Text des Pfads.
 - **Wer angemeldet ist**, erfahren die Services nur aus den Headern `X-Pwr-User-Login`, `X-Pwr-User-Initials` und `X-Pwr-User-Admin`. Die Edge setzt sie aus dem geprüften Token, nachdem sie gleichnamige Header des Clients entfernt hat; `X-Pwr-User-Admin` setzt sie auf jede Anfrage (#255).
   - Ein Akteur (Ersteller, Exporteur, Bestätiger) kommt nie aus Body, Pfad oder Query.
