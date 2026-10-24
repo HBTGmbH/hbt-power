@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class FileUploadClient {
@@ -47,5 +48,18 @@ public class FileUploadClient {
                 Void.class,
                 Map.of("fileId", fileId)
         );
+    }
+
+    /**
+     * The ids of all template files the report service stores (#242); throws if it does not answer
+     */
+    public Set<String> findAllFileIds() {
+        Map<String, String> files = restTemplate.exchange(pwrReportServiceUrl + "/admin/file",
+                HttpMethod.GET,
+                new HttpEntity<>(null),
+                new ParameterizedTypeReference<Map<String, String>>() {
+                }
+        ).getBody();
+        return files == null ? Set.of() : Set.copyOf(files.keySet());
     }
 }

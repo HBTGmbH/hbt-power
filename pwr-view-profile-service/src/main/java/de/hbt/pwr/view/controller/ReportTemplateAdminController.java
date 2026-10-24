@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -67,6 +68,15 @@ public class ReportTemplateAdminController {
                             .value());
         }
 
+    }
+
+    /**
+     * The ids of the files and previews all templates point to; the housekeeping of the report service deletes the
+     * other files (#242)
+     */
+    @GetMapping("files")
+    public ResponseEntity<Set<String>> referencedFileIds() {
+        return ResponseEntity.ok(reportTemplateService.getReferencedFileIds());
     }
 
     @DeleteMapping("{id}")

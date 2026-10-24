@@ -12,8 +12,6 @@ import java.util.List;
 
 @Repository
 public interface DBFileRepository extends JpaRepository<DBFile, String> {
-    List<DBFile> findAllByOrderByFiletype();
-
     /** All files without their content, for the housekeeping (#242) */
     @Query("select f.id as id, f.filename as filename from DBFile f order by f.filename")
     List<FileSummary> findAllSummaries();

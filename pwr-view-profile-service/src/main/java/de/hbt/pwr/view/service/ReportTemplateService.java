@@ -3,12 +3,15 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.repo.ReportTemplateRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.hbt.pwr.view.util.PwrFunctionalUtils.peek;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
@@ -31,6 +34,14 @@ public class ReportTemplateService {
                 .map(ReportTemplate::getId)
                 .collect(Collectors.toList());
 
+    }
+
+    @NotNull
+    public Set<String> getReferencedFileIds() {
+        return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
+                .flatMap(template -> Stream.of(template.getFileId(), template.getPreviewId()))
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toSet());
     }
 
     @NotNull
