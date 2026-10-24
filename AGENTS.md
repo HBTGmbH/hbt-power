@@ -1,6 +1,6 @@
 # AGENTS.md
 
-HBT Power is HBT's skills/profile management app: a React webclient plus six Spring Boot services, each in its own top-level `pwr-*` folder. There is no parent POM: every service is a standalone Maven project that is built, tested and deployed on its own. The root [`README.md`](README.md) is the authoritative setup guide; the per-service READMEs date from the old separate repositories (Travis, `sample_config.js`, Node 10) and are partly outdated.
+HBT Power is HBT's skills/profile management app: a React webclient plus six Spring Boot services, each in its own top-level `pwr-*` folder. There is no parent POM: every service is a standalone Maven project that is built, tested and deployed on its own. The root [`README.md`](README.md) is the authoritative setup guide; the per-service READMEs date from the old separate repositories (Travis, `sample_config.js`, Node 10) and are partly outdated. The architecture is documented after arc42 in [`docs/arc42/`](docs/arc42/README.md) (context, building blocks, runtime flows, deployment, decisions as ADRs, risks); this file stays the place of the binding rules.
 
 ## Build and test
 
@@ -38,7 +38,7 @@ There are no webclient tests at the moment.
 | `pwr-edge-service` (Spring Cloud Gateway, Boot 2.7) | 9000 | – | routes to all |
 | `pwr-skill-service` | 9003 | MariaDB + Lucene index | – |
 | `pwr-profile-service` | 9004 | MariaDB | skill, view-profile, statistics, report |
-| `pwr-report-service` (BIRT → .docx) | 9005 | MariaDB | profile |
+| `pwr-report-service` (BIRT → .docx) | 9005 | MariaDB | profile, view-profile |
 | `pwr-statistics-service` (Boot 2.7) | 9007 | Redis | profile, skill |
 | `pwr-view-profile-service` | 9008 | Redis | skill, profile, report |
 
@@ -148,6 +148,7 @@ Apply this at the end of each task to what the task changed, and report which it
 
 ### Documentation and pull request
 - [ ] `AGENTS.md` and `README.md` are updated in the same PR if a rule, command, port or prerequisite changed
+- [ ] The affected chapter of [`docs/arc42/`](docs/arc42/README.md) is updated in the same PR if a service, an interface between services, a flow, the deployment or an architecture decision changed (a new decision gets the next ADR number in chapter 9)
 - [ ] No operating environment details in code, docs, commits, issue or PR (see GitHub workflow)
 - [ ] Every commit message starts with `#NNN - ` (or `#noissue - `)
 - [ ] Small fixes made along the way (see GitHub workflow) are listed in the PR
