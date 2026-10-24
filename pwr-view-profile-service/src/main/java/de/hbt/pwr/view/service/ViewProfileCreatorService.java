@@ -72,8 +72,7 @@ public class ViewProfileCreatorService {
             profile = profileServiceClient.getSingleProfile(initials);
         } catch (RuntimeException e) {
             LOG.error("Could not get profile from client for " + initials, e);
-            // Usually, this will be a HystrixRuntimeException, but docs are missing a bit of information,
-            // so we'll catch a general exception
+            // A RestClientException from the RestTemplate, or the profile service answering with an error
             throw new NoProfileAvailableException(initials);
         }
         return createViewProfile(profile, initials, name, viewDescription, locale, localization);

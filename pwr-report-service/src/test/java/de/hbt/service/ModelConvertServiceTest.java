@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 /**
- * Skills in the export: their versions (#151), categories switched off (#159), names in a language (#174)
+ * Skills in the export: their versions (#151), categories switched off (#159), names in a language (#174); projects
  */
 class ModelConvertServiceTest {
 
@@ -116,5 +116,22 @@ class ModelConvertServiceTest {
     void shouldExportTheNamesOfTheSkillTree_withoutLocalizations() {
         assertThat(skills(true)).extracting(skill -> skill.getBezeichnung().getHauptbegriff().getBezeichnung(), Skill::getGruppe)
                 .containsExactly(tuple("Java", "Programming Languages"));
+    }
+
+    /**
+     * The view profile knows no consultant per project, so the field stays empty instead of "TODO" (#253)
+     */
+    @Test
+    void projectHasNoBerater() {
+        ReportInfo reportInfo = reportInfo(true);
+        ViewProject project = new ViewProject();
+        project.setName("Projekt");
+        project.setEnabled(true);
+        reportInfo.viewProfile.getProjects().add(project);
+
+        Profil profil = modelConvertService.convert(reportInfo, null);
+
+        assertThat(profil.getProjekte()).hasSize(1);
+        assertThat(profil.getProjekte().get(0).getBerater()).isNull();
     }
 }

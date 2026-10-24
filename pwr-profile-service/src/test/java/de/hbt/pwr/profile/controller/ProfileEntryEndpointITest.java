@@ -45,7 +45,7 @@ public class ProfileEntryEndpointITest extends AbstractIntegrationTest {
     ConsultantService consultantService;
     private Consultant testConsultant;
 
-    private void setUpFeignClient() {
+    private void noViewProfiles() {
         when(viewProfileClient.getAllViewProfiles(any())).thenAnswer(invocationOnMock ->  new ArrayList<String>());
     }
 
@@ -56,7 +56,7 @@ public class ProfileEntryEndpointITest extends AbstractIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
-        setUpFeignClient();
+        noViewProfiles();
         testConsultant.setActive(false);
         consultantService.updatePersonalData("abc", testConsultant);
         consultantService.deleteConsultant("abc");

@@ -176,7 +176,6 @@ public class ModelConvertService {
         Projekt result = new Projekt();
         result.setProjektId(viewProject.getId());
         result.setAuszeit(null);
-        result.setBerater("TODO");
         result.setBranche(null);
         result.setKurzbeschreibung(viewProject.getDescription());
         result.setTitel(viewProject.getName());

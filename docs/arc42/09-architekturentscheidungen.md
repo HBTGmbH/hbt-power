@@ -47,7 +47,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - CI läuft je Ordner ([ADR-18](#adr-18-ci-je-ordner-mit-pfadfiltern-und-getrenntem-publish)).
   - Die Teile laufen mit verschiedenen Commits, deshalb zeigt die App jeden an (#71).
   - Modelle, die mehrere Services kennen, sind mehrfach vorhanden.
-  - Die README-Dateien der Services sind teils veraltet; maßgeblich ist die `README.md` im Wurzelverzeichnis.
+  - Die README-Dateien der Services beschreiben nur kurz den Service und verweisen auf die `README.md` im Wurzelverzeichnis und diese Dokumentation (#253).
 
 ## ADR-02: Kleine Services je Datenbestand
 
@@ -69,7 +69,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - Einfach und lokal ohne Infrastruktur lauffähig.
   - Ausfälle behandelt jeder Aufruf selbst: abbrechen, loggen oder melden ([Kapitel 8.4](08-querschnittliche-konzepte.md#84-kommunikation-zwischen-services)).
   - Timeouts sind nicht gesetzt.
-  - Reste von Feign stehen noch in Kommentaren und Testkonfigurationen.
+  - Die letzten Reste von Feign, Eureka, Ribbon und Hystrix in Kommentaren und Konfiguration sind seit #253 entfernt.
 
 ## ADR-04: Anmeldung und Rollen nur in der Edge, Identität über Header
 

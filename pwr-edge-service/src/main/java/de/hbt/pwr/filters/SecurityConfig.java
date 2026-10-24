@@ -16,9 +16,7 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain configure(ServerHttpSecurity http) {
         return http.authorizeExchange()
-                // Only admins can do admin things
-                .pathMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("Power.Admin")
-                // Also listing and managing the consultants (#218)
+                // Only admins can do admin things, e.g. listing and managing the consultants (#218)
                 .pathMatchers("/pwr-profile-service/admin/**").hasAnyAuthority("Power.Admin")
                 .pathMatchers("/pwr-skill-service/admin/**").hasAnyAuthority("Power.Admin")
                 // Report templates and their files (#203)
