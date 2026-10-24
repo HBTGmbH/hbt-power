@@ -30,7 +30,10 @@ export class Paths {
     public static readonly USER_SPECIAL_LOGOUT = '##LOGOUT_USER##';
 
     public static readonly USER_BASE = CONFIG.APP_PATH + '/app/:initials';
-    public static readonly PROFILE_SELECT = CONFIG.APP_PATH + '/profilauswahl';
+    /** Sends admins to the consultant management and everyone else to the own profile (#263) */
+    public static readonly START = CONFIG.APP_PATH + '/start';
+    /** The former profile selection; old links and bookmarks lead to the start */
+    public static readonly FORMER_PROFILE_SELECT = CONFIG.APP_PATH + '/profilauswahl';
     public static readonly USER_HOME = CONFIG.APP_PATH + '/app/:initials/home';
     /** The slug is only for reading, the ID selects (#182) */
     public static readonly USER_VIEW_PROFILES = CONFIG.APP_PATH + '/app/:initials/views';

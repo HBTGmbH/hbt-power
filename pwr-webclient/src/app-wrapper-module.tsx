@@ -7,7 +7,7 @@ import {MuiThemeProvider} from '@material-ui/core';
 import {POWER_MUI_THEME} from './PowerTheme';
 import {Provider} from 'react-redux';
 import {store} from './reducers/reducerIndex';
-import {Route, Router} from 'react-router-dom';
+import {Redirect, Route, Router} from 'react-router-dom';
 import {Paths} from './Paths';
 import {LoginModule} from './modules/login_module';
 import {PowerClient} from './modules/home/power-client_module';
@@ -19,7 +19,7 @@ import {PWR_HISTORY} from './reducers/navigation/NavigationActionCreator';
 import {OIDCService} from './OIDCService';
 import {AuthenticatedRoute} from './modules/navigation/authenticated-route_module';
 import {ConsultantNamesLoader} from './modules/general/pwr-consultant-name';
-import {ProfileSelect} from './modules/profile-select_module';
+import {StartPage} from './modules/start-page_module';
 import {PwrThemeColors} from './modules/general/pwr-theme-colors';
 import {PwrNewVersionNotice} from './modules/general/pwr-new-version-notice';
 
@@ -43,7 +43,8 @@ export class AppWrapper extends React.Component<{}, {}> {
                         <Provider store={store}>
                             <div>
                                 <Route exact path={Paths.APP_ROOT} component={LoginModule}/>
-                                <AuthenticatedRoute path={Paths.PROFILE_SELECT} component={ProfileSelect}/>
+                                <AuthenticatedRoute path={Paths.START} component={StartPage}/>
+                                <Route path={Paths.FORMER_PROFILE_SELECT}><Redirect to={Paths.START}/></Route>
                                 <AuthenticatedRoute path={Paths.USER_BASE} component={PowerClient}/>
                                 <AuthenticatedRoute requiresAdmin path={Paths.ADMIN_BASE} component={AdminClient}/>
                                 <ConsultantNamesLoader/>

@@ -188,6 +188,12 @@ body {
     height: 100%;
 }
 
+.pwr-brand-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
 .pwr-brand-icon {
     height: 44px;
     width: 44px;

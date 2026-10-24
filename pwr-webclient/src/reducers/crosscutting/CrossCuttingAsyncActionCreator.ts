@@ -69,7 +69,7 @@ export class CrossCuttingAsyncActionCreator {
                 if (!consultant) {
                     // Unknown initials, e.g. from an old link: back to the selection, a clear message instead of errors (#135)
                     Alerts.showError(PowerLocalize.getFormatted('ProfileSelect.NoProfileFor', initials));
-                    navigateReplacing(Paths.PROFILE_SELECT, dispatch);
+                    navigateReplacing(Paths.START, dispatch);
                     return;
                 }
                 dispatch(consultantUpdateAction(consultant));
@@ -83,12 +83,12 @@ export class CrossCuttingAsyncActionCreator {
     /**
      * Local dev mode only: log in without Azure, as a user with admin rights.
      */
-    public static AsyncLogInLocalUser(navigateToProfileSelect: boolean) {
+    public static AsyncLogInLocalUser(navigateToStart: boolean) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
             dispatch(AdminActionCreator.AsyncValidateAuthentication());
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.SUCCESS));
-            if (navigateToProfileSelect) {
-                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.PROFILE_SELECT));
+            if (navigateToStart) {
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.START));
             }
         };
     }
@@ -99,7 +99,7 @@ export class CrossCuttingAsyncActionCreator {
                 dispatch(AdminActionCreator.AsyncValidateAuthentication());
             }
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.SUCCESS));
-            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.PROFILE_SELECT));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.START));
         };
     }
 
