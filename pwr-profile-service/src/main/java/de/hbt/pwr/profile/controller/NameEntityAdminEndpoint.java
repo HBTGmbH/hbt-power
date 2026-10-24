@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.noContent;
 
@@ -31,6 +32,14 @@ public class NameEntityAdminEndpoint {
     }
 
     @ApiOperation(value = "The initials of the consultants whose profile uses the profile element, counted in the database")
+    /**
+     * How many consultants use each element of the type, by id (#271)
+     */
+    @GetMapping("/usage")
+    public Map<Long, Integer> countUsers(@RequestParam("type") NameEntityType type) {
+        return nameEntityAdminService.countUsers(type);
+    }
+
     @GetMapping("/{id}/users")
     public List<String> findUsers(@PathVariable("id") Long id) {
         return nameEntityAdminService.findUsers(id);

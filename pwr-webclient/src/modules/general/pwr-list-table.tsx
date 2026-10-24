@@ -9,6 +9,9 @@ export interface PwrListTableColumn<T> {
 
     /** Fixed width in px; without, the column takes the remaining space */
     width?: number;
+
+    /** Right aligns header and cells, e.g. for numbers */
+    alignRight?: boolean;
 }
 
 interface PwrListTableProps<T> {
@@ -72,6 +75,9 @@ const useStyles = makeStyles(theme => ({
         minWidth: 0,
         overflowWrap: 'anywhere',
     },
+    right: {
+        textAlign: 'right',
+    },
     empty: {
         color: theme.palette.text.secondary,
     },
@@ -101,8 +107,9 @@ export function PwrListTable<T>(props: PwrListTableProps<T>) {
     };
     // A table for screen readers only without selection; with it, a group of buttons whose header is decoration
     const asTable = !props.onSelect;
+    const cellClass = (column: PwrListTableColumn<T>) => column.alignRight ? classes.cell + ' ' + classes.right : classes.cell;
     const cells = (item: T) => props.columns.map((column, index) =>
-        <div key={index} className={classes.cell} role={asTable ? 'cell' : undefined}>{column.render(item)}</div>);
+        <div key={index} className={cellClass(column)} role={asTable ? 'cell' : undefined}>{column.render(item)}</div>);
 
     const renderRow = (item: T) => {
         const key = props.itemKey(item);
@@ -121,7 +128,7 @@ export function PwrListTable<T>(props: PwrListTableProps<T>) {
     return <div aria-label={props.label} role={asTable ? 'table' : 'group'} onKeyDown={moveFocus}>
         <div className={classes.row + ' ' + classes.head} style={template}
              role={asTable ? 'row' : undefined} aria-hidden={asTable ? undefined : true}>
-            {props.columns.map((column, index) => <div key={index} className={classes.cell}
+            {props.columns.map((column, index) => <div key={index} className={cellClass(column)}
                                                        role={asTable ? 'columnheader' : undefined}>{column.header}</div>)}
         </div>
         {props.items.length === 0 && props.emptyText

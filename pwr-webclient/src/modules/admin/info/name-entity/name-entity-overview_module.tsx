@@ -26,6 +26,7 @@ import {PwrIconButton} from '../../../general/pwr-icon-button';
 import {PwrButton} from '../../../general/pwr-button';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
 import {NameEntityChangeDialog, UnusedNameEntitiesDialog} from './name-entity-dialogs';
+import {PwrUsageCount, USAGE_COLUMN_WIDTH} from '../../../general/pwr-usage-count';
 
 interface NameEntityOverviewProps {
     sectors: Array<NameEntity>;
@@ -47,6 +48,8 @@ type NameEntityOverviewLocalProps = RouteComponentProps;
 interface NameEntityOverviewLocalState {
     /** Renaming, merging or deleting the unused ones of the type (#227) */
     dialog: 'rename' | 'merge' | 'unused' | null;
+    /** How many consultants use each element of the shown type, by id (#271); null while loading */
+    usage: { type: ProfileElementType, counts: Record<string, number> } | null;
 }
 
 interface NameEntityOverviewDispatch {
@@ -128,19 +131,43 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     & NameEntityOverviewDispatch
     & ThemeProps, NameEntityOverviewLocalState> {
 
-    state: NameEntityOverviewLocalState = {dialog: null};
+    state: NameEntityOverviewLocalState = {dialog: null, usage: null};
 
     public componentDidMount() {
         this.props.requestAllNameEntities();
         this.applyUrl();
+        this.loadUsage();
     };
 
     public componentDidUpdate(prevProps: NameEntityOverviewProps & NameEntityOverviewLocalProps) {
-        if (prevProps.location.pathname !== this.props.location.pathname
-            || entitiesOf(prevProps, this.selectedField()) !== entitiesOf(this.props, this.selectedField())) {
+        const entitiesChanged = entitiesOf(prevProps, this.selectedField()) !== entitiesOf(this.props, this.selectedField());
+        if (prevProps.location.pathname !== this.props.location.pathname || entitiesChanged) {
             this.applyUrl();
         }
+        // Renaming, merging and deleting reload the list, so the numbers follow it (#271)
+        if (entitiesChanged || this.usageRequestedFor !== this.selectedField()) {
+            this.loadUsage();
+        }
     }
+
+    private usageRequestedFor: ProfileElementType | undefined;
+
+    private loadUsage = () => {
+        const type = this.selectedField();
+        this.usageRequestedFor = type;
+        ProfileServiceClient.instance().getNameEntityUsage(type)
+            .then(counts => {
+                if (type === this.selectedField()) {
+                    this.setState({usage: {type, counts}});
+                }
+            })
+            .catch(() => this.setState({usage: null}));
+    };
+
+    private usageOf = (nameEntity: NameEntity): number | undefined => {
+        const usage = this.state.usage;
+        return usage && usage.type === this.selectedField() ? usage.counts[String(nameEntity.id)] : undefined;
+    };
 
     /**
      * Type and entry are in the URL (#212); the slug is only for reading, the ID selects
@@ -305,7 +332,13 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                                 selectedKey={selected && String(selected.id)}
                                 onSelect={this.handleSelectEntity}
                                 emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
-                                columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: renderName}]}/>}
+                                columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: renderName},
+                                    {
+                                        header: PowerLocalize.get('AdminClient.Overview.Users'),
+                                        width: USAGE_COLUMN_WIDTH,
+                                        alignRight: true,
+                                        render: nameEntity => <PwrUsageCount count={this.usageOf(nameEntity)}/>
+                                    }]}/>}
             info={this.renderInfoBox(selected)}
         />
         </>;

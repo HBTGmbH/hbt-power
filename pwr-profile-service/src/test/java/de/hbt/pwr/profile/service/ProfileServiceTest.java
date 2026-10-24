@@ -1,6 +1,12 @@
 package de.hbt.pwr.profile.service;
 
 
+import de.hbt.pwr.profile.client.SkillTreeIndex;
+import java.util.Optional;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Arrays;
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
 import de.hbt.pwr.profile.data.AdminNotificationRepository;
@@ -24,6 +30,7 @@ import static de.hbt.pwr.profile.PwrCollectionUtils.hashSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -340,5 +347,26 @@ public class ProfileServiceTest {
 
         verify(profileRepository, never()).findAll();
         verify(skillProfileClient, never()).deleteSkill(anyLong());
+    }
+
+    // ------------------------------------------------------------------------------------- usage of skills (#271)
+
+    @Test
+    public void countSkillUsers_countsEachConsultantOnceUnderTheNameOfTheSkillTree() {
+        Map<String, String> treeNames = new HashMap<>();
+        treeNames.put(".net", ".NET");
+        treeNames.put(".net core", ".NET");
+        treeNames.put("java", "Java");
+        when(skillProfileClient.getSkillTreeIndex())
+                .thenReturn(Optional.of(new SkillTreeIndex(new HashSet<>(), new HashSet<>(), treeNames)));
+        Profile first = profileWithSkills(".Net", "Java");
+        Profile second = profileWithSkills(".NET", ".NET Core", "Unknown Tool");
+        // A skill of a project counts for the consultant too, once
+        second.getProjects().add(Project.builder().name("Projekt")
+                .skills(hashSet(Skill.builder().name("java").rating(1).build())).build());
+        when(profileRepository.findAll()).thenReturn(Arrays.asList(first, second));
+
+        assertThat(profileService.countSkillUsers())
+                .containsOnly(entry(".NET", 2), entry("Java", 2), entry("Unknown Tool", 1));
     }
 }

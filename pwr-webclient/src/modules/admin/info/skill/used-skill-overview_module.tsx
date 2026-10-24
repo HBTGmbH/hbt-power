@@ -17,6 +17,8 @@ import {ProfileElementLayout} from '../profile-element-layout';
 import {ThunkDispatch} from 'redux-thunk';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {Paths} from '../../../../Paths';
+import {ProfileServiceClient} from '../../../../clients/ProfileServiceClient';
+import {PwrUsageCount, USAGE_COLUMN_WIDTH} from '../../../general/pwr-usage-count';
 
 
 interface UsedSkillOverviewProps {
@@ -30,6 +32,8 @@ type UsedSkillOverviewLocalProps = RouteComponentProps;
 interface UsedSkillOverviewLocalState {
     filterString: string;
     editOpen: boolean;
+    /** How many consultants use each skill, by the name of the skill tree (#271); null while loading */
+    usage: Record<string, number> | null;
 }
 
 interface UsedSkillOverviewDispatch {
@@ -48,7 +52,8 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         super(props);
         this.state = {
             filterString: '',
-            editOpen: false
+            editOpen: false,
+            usage: null,
         };
     }
 
@@ -71,11 +76,24 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     public componentDidMount() {
         this.props.loadAllUsedSkills();
         this.loadSelected();
+        this.loadUsage();
     }
+
+    /**
+     * Merging, renaming and deleting skills reload the list, so the numbers follow it (#271)
+     */
+    private loadUsage = () => {
+        ProfileServiceClient.instance().getSkillUsage()
+            .then(usage => this.setState({usage}))
+            .catch(() => this.setState({usage: null}));
+    };
 
     public componentDidUpdate(prevProps: UsedSkillOverviewProps & UsedSkillOverviewLocalProps) {
         if (prevProps.location.search !== this.props.location.search) {
             this.loadSelected();
+        }
+        if (prevProps.usedSkillNames !== this.props.usedSkillNames) {
+            this.loadUsage();
         }
         // A merged or unknown skill is not in the list: the list without a selection
         const selected = this.selectedSkillName();
@@ -150,7 +168,14 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                                         selectedKey={selectedSkillName}
                                         onSelect={this.handleSkillSelect}
                                         emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
-                                        columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: name => name}]}/>}
+                                        columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: name => name},
+                                            {
+                                                header: PowerLocalize.get('AdminClient.Overview.Users'),
+                                                width: USAGE_COLUMN_WIDTH,
+                                        alignRight: true,
+                                                render: name => <PwrUsageCount
+                                                    count={this.state.usage ? this.state.usage[name] : undefined}/>
+                                            }]}/>}
                     info={<UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
                                             usedBy={usedBy ? usedBy.toArray() : undefined}
                                             skillName={selectedSkillName}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.accepted;
 import static org.springframework.http.ResponseEntity.noContent;
@@ -119,6 +120,14 @@ public class AdminEndpoint {
     @DeleteMapping("/notifications/trash")
     public void deleteTrashed() {
         adminNotificationService.trashAllDeleted();
+    }
+
+    /**
+     * How many consultants use each skill, by the name of the skill tree (#271)
+     */
+    @GetMapping("/skills/usage")
+    public Map<String, Integer> countSkillUsers() {
+        return profileService.countSkillUsers();
     }
 
     @ApiOperation(
