@@ -411,7 +411,7 @@ flowchart LR
 | profile | statistics | `POST /admin/consultants/refresh` | Kopie nach Massenänderungen neu laden |
 | view-profile | profile | `GET /profiles/{initials}`, `GET /consultants/{initials}`, `GET /admin/name-entities/former-names`, `GET /consultants/names` | Momentaufnahme, *Aktualisieren*, Housekeeping |
 | view-profile | skill | `GET /skill/byName` | Kategorien, Namen und Übersetzungen des Baums |
-| view-profile | report | `POST /report?type=`, `POST /report/preview`, `/admin/file` | Export, Vorschau, Vorlagen-Dateien |
+| view-profile | report | `POST /report?type=`, `POST /report/preview`, `/admin/file` | Export, Vorschau, Vorlagen-Dateien; `POST /report` und `/report/preview` nur von hier, nicht über die Edge (#262) |
 | report | profile | `GET /consultants/{initials}`, `GET /consultants/names`, `GET /profile-pictures/by-initials/{initials}` | Name des Exportierenden, Housekeeping, Profilbild im Dokument |
 | report | view-profile | `GET /admin/template/files` | Housekeeping |
 | statistics | profile | `GET /admin/consultants` | Kopie aller Berater |

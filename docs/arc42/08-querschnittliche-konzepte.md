@@ -36,7 +36,9 @@ flowchart LR
   - Kürzel im Pfad sagen nur, um welches Profil es geht.
 - **Nur eigene Daten** (#255): Ein `Power.User` liest und ändert nur die Daten zu seinem Kürzel, ein `Power.Admin` alle. Profile, Report, View-Profile und Statistics Service prüfen das selbst (`security/ConsultantAccess`):
   - Ein Interceptor vergleicht die Pfadvariable `{initials}` jedes Endpunkts mit `X-Pwr-User-Initials`, ohne Groß-/Kleinschreibung.
-  - Was über eine ID geladen wird (Dokument, Profilbild, View-Profil), prüft der Endpunkt am Besitzer; ebenso Kürzel im Body (`POST /report`, `/report/preview`).
+  - Was über eine ID geladen wird (Dokument, Profilbild, View-Profil), prüft der Endpunkt am Besitzer.
+  - Dokumente entstehen nur über den View-Profile Service (#262): Er lädt das View-Profil über seine ID und prüft den Besitzer. `POST /report` und `/report/preview` des Report Service weisen jede Anfrage über die Edge ab, auch eines Admins, und ebenso ein View-Profil, dessen Besitzer nicht zu den Kürzeln im Body passt.
+  - Ein ganzes Profil wird nur gelesen (`GET /profiles/{initials}`), nie aus einem Body ersetzt (#261).
   - Eine Anfrage ohne `X-Pwr-User-Admin` kam nicht über die Edge (Aufruf eines anderen Service, lokal) und darf alles.
   - Eine ID im Body muss zum Profil im Pfad gehören, auch für Admins.
   - Für alle offen bleiben nach Entscheidung: Beratersuche, Namensliste, Cluster-Info und Angaben ohne Personenbezug. Personenbezogenes über andere, das nur der Admin-Bereich braucht, liegt unter `/admin`.
