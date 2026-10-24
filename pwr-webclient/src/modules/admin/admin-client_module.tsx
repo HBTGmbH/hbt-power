@@ -24,6 +24,7 @@ import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_mod
 import {AppInfoButton, LoggedInUserAvatar} from '../metadata/app-info_module';
 import {ThunkDispatch} from 'redux-thunk';
 import {AdminMenu} from './admin-menu';
+import {Housekeeping} from './housekeeping/housekeeping_module';
 
 
 /**
@@ -101,6 +102,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                         <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
                         <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={NameEntityOverview}/>
                         <Route path={Paths.ADMIN_INFO_USED_SKILLS} component={UsedSkillOverview}/>
+                        <Route path={Paths.ADMIN_HOUSEKEEPING} component={Housekeeping}/>
                     </div>
                     <ProfileLoadingSpinner/>
                 </div>

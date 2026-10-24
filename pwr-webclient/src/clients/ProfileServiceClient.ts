@@ -1,4 +1,5 @@
 import {APIConsultant} from '../model/APIProfile';
+import {HousekeepingFindings} from '../model/admin/HousekeepingFindings';
 import {AxiosRequestConfig} from 'axios';
 import {PowerHttpClient} from './PowerHttpClient';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
@@ -263,5 +264,20 @@ export class ProfileServiceClient extends PowerHttpClient {
     /** Admins only (edge: /admin/**) */
     public getProfileConfirmations = (initials: string): Promise<Array<ProfileConfirmation>> => {
         return this.getQuietly(this.base() + '/admin/profile-checks/' + encodeURIComponent(initials) + '/confirmations');
+    };
+
+    /**
+     * The housekeeping checks of the service (#242), without loading spinner and error alert: the housekeeping page
+     * shows a service that does not answer next to the others
+     */
+    public getHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
+        return this.getQuietly(this.base() + '/admin/housekeeping');
+    };
+
+    /** Deletes what the check finds now; the answer says how many */
+    public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
+        const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);
+        this.beginRequest();
+        return this.delete(url);
     };
 }
