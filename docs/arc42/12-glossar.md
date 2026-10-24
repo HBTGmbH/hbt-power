@@ -8,7 +8,6 @@
 | **Alias** | Weiterer Name eines Skills im Skill-Baum (z. B. `JS` für `JavaScript`). Global eindeutig ohne Groß-/Kleinschreibung. |
 | **Anzeigekategorie** | Kategorie des Skill-Baums, unter der ein View-Profil Skills gruppiert (`display` in `SkillCategory`) |
 | **Berater** (`Consultant`) | Mitarbeiterin oder Mitarbeiter der HBT mit Profil, identifiziert durch das Kürzel |
-| **Benachrichtigung** (`AdminNotification`) | Eintrag im Postkorb der Admins, z. B. zu einem unbekannten Skill. Kann in den Papierkorb verschoben werden. |
 | **BIRT** | Eclipse Business Intelligence and Reporting Tools; rendert die Dokumente aus Vorlagen (`.rptdesign`) |
 | **Bereinigen** | Löscht im Housekeeping, was eine Prüfung gerade findet |
 | **Datenleiche** | Datensatz, auf den nichts mehr zeigt oder der auf etwas Gelöschtes zeigt (z. B. ein Dokument zu einem gelöschten Berater). Unbenutzte Profil-Elemente oder eigene Skills sind keine Datenleichen, sondern gültige Einträge; das Housekeeping führt sie in der eigenen Rubrik *Unbenutzt* (#288). |
@@ -28,7 +27,6 @@
 | **Lokalisierung** (`LocalizedQualifier`, `NameEntityLocalization`) | Übersetzung eines Skills, einer Kategorie (#174) oder eines Profil-Elements (#291) in eine Sprache (ISO 639-2); erscheint in View-Profilen dieser Sprache und ihren Dokumenten |
 | **Massenänderung** | Änderung vieler Profile auf einmal: Skills zusammenführen, umbenennen oder löschen, ebenso Profil-Elemente, oder einen Berater löschen. Danach wird die Statistik neu geladen. |
 | **Other** | Kategorie des Skill-Baums, in die unbekannte Skills kommen, bis ein Admin sie einsortiert |
-| **Postkorb, Papierkorb** | Liste der offenen bzw. verworfenen Benachrichtigungen im Admin-Bereich |
 | **Power.User / Power.Admin** | App-Rollen in Entra ID für Berater bzw. Admins |
 | **Profil** | Alle Angaben eines Beraters: Einträge, Projekte, Skills, Beschreibung |
 | **Profil-Element** (`NameEntity`) | Gemeinsamer Eintrag, den mehrere Profile benutzen: Firma, Projektrolle, Sprache, Qualifikation, Branche, Ausbildung, Weiterbildung, Werdegang, Schwerpunkt |

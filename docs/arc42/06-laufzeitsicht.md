@@ -180,7 +180,7 @@ sequenceDiagram
     alt ein Service antwortet nicht
         P-->>W: 502, der Berater bleibt (erneut löschen löscht den Rest)
     else alles gelöscht
-        P->>P: eine Transaktion: Benachrichtigungen, Projekte samt Verknüpfungen,<br/>Skills, Profil, Profilbild, Berater (#240, #243)
+        P->>P: eine Transaktion: Projekte samt Verknüpfungen,<br/>Skills, Profil, Profilbild, Berater (#240, #243)
         P-->>W: 200
         P->>ST: POST /admin/consultants/refresh (nach dem Commit)
     end
@@ -201,7 +201,7 @@ sequenceDiagram
 
     par jeder Service prüft seine eigenen Daten
         W->>P: GET /admin/housekeeping
-        P-->>W: Profileinträge ohne Typ, ohne Profil, Projekte, Skills,<br/>Benachrichtigungen, Profilbilder
+        P-->>W: Profileinträge ohne Typ, ohne Profil, Projekte, Skills,<br/>Profilbilder
     and
         W->>R: GET /admin/housekeeping
         R->>P: GET /consultants/names

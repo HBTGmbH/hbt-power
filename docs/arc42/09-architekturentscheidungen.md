@@ -35,6 +35,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 | [22](#adr-22-löschen-in-der-oberfläche-absichern) | Löschen in der Oberfläche absichern | gilt | #134, #181 |
 | [23](#adr-23-webclient-mit-laufzeitkonfiguration-und-gehashten-dateien) | Webclient mit Laufzeitkonfiguration und gehashten Dateien | gilt | #9, #10, #109 |
 | [24](#adr-24-spring-security-in-den-backend-services-erst-mit-eigener-tokenprüfung) | Spring Security in den Backend-Services erst mit eigener Tokenprüfung | gilt | #255, #256, #260 |
+| [25](#adr-25-keine-admin-meldungen) | Keine Admin-Meldungen | gilt | #138, #307 |
 
 ---
 
@@ -303,7 +304,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 - **Status:** gilt (#134, #181)
 - **Entscheidung:**
   - Jedes Löschen fragt nach (`makeDeferrable` mit eigener Aktion).
-  - Im Admin-Bereich wird der Name zweimal eingegeben, beim Berater das Kürzel. Nur das Leeren des Papierkorbs und das Bereinigen behalten die einfache Rückfrage.
+  - Im Admin-Bereich wird der Name zweimal eingegeben, beim Berater das Kürzel. Nur das Bereinigen im Housekeeping behält die einfache Rückfrage.
 - **Konsequenzen:** Versehentliches Löschen von Stammdaten über alle Profile wird unwahrscheinlich, kostet aber einen Schritt mehr.
 
 ## ADR-23: Webclient mit Laufzeitkonfiguration und gehashten Dateien
@@ -340,3 +341,17 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 - **Konsequenzen:**
   - Das Risiko K2 bleibt: Die Sicherheit hängt daran, dass nur der Ingress von außen erreichbar ist.
   - Neue Endpunkte brauchen weiter `{initials}` im Pfad oder `ConsultantAccess.check` (Definition of Done).
+
+## ADR-25: Keine Admin-Meldungen
+
+- **Status:** gilt (#138, #307)
+- **Kontext:**
+  - Der Admin-Bereich hatte einen Posteingang mit Papierkorb (`AdminNotification`): Meldungen zu neuen Bezeichnern, neuen Skills und Profiländerungen, jeweils mit den Aktionen OK, Bearbeiten und Löschen.
+  - Meldungen entstanden nur beim Speichern des ganzen Profils (`PUT /profiles/{initials}`). Seit 2019 speichert der Webclient eintragsweise, seitdem entstanden keine Meldungen mehr; #261 hat den Endpoint entfernt. Trotzdem pflegte jedes Löschen und Zusammenführen die Meldungen mit, und das Housekeeping prüfte sie.
+- **Entscheidung:** Posteingang, Papierkorb und Meldungen entfallen, kein Ereignis erzeugt eine Meldung. Was sie zeigen sollten, sieht der Admin dort, wo er es bearbeitet:
+  - neue eigene Skills im Skill-Baum unter *Other* und im Housekeeping (*Unbenutzt*)
+  - neue Bezeichner, Kunden und Vermittler in den Profil-Elementen (Nutzung, Umbenennen, Zusammenführen, Aliase) und im Housekeeping
+  - Profiländerungen in der Profilprüfung auf den Berater-Kacheln
+- **Konsequenzen:**
+  - Weniger Code, und keine Tabellen mehr, die bei jedem Löschen mitzupflegen sind (`drop-admin-notifications.sql` löscht sie).
+  - Wer über Neues benachrichtigt werden will, braucht einen neuen Entwurf, z. B. eine Liste „Neu seit …“, keinen Posteingang.

@@ -11,7 +11,6 @@ HBT Power ist die Anwendung, in der die Beraterinnen und Berater der HBT ihr Pro
   - Den Skill-Baum pflegen: Kategorien, Skills, Aliase, Versionen, Übersetzungen.
   - Profil-Elemente umbenennen, zusammenführen und löschen.
   - Vorlagen hochladen.
-  - Benachrichtigungen bearbeiten.
   - Datenleichen bereinigen (*Housekeeping*).
 - **Auswerten:** Statistiken zur Nutzung von Skills und zu ähnlichen Profilen, die Suche nach Beratern mit bestimmten Skills, und wer welchen Skill oder welches Profil-Element benutzt.
 
