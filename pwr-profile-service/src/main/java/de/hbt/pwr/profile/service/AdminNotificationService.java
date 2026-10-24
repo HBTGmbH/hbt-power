@@ -263,6 +263,10 @@ public class AdminNotificationService {
                 .ifPresent(notification -> notification.setAdminNotificationStatus(TRASHED));
     }
 
+    /**
+     * In a transaction (#257): the derived delete loads the notifications and removes them one by one
+     */
+    @Transactional
     public void trashAllDeleted() {
         adminNotificationRepository.deleteByAdminNotificationStatus(TRASHED);
     }
