@@ -125,7 +125,7 @@ public class ProfileCheckServiceTest {
         Profile profile = completeProfile();
         Project project = profile.getProjects().iterator().next();
         project.setSkills(skills(4));
-        project.setDescription(TEXT_500.substring(1));
+        project.setDescription(TEXT_300.substring(1));
         project.setProjectRoles(new HashSet<>());
         ProfileCheckHint hint = single(check(profile), Code.PROJECT_INCOMPLETE);
         assertThat(hint.getType()).isEqualTo(Type.INCOMPLETE);
@@ -140,8 +140,24 @@ public class ProfileCheckServiceTest {
         Profile profile = completeProfile();
         Project project = profile.getProjects().iterator().next();
         project.setSkills(skills(5));
-        project.setDescription(TEXT_500);
+        project.setDescription(TEXT_300);
         assertThat(hints(check(profile), Code.PROJECT_INCOMPLETE)).isEmpty();
+    }
+
+    /**
+     * Clients sometimes want every project, so old ones are checked too (#305)
+     */
+    @Test
+    public void anOldProjectWithAShortDescriptionIsIncompleteToo() {
+        Profile profile = completeProfile();
+        Project old = project("Altprojekt");
+        old.setStartDate(LocalDate.of(2004, 1, 1));
+        old.setEndDate(LocalDate.of(2005, 12, 31));
+        old.setDescription(TEXT_300.substring(1));
+        profile.getProjects().add(old);
+        ProfileCheckHint hint = single(check(profile), Code.PROJECT_INCOMPLETE);
+        assertThat(hint.getProjectName()).isEqualTo("Altprojekt");
+        assertThat((List<Object>) hint.getValues().get("reasons")).contains("SHORT_DESCRIPTION");
     }
 
     // -------------------------------------------------------------------------------------------------------- outdated

@@ -693,7 +693,7 @@
   "ProfileCheck.ProjectIncomplete": "„{0}“ ist vielleicht noch nicht fertig: {1}.",
   "ProfileCheck.EducationWithoutDegree": "Zu „{0}“ fehlt der Abschluss.",
   "ProfileCheck.Reason.FewSkills": "{0} Skills (mindestens {1})",
-  "ProfileCheck.Reason.ShortDescription": "kurze Beschreibung",
+  "ProfileCheck.Reason.ShortDescription": "kurze Beschreibung (siehe „Hilfe zur Beschreibung“)",
   "ProfileCheck.Reason.NoRole": "keine Rolle",
   "ProfileCheck.ProjectsOutdated": "Deine letzte Projektreferenz hast du {0} gespeichert. Aktualisiere sie einmal im Jahr.",
   "ProfileCheck.NoFollowUpProject": "Deine letzte Projektreferenz endete {0}. Was ist mit dem neuen Projekt?",
