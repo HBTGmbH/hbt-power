@@ -19,6 +19,12 @@ spring:
     multipart:
       max-file-size: 32MB
       max-request-size: 32MB
+  cloud:
+    gateway:
+      httpclient:
+        # A service that hangs must not hold the edge (#249); longer than the slow calls of the services (60 s)
+        connect-timeout: 2000
+        response-timeout: 90s
 ---
 spring:
   config:

@@ -19,8 +19,8 @@ public class SkillServiceClient {
 
     private final RestTemplate restTemplate;
 
-    public SkillServiceClient() {
-        restTemplate = new RestTemplate();
+    public SkillServiceClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public SkillServiceSkill getSkillByName(String qualifier) {

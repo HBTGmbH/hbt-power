@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import de.hbt.pwr.view.client.RestClientConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,8 +26,14 @@ public class FileUploadClient {
     private String pwrReportServiceUrl;
     private final RestTemplate restTemplate;
 
-    public FileUploadClient() {
-        restTemplate = new RestTemplate();
+    /**
+     * For uploading a template file, up to 128 MB (#249)
+     */
+    private final RestTemplate slowRestTemplate;
+
+    public FileUploadClient(RestTemplate restTemplate, @Qualifier(RestClientConfig.SLOW) RestTemplate slowRestTemplate) {
+        this.restTemplate = restTemplate;
+        this.slowRestTemplate = slowRestTemplate;
     }
 
     public ResponseEntity<UploadFileResponse> uploadFile(MultipartFile file) {
@@ -33,7 +41,7 @@ public class FileUploadClient {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.set("file", file.getResource());
-        return restTemplate.exchange(pwrReportServiceUrl + "/admin/file",
+        return slowRestTemplate.exchange(pwrReportServiceUrl + "/admin/file",
                 HttpMethod.POST,
                 new HttpEntity<>(body, headers),
                 new ParameterizedTypeReference<>() {

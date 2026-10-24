@@ -28,8 +28,8 @@ public class ConsultantNameClient {
 
     private final RestTemplate restTemplate;
 
-    public ConsultantNameClient() {
-        restTemplate = new RestTemplate();
+    public ConsultantNameClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**

@@ -30,8 +30,8 @@ public class ProfileServiceClient {
 
     private final RestTemplate restTemplate;
 
-    public ProfileServiceClient() {
-        restTemplate = new RestTemplate();
+    public ProfileServiceClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping("/profiles/{initials}")

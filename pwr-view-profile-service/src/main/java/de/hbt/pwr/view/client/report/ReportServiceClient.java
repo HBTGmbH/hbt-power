@@ -7,6 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import de.hbt.pwr.view.client.RestClientConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -22,8 +24,14 @@ public class ReportServiceClient {
 
     private final RestTemplate restTemplate;
 
-    public ReportServiceClient() {
-        restTemplate = new RestTemplate();
+    /**
+     * For the preview, which the report service renders for up to 10 s (#155, #249)
+     */
+    private final RestTemplate slowRestTemplate;
+
+    public ReportServiceClient(RestTemplate restTemplate, @Qualifier(RestClientConfig.SLOW) RestTemplate slowRestTemplate) {
+        this.restTemplate = restTemplate;
+        this.slowRestTemplate = slowRestTemplate;
     }
 
     /**
@@ -33,7 +41,7 @@ public class ReportServiceClient {
      *                                                                                    rendered with this data
      */
     public byte[] renderPdfPreview(ReportInfo reportInfo) {
-        return restTemplate.postForObject(pwrReportServiceUrl + "/report/preview", reportInfo, byte[].class);
+        return slowRestTemplate.postForObject(pwrReportServiceUrl + "/report/preview", reportInfo, byte[].class);
     }
 
     /**

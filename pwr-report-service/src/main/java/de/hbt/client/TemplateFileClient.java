@@ -18,8 +18,8 @@ public class TemplateFileClient {
 
     private final RestTemplate restTemplate;
 
-    public TemplateFileClient() {
-        restTemplate = new RestTemplate();
+    public TemplateFileClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**
