@@ -5,6 +5,7 @@ import de.hbt.exceptions.ReportRenderException;
 import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.view.ViewProfileInfo;
+import de.hbt.security.ConsultantAccess;
 import de.hbt.service.ProfileReportService;
 import de.hbt.service.ReportDataService;
 import org.apache.logging.log4j.LogManager;
@@ -66,6 +67,7 @@ public class ReportController {
     @GetMapping(value = "/file/{reportId}", produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     public ResponseEntity<ByteArrayResource> getReportFile(@PathVariable("reportId") Long reportId) {
         ReportData reportData = reportDataService.getReportDataById(reportId);
+        ConsultantAccess.check(reportData.getInitials());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=" + reportData.getInitials() + "_" + LocalDate.now() + ".docx")
@@ -74,6 +76,7 @@ public class ReportController {
 
     @DeleteMapping(value = "/delete/{reportId}")
     public ResponseEntity<String> deleteReportFile(@PathVariable("reportId") Long reportId) {
+        ConsultantAccess.check(reportDataService.getReportDataById(reportId).getInitials());
         reportDataService.deleteReportDataById(reportId);
         return ResponseEntity.ok("Deleted Report File");
     }
@@ -84,6 +87,7 @@ public class ReportController {
                                            @RequestHeader(value = USER_LOGIN_HEADER, required = false) String login,
                                            @RequestHeader(value = USER_INITIALS_HEADER, required = false) String exportedBy) {
         LOG.info("Generating new report!");
+        ConsultantAccess.check(reportInfo.initials);
         ViewProfileInfo viewProfileInfo = reportInfo.viewProfile.getViewProfileInfo();
         // Who exports only from the headers of the edge (#214), the name as it is now; without them (locally) nobody
         String exportedByName = null;
@@ -121,6 +125,7 @@ public class ReportController {
     @PostMapping(value = "/preview", consumes = "application/json")
     public ResponseEntity<byte[]> preview(@RequestBody ReportInfo reportInfo) {
         LOG.info("Rendering preview for " + reportInfo.initials);
+        ConsultantAccess.check(reportInfo.initials);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .cacheControl(CacheControl.noStore())

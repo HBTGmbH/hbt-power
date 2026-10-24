@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.controller;
 
+import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.model.ProfilePicture;
 import de.hbt.pwr.profile.service.PictureService;
 import org.junit.Before;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class ProfilePictureControllerTest {
 
     private final PictureService pictureService = mock(PictureService.class);
-    private final ProfilePictureController controller = new ProfilePictureController(pictureService);
+    private final ProfilePictureController controller = new ProfilePictureController(pictureService, mock(ConsultantRepository.class));
     private final ProfilePicture picture = new ProfilePicture();
 
     @Before

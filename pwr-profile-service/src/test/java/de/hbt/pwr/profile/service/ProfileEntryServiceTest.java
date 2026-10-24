@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -19,8 +20,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import de.hbt.pwr.profile.data.AdminNotificationRepository;
@@ -51,7 +55,15 @@ public class ProfileEntryServiceTest {
 
 
         when(nameEntityRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-        when(skillRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        // Like the database: a new skill gets an id
+        AtomicLong skillIds = new AtomicLong(1000);
+        when(skillRepository.save(any())).thenAnswer(invocationOnMock -> {
+            Skill skill = invocationOnMock.getArgument(0);
+            if (skill.getId() == null) {
+                skill.setId(skillIds.incrementAndGet());
+            }
+            return skill;
+        });
         when(projectRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         profileUpdateService = new ProfileUpdateService(nameEntityRepository, skillRepository, profileEntryDAO, projectRepository, profileRepository, null, null);
@@ -126,6 +138,7 @@ public class ProfileEntryServiceTest {
         Profile profile = new Profile();
         LanguageSkill language = LanguageSkill.builder().id(15235L).level(LanguageSkillLevel.ADVANCED).language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
         profileEntryUpdate(language);
+        profile.getLanguages().add(language);
         LanguageSkill result = (LanguageSkill) profileEntryService.updateProfileEntry(language, profile, NameEntityType.LANGUAGE);
         verify(profileEntryDAO, times(1)).update(language);
     }
@@ -146,6 +159,7 @@ public class ProfileEntryServiceTest {
         Profile profile = new Profile();
         LanguageSkill language = LanguageSkill.builder().id(222L).level(LanguageSkillLevel.ADVANCED).language(NameEntity.builder().id(5959L).name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
         profileEntryUpdate(language);
+        profile.getLanguages().add(language);
         LanguageSkill result = (LanguageSkill) profileEntryService.updateProfileEntry(language, profile, NameEntityType.LANGUAGE);
         verify(nameEntityRepository, times(0)).save(language.getNameEntity());
         assertThat(profile.getLanguages())
@@ -192,7 +206,7 @@ public class ProfileEntryServiceTest {
     public void shouldAddSkillToProfile() {
         skillExisting(34L, "skill", 3);
         Profile p = new Profile();
-        Skill s = Skill.builder().id(34L).name("skill").rating(3).build();
+        Skill s = Skill.builder().name("skill").rating(3).build();
         profileEntryService.updateProfileSkills(s, p);
         assertThat(p.getSkills()).containsExactly(s);
     }
@@ -201,7 +215,7 @@ public class ProfileEntryServiceTest {
     public void shouldAddSkillOnceToProfile() {
         skillExisting(190L, "skill", 3);
         Profile p = new Profile();
-        Skill s = Skill.builder().id(190L).name("skill").rating(3).build();
+        Skill s = Skill.builder().name("skill").rating(3).build();
         profileEntryService.updateProfileSkills(s, p);
         profileEntryService.updateProfileSkills(s, p);
         assertThat(p.getSkills()).containsExactly(s);
@@ -214,13 +228,13 @@ public class ProfileEntryServiceTest {
         skillExisting(190L, "skillo", 3);
         skillExisting(190L, "skillo", 4);
         Profile p = new Profile();
-        Skill s = Skill.builder().id(190L).name("skillo").rating(3).build();
-        Skill ex = Skill.builder().id(190L).name("skillo").rating(4).build();
+        Skill s = Skill.builder().name("skillo").rating(3).build();
+        Skill ex = Skill.builder().name("skillo").rating(4).build();
         profileEntryService.updateProfileSkills(s, p);
         assertThat(p.getSkills()).containsExactly(s);
         assertThat(p.getSkills().size()).isEqualTo(1);
         profileEntryService.updateProfileSkills(ex, p);
-        assertThat(p.getSkills()).containsExactly(ex);
+        assertThat(p.getSkills()).extracting(Skill::getName, Skill::getRating).containsExactly(tuple("skillo", 4));
         assertThat(p.getSkills().size()).isEqualTo(1);
 
     }
@@ -230,8 +244,8 @@ public class ProfileEntryServiceTest {
         skillExisting(190L, "skillo", 4);
         skillExisting(190L, "skillo", 3);
         Profile p = new Profile();
-        Skill s = Skill.builder().id(190L).name("skillo").rating(4).build();
-        Skill ex = Skill.builder().id(190L).name("skillo").rating(3).build();
+        Skill s = Skill.builder().name("skillo").rating(4).build();
+        Skill ex = Skill.builder().name("skillo").rating(3).build();
         profileEntryService.updateProfileSkills(s, p);
         assertThat(p.getSkills()).containsExactly(s);
         assertThat(p.getSkills().size()).isEqualTo(1);
@@ -245,7 +259,7 @@ public class ProfileEntryServiceTest {
     public void shouldDeleteSkill_whenExisting() {
         skillExisting(8L, "skillOne", 1);
         Profile p = new Profile();
-        Skill s1 = Skill.builder().id(8L).name("skillOne").rating(1).build();
+        Skill s1 = Skill.builder().name("skillOne").rating(1).build();
         Skill db = profileEntryService.updateProfileSkills(s1, p);
         assertThat(db).isNotNull();
         assertThat(p.getSkills()).containsExactly(db);
@@ -338,7 +352,7 @@ public class ProfileEntryServiceTest {
     @Test
     public void shouldAddProjectSkillsToProfile() {
         Project project = Project.builder().id(null).name("project").skills(new HashSet<>()).build();
-        Skill s1 = Skill.builder().id(189L).rating(3).name("S1").build();
+        Skill s1 = Skill.builder().rating(3).name("S1").build();
         project.getSkills().add(s1);
 
         Profile p = Profile.empty();
@@ -382,7 +396,7 @@ public class ProfileEntryServiceTest {
     @Test
     public void shouldUpdateOnlySkills_thatAreNotYetInTheProfile() {
         Skill skillA = Skill.builder().id(new Long(1)).name("Skill A").rating(2).build();
-        Skill skillB = Skill.builder().id(new Long(2)).name("Skill B").rating(2).build();
+        Skill skillB = Skill.builder().name("Skill B").rating(2).build();
 
         Profile profile = new Profile();
         profile.getSkills().add(skillA);
@@ -437,6 +451,60 @@ public class ProfileEntryServiceTest {
 
     // TODO Skill löschen wenn er im Project enthalten ist ?!!?
 
+    // ------------------------------------------------------------------- ids must belong to the profile (#255)
+
+    @Test
+    public void entryWithTheIdOfAnotherProfile_isRejected() {
+        LanguageSkill foreign = LanguageSkill.builder().id(777L).level(LanguageSkillLevel.BASIC)
+                .language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
+        Profile profile = new Profile();
+
+        assertNotFound(() -> profileEntryService.updateProfileEntry(foreign, profile, NameEntityType.LANGUAGE));
+        verify(profileEntryDAO, never()).update(any());
+        assertThat(profile.getLanguages()).isEmpty();
+    }
+
+    @Test
+    public void skillWithTheIdOfAnotherProfile_isRejected() {
+        Skill foreign = Skill.builder().id(777L).name("Kotlin").rating(1).build();
+        Profile profile = new Profile();
+
+        assertNotFound(() -> profileEntryService.updateProfileSkills(foreign, profile));
+        Project project = Project.builder().name("Project").skills(new HashSet<>(Collections.singletonList(foreign))).build();
+        assertNotFound(() -> profileEntryService.updateProject(project, profile));
+        verify(skillRepository, never()).save(any());
+        assertThat(profile.getSkills()).isEmpty();
+    }
+
+    @Test
+    public void projectSkillThatOnlyAProjectOfTheProfileHolds_isKept() {
+        // A skill deleted from the profile stays in its projects (#254); saving such a project must still work
+        Skill onlyInProject = Skill.builder().id(55L).name("Cobol").rating(2).build();
+        Project existing = Project.builder().id(9L).name("Project").skills(new HashSet<>(Collections.singletonList(onlyInProject))).build();
+        Profile profile = new Profile();
+        profile.getProjects().add(existing);
+        Project update = Project.builder().id(9L).name("Project, renamed").skills(new HashSet<>(Collections.singletonList(onlyInProject))).build();
+
+        profileEntryService.updateProject(update, profile);
+
+        assertThat(update.getSkills()).extracting(Skill::getId).containsExactly(55L);
+    }
+
+    @Test
+    public void projectWithTheIdOfAnotherProfile_isRejected() {
+        Project foreign = Project.builder().id(777L).name("Project").skills(new HashSet<>()).build();
+        Profile profile = new Profile();
+
+        assertNotFound(() -> profileEntryService.updateProject(foreign, profile));
+        verify(projectRepository, never()).save(any());
+    }
+
+    private static void assertNotFound(Runnable call) {
+        WebApplicationException e = catchThrowableOfType(call::run, WebApplicationException.class);
+        assertThat(e).isNotNull();
+        assertThat(e.getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
     // ------------------------------------------------------------------------------- timestamps of the check (#139)
 
     @Test
@@ -453,7 +521,7 @@ public class ProfileEntryServiceTest {
     public void addingAndDeletingASkill_setsSkillsLastEdited() {
         skillExisting(8L, "skillOne", 1);
         Profile p = new Profile();
-        Skill skill = profileEntryService.updateProfileSkills(Skill.builder().id(8L).name("skillOne").rating(1).build(), p);
+        Skill skill = profileEntryService.updateProfileSkills(Skill.builder().name("skillOne").rating(1).build(), p);
         assertThat(p.getSkillsLastEdited()).isNotNull();
         p.setSkillsLastEdited(null);
 

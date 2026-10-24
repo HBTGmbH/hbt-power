@@ -3,6 +3,7 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.NameEntityType;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
@@ -51,6 +52,10 @@ public class ViewProfileMergeService {
     public ViewProfile updateViewProfile(String oldId, String initials, ViewProfile.ViewProfileMergeOptions options) {
         //1. get old ViewProfile (VP)
         ViewProfile oldView = viewProfileRepository.findById(oldId).orElseThrow(() -> new ViewProfileNotFoundException(oldId));
+        // Only an own view profile is taken over into the new one (#255)
+        if (!ViewProfileOperationService.isOwner(oldView, initials)) {
+            throw new InvalidOwnerException(oldId, initials);
+        }
 
         // 3. create new ViewProfile
         ViewProfile newView = viewProfileCreatorService.createViewProfile(initials, options.name, options.viewDescription, "",

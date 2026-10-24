@@ -76,7 +76,7 @@ public class ViewProfileOperationService {
     @NotNull
     public ViewProfile getByIdAndCheckOwner(@NotNull String id, @NotNull String owner) {
         ViewProfile viewProfile = findViewProfile(id);
-        if (!viewProfile.getViewProfileInfo().getOwnerInitials().equals(owner)) {
+        if (!isOwner(viewProfile, owner)) {
             throw new InvalidOwnerException(id, owner);
         }
         return viewProfile;
@@ -92,10 +92,19 @@ public class ViewProfileOperationService {
      */
     public void deleteWithOwnerCheck(@NotNull String id, @NotNull String owner) {
         ViewProfile viewProfile = findViewProfile(id);
-        if (!viewProfile.getViewProfileInfo().getOwnerInitials().equals(owner)) {
+        if (!isOwner(viewProfile, owner)) {
             throw new InvalidOwnerException(id, owner);
         }
         viewProfileRepository.deleteById(id);
+    }
+
+    /**
+     * Whether the view profile belongs to the consultant with these initials, compared ignoring case like everywhere
+     * else (#255)
+     */
+    public static boolean isOwner(ViewProfile viewProfile, String initials) {
+        String owner = viewProfile.getViewProfileInfo().getOwnerInitials();
+        return owner != null && initials != null && owner.equalsIgnoreCase(initials);
     }
 
     private <T extends ToggleableEntry> void setEnabled(List<T> list, int index,

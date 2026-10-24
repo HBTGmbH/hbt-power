@@ -25,6 +25,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static de.hbt.security.ConsultantAccess.USER_ADMIN_HEADER;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -134,5 +136,58 @@ class ReportControllerITest {
                 .andExpect(status().isOk());
 
         assertThat(theOnlyReport().getViewProfileDescription()).hasSize(ReportController.MAX_DESCRIPTION_LENGTH);
+    }
+
+    // ------------------------------------------------------------------------------- own documents only (#255)
+
+    private ReportData storedReport(String initials) {
+        ReportData report = new ReportData(initials, "Anfrage A", null, initials + "_Anfrage A_Standard",
+                "template-1", null, null);
+        report.setData(new byte[]{1, 2, 3});
+        return reportDataRepository.save(report);
+    }
+
+    private static MockHttpServletRequestBuilder asUser(MockHttpServletRequestBuilder request, String initials) {
+        return request.header(USER_ADMIN_HEADER, "false").header(ReportController.USER_INITIALS_HEADER, initials);
+    }
+
+    @Test
+    void userSeesAndChangesOnlyTheOwnDocuments() throws Exception {
+        ReportData own = storedReport("tst");
+        ReportData other = storedReport("xyz");
+
+        mockMvc.perform(asUser(get("/report/tst"), "TST")).andExpect(status().isOk());
+        mockMvc.perform(asUser(get("/report/file/" + own.getId()), "tst")).andExpect(status().isOk());
+        mockMvc.perform(asUser(get("/report/xyz"), "tst")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get("/report/file/" + other.getId()), "tst")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(delete("/report/delete/" + other.getId()), "tst")).andExpect(status().isForbidden());
+        assertThat(reportDataRepository.findById(other.getId())).isPresent();
+
+        mockMvc.perform(asUser(delete("/report/delete/" + own.getId()), "tst")).andExpect(status().isOk());
+        assertThat(reportDataRepository.findById(own.getId())).isEmpty();
+    }
+
+    @Test
+    void userExportsAndPreviewsOnlyTheOwnProfile() throws Exception {
+        mockMvc.perform(asUser(generate(), "xyz")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(post("/report/preview"), "xyz")
+                        .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
+                .andExpect(status().isForbidden());
+        assertThat(reportDataRepository.findAll()).isEmpty();
+
+        mockMvc.perform(asUser(post("/report/preview"), "tst")
+                        .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void adminSeesAndChangesTheDocumentsOfEveryone() throws Exception {
+        ReportData other = storedReport("xyz");
+
+        mockMvc.perform(get("/report/file/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
+                .andExpect(status().isOk());
+        mockMvc.perform(generate().header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
+        mockMvc.perform(delete("/report/delete/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
+                .andExpect(status().isOk());
     }
 }
