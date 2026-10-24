@@ -63,8 +63,8 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
 
     render() {
         if (this.props.loginStatus === LoginStatus.SUCCESS) {
-            // Already logged in? Great! Redirect to Profile Selection!
-            return <Redirect to={Paths.PROFILE_SELECT}/>;
+            // Already logged in: to the start page of the account (#263)
+            return <Redirect to={Paths.START}/>;
         }
         return (
             <React.Fragment>

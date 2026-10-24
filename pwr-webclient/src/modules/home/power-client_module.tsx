@@ -28,7 +28,7 @@ export const PowerClient = () => {
         if (!mayOpen) {
             // Only the own profile, an admin every one (#255): one message instead of an error from every part of the page
             Alerts.showError(PowerLocalize.getFormatted('ProfileSelect.NotYourProfile', initials));
-            navigateReplacing(Paths.PROFILE_SELECT, dispatch);
+            navigateReplacing(Paths.START, dispatch);
             return;
         }
         dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));

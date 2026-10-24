@@ -373,7 +373,7 @@ flowchart TB
 
 | Bereich | Pfade (`src/Paths.ts`) |
 |---|---|
-| Einstieg | `/` (Anmeldung), `/profilauswahl` |
+| Einstieg | `/` (Anmeldung, nur nach dem Abmelden), `/start` (Admins → Beraterverwaltung, sonst eigenes Profil; `/profilauswahl` leitet dorthin) |
 | Profil eines Beraters | `/app/:initials/home`, `…/profile`, `…/profile/projects/:projectId`, `…/profile/skills`, `…/views`, `…/view/:id`, `…/reports`, `…/search`, `…/statistics/*` |
 | Admin | `/admin/home/inbox`, `…/trashbox`, `…/consultants`, `…/templates`, `…/statistics/skills`, `…/info/skilltree`, `…/info/names`, `…/info/skills`, `…/housekeeping` |
 

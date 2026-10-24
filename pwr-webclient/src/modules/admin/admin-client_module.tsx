@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import Icon from '@material-ui/core/Icon';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Paths} from '../../Paths';
-import {Route} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {PwrBrand} from '../general/pwr-brand';
 import {NotificationInbox} from './notification/notification-inbox_module';
@@ -94,6 +94,12 @@ class AdminClientModule extends React.Component<AdminClientProps
                     is no menu column on the left any more (#212) */}
                 <div>
                     <div className="col-md-12 fittingContainer admin-app-bar-spacer">
+                        {/* The admin area without a page starts in the consultant management (#263) */}
+                        <Switch>
+                            <Route exact path={[Paths.ADMIN_BASE, Paths.ADMIN_BASE + 'home']}>
+                                <Redirect to={Paths.ADMIN_CONSULTANTS}/>
+                            </Route>
+                        </Switch>
                         <Route path={Paths.ADMIN_INBOX} component={NotificationInbox}/>
                         <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid}/>
                         <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager}/>

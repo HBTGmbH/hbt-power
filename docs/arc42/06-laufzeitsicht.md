@@ -26,7 +26,7 @@ sequenceDiagram
     P-->>W: Berater mit Profil
 ```
 
-- Ohne `Power.Admin` öffnet die Profilauswahl gleich das eigene Profil. Admins wählen aus der Beraterliste (#135).
+- Danach führt die Startseite (`/start`, #263) Admins in die Beraterverwaltung und alle anderen gleich ins eigene Profil (#135). Ohne eigenes Profil oder Kürzel zeigt sie eine Meldung.
 - Läuft das Token ab, erneuert MSAL es still (`acquireTokenSilent`). Scheitert das, meldet der Webclient einmal automatisch neu an (#129).
 - Profilbilder und Vorschauen lädt der Webclient mit Token als Blob und zeigt sie über eine Blob-URL. Ein `src` oder `iframe` direkt auf die API scheitert an der Edge, weil es kein Token mitschickt (#65, #67).
 
