@@ -6,10 +6,12 @@ import {PwrAutoComplete} from '../pwr-auto-complete';
 import {NameEntity} from '../../../reducers/profile-new/profile/model/NameEntity';
 import {NameEntityType} from '../../../reducers/profile-new/profile/model/NameEntityType';
 import {ComponentClass} from 'react';
+import {NameEntityAlias} from '../../../model/NameEntityAlias';
 
 interface PwrProjectRoleAutocompleteProps {
     projectRoles: Array<NameEntity>;
     projectRoleNames: Array<string>;
+    aliases: Array<NameEntityAlias>;
 }
 
 
@@ -40,7 +42,8 @@ class PwrProjectRoleAutocompleteModule extends React.Component<PwrProjectRoleAut
     static mapStateToProps(state: ApplicationState, localProps: PwrProjectRoleAutocompletePropsLocalProps): PwrProjectRoleAutocompleteProps {
         return {
             projectRoles: state.suggestionStore.allProjectRoles,
-            projectRoleNames: state.suggestionStore.allProjectRoles.map(value => value.name)
+            projectRoleNames: state.suggestionStore.allProjectRoles.map(value => value.name),
+            aliases: state.suggestionStore.allAliases.filter(alias => alias.type === NameEntityType.PROJECT_ROLE)
         };
     }
 

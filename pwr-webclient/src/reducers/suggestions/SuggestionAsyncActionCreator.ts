@@ -22,6 +22,16 @@ export class SuggestionAsyncActionCreator {
             dispatch(SuggestionAsyncActionCreator.requestProjectRoles());
             dispatch(SuggestionAsyncActionCreator.requestKeySkills());
             dispatch(SuggestionAsyncActionCreator.requestCareers());
+            dispatch(SuggestionAsyncActionCreator.requestAliases());
+        };
+    }
+
+    /** The aliases of all profile elements (#270) */
+    public static requestAliases() {
+        return function (dispatch: redux.Dispatch) {
+            client.getAliases()
+                .then(payload => dispatch(suggestionUpdateAction('allAliases' as SuggestionField, payload)))
+                .catch(console.error);
         };
     }
 

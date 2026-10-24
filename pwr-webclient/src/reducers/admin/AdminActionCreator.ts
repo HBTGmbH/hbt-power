@@ -548,6 +548,35 @@ export class AdminActionCreator {
         };
     }
 
+    /**
+     * Adds another name to a profile element (#270): a consultant typing it gets the element. A conflict (the name or
+     * an alias of another element of the type) is explained to the admin, other errors are already shown by the client.
+     */
+    public static AsyncAddNameEntityAlias(nameEntity: NameEntity, alias: string) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.addNameEntityAlias(nameEntity.id, alias.trim())
+                .then(() => dispatch(SuggestionAsyncActionCreator.requestAliases()))
+                .catch((error: PowerApiError) => {
+                    if (error.status === 409) {
+                        Alerts.showError(PowerLocalize.getFormatted('AdminClient.NameEntity.Alias.Conflict', alias.trim()));
+                    } else if (error.status === 400) {
+                        Alerts.showError(PowerLocalize.get('AdminClient.Info.SkillTree.Alias.Invalid'));
+                    }
+                });
+        };
+    }
+
+    /** The alias has to be entered twice (#181); entries saved under it keep the element */
+    @makeDeferrable(ActionType.AsyncDeleteNameEntityAlias,
+        (nameEntity: NameEntity, alias: string) => confirmDeleteByName('NameEntityAlias', alias, nameEntity.name))
+    public static AsyncDeleteNameEntityAlias(nameEntity: NameEntity, alias: string) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.deleteNameEntityAlias(nameEntity.id, alias)
+                .then(() => dispatch(SuggestionAsyncActionCreator.requestAliases()))
+                .catch(console.error);
+        };
+    }
+
     /** The dialog with the list of unused elements is the question */
     public static AsyncDeleteUnusedNameEntities(type: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {

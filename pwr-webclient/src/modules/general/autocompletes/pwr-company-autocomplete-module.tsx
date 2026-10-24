@@ -3,9 +3,12 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {PwrAutoComplete} from '../pwr-auto-complete';
+import {NameEntityAlias} from '../../../model/NameEntityAlias';
+import {NameEntityType} from '../../../reducers/profile-new/profile/model/NameEntityType';
 
 interface PwrCompanyAutocompleteProps {
     companies: Array<string>;
+    aliases: Array<NameEntityAlias>;
 }
 
 interface PwrCompanyAutocompleteLocalProps {
@@ -42,7 +45,8 @@ class PwrCompanyAutocompleteModule extends React.Component<PwrCompanyAutocomplet
 
     static mapStateToProps(state: ApplicationState, localProps: PwrCompanyAutocompleteLocalProps): PwrCompanyAutocompleteProps {
         return {
-            companies: state.suggestionStore.allCompanies.map(value => value.name)
+            companies: state.suggestionStore.allCompanies.map(value => value.name),
+            aliases: state.suggestionStore.allAliases.filter(alias => alias.type === NameEntityType.COMPANY)
         };
     }
 

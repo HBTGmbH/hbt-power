@@ -56,6 +56,12 @@ export interface PwrAutoCompleteProps {
      */
     suggestionHint?(suggestion: string): string | null | undefined;
 
+    /**
+     * Further names of the entries of data (#270): an entry is suggested when one of its aliases matches too, with the
+     * alias as hint (unless suggestionHint is given)
+     */
+    aliases?: Array<{ name: string, currentName: string }>;
+
     onAdd?(item: string);
 
     onRemove?(item: string);
@@ -82,9 +88,31 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
     dataFilteredBy = (value: string) => {
         if (this.props.disableFiltering) {
             return this.props.data;
-        } else {
-            return filter(this.props.data, value, StringUtils.filterFuzzy);
         }
+        const filtered = filter(this.props.data, value, StringUtils.filterFuzzy);
+        const byAlias = this.matchingAliases(value)
+            .map(alias => alias.currentName)
+            .filter(name => this.props.data.indexOf(name) >= 0 && filtered.indexOf(name) < 0);
+        return [...filtered, ...byAlias.filter((name, index) => byAlias.indexOf(name) === index)];
+    };
+
+    private matchingAliases = (value: string) => {
+        if (!this.props.aliases || !value) {
+            return [];
+        }
+        return this.props.aliases.filter(alias => StringUtils.filterFuzzy(value, alias.name));
+    };
+
+    /**
+     * The alias by which the entry was found, unless the name contains the search text; matching the name only fuzzily
+     * ("mbk" in "Musterbank eG") is no reason to leave out the alias "MBK"
+     */
+    private aliasHint = (suggestion: string, query: string): string | undefined => {
+        if (!this.props.aliases || !query || suggestion.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+            return undefined;
+        }
+        const alias = this.matchingAliases(query).find(alias => alias.currentName === suggestion);
+        return alias ? alias.name : undefined;
     };
 
     handleSuggestionsFetchRequested = ({value}) => {
@@ -176,7 +204,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         if (suggestion === query && this.props.data.indexOf(suggestion) < 0) {
             return null;
         }
-        const hint = this.props.suggestionHint ? this.props.suggestionHint(suggestion) : null;
+        const hint = this.props.suggestionHint ? this.props.suggestionHint(suggestion) : this.aliasHint(suggestion, query);
         return (
             <MenuItem selected={isHighlighted} component="div">
                 <div>

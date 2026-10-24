@@ -24,9 +24,11 @@ import {PwrFormActions} from '../../general/pwr-form-actions';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
 import {LocalDate, today} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
+import {NameEntityAlias} from '../../../model/NameEntityAlias';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
+    aliases: Array<NameEntityAlias>;
     degrees: Array<EducationDegree>;
 
     langLevel: Array<LanguageLevel>;
@@ -86,6 +88,8 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
 
         return {
             suggestions: suggestionNames,
+            // The entry types are named like the types of the profile elements
+            aliases: state.suggestionStore.allAliases.filter(alias => alias.type === localProps.type),
             langLevel: langLevel,
             degrees: degrees,
             initials: initials
@@ -180,6 +184,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
                                 id={'id'}
                                 data={this.props.suggestions}
+                                aliases={this.props.aliases}
                                 searchTerm={this.state.searchText}
                                 onSearchChange={(value) => this.setState({searchText: value})}
                             />

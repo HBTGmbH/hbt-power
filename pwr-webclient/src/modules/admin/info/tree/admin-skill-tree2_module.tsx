@@ -402,7 +402,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
             <PwrFormSection title={PowerLocalize.get('AdminClient.Info.SkillTree.Alias.Title')}>
                 <AliasList
                     key={selectedSkill.id()}
-                    skillName={selectedSkill.qualifier()}
+                    name={selectedSkill.qualifier()}
                     aliases={selectedSkill.aliases()}
                     onAliasAdd={alias => this.props.addSkillAlias(selectedSkill.id(), alias)}
                     onAliasDelete={alias => this.props.deleteSkillAlias(selectedSkill.id(), alias, selectedSkill.qualifier())}

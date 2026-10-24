@@ -27,6 +27,9 @@ import {PwrButton} from '../../../general/pwr-button';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
 import {NameEntityChangeDialog, UnusedNameEntitiesDialog} from './name-entity-dialogs';
 import {PwrUsageCount, USAGE_COLUMN_WIDTH} from '../../../general/pwr-usage-count';
+import {NameEntityAlias} from '../../../../model/NameEntityAlias';
+import {PwrFormSection} from '../../../general/pwr-form-section';
+import {AliasList} from '../../../general/skill/alias-list_module';
 
 interface NameEntityOverviewProps {
     sectors: Array<NameEntity>;
@@ -41,6 +44,7 @@ interface NameEntityOverviewProps {
     currentlyUsedSkillNames: Array<string>;
     nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>;
     consultantNames: Record<string, ConsultantName>;
+    aliases: Array<NameEntityAlias>;
 }
 
 type NameEntityOverviewLocalProps = RouteComponentProps;
@@ -60,6 +64,10 @@ interface NameEntityOverviewDispatch {
     requestNameEntityUsageInfo(nameEntity: NameEntity, type: ProfileElementType): void;
 
     deleteNameEntity(nameEntity: NameEntity, users: Array<string>): void;
+
+    addAlias(nameEntity: NameEntity, alias: string): void;
+
+    deleteAlias(nameEntity: NameEntity, alias: string): void;
 }
 
 /**
@@ -228,6 +236,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
             currentlyUsedSkillNames: state.suggestionStore.allSkills,
             nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo,
             consultantNames: state.consultantNames.names,
+            aliases: state.suggestionStore.allAliases,
         };
     }
 
@@ -236,7 +245,9 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
             requestAllNameEntities: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities()),
             requestNameEntityUsageInfo: (nameEntity, type) => dispatch(StatisticsActionCreator.AsyncRequestNameEntityUsageInfo(nameEntity, type)),
             requestCurrentlyUsedSkills: () => dispatch(SuggestionAsyncActionCreator.requestAllSkills()),
-            deleteNameEntity: (nameEntity, users) => dispatch(AdminActionCreator.AsyncDeleteNameEntity(nameEntity, users))
+            deleteNameEntity: (nameEntity, users) => dispatch(AdminActionCreator.AsyncDeleteNameEntity(nameEntity, users)),
+            addAlias: (nameEntity, alias) => dispatch(AdminActionCreator.AsyncAddNameEntityAlias(nameEntity, alias)),
+            deleteAlias: (nameEntity, alias) => dispatch(AdminActionCreator.AsyncDeleteNameEntityAlias(nameEntity, alias)),
         };
     }
 
@@ -275,7 +286,26 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     private renderInfoBox = (selected: NameEntity | undefined) => {
         const usageInfo = selected && this.props.nameEntityUsageInfo.get(selected);
         return <ProfileElementInfo name={selected && displayName(selected)} usedBy={usageInfo && usageInfo.toArray()}
-                                   action={selected && this.renderActions(selected)}/>;
+                                   action={selected && this.renderActions(selected)}>
+            {selected && this.renderAliases(selected)}
+        </ProfileElementInfo>;
+    };
+
+    /** Further names a consultant can type for the element, former names among them (#270) */
+    private renderAliases = (selected: NameEntity) => {
+        const aliases = this.props.aliases
+            .filter(alias => alias.type === selected.type && alias.currentName === selected.name)
+            .map(alias => alias.name);
+        return <PwrFormSection title={PowerLocalize.get('AdminClient.NameEntity.Alias.Title')}>
+            <Typography variant="body2" color="textSecondary">
+                {PowerLocalize.get('AdminClient.NameEntity.Alias.Help')}
+            </Typography>
+            <AliasList key={selected.id}
+                       name={displayName(selected)}
+                       aliases={Immutable.List(aliases)}
+                       onAliasAdd={alias => this.props.addAlias(selected, alias)}
+                       onAliasDelete={alias => this.props.deleteAlias(selected, alias)}/>
+        </PwrFormSection>;
     };
 
     private renderDialogs(selected: NameEntity | undefined) {

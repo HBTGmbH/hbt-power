@@ -106,6 +106,60 @@ public class NameEntityAdminService {
     }
 
     /**
+     * The aliases of the element, sorted (#270): further names that stand for it, the former names from renaming and
+     * merging as well as the ones an admin added. A consultant typing one gets the element.
+     */
+    @Transactional(readOnly = true)
+    public List<String> findAliases(Long id) {
+        NameEntity nameEntity = require(id);
+        return formerNameRepository.findAllByNameEntity(nameEntity).stream()
+                .map(NameEntityFormerName::getName)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Adds an alias to the element (#270), e.g. <code>DB</code> for <code>Deutsche Bahn AG</code>. Names compare
+     * ignoring case and spaces at the ends (#207, #215): 400 for a blank one, 409 if it is the name of another element
+     * of the type or an alias of one; the name of the element itself or one of its aliases changes nothing.
+     */
+    public List<String> addAlias(Long id, String alias) {
+        NameEntity nameEntity = require(id);
+        String name = requireName(alias);
+        findOtherOfType(nameEntity, name).ifPresent(other -> {
+            throw new WebApplicationException(HttpStatus.CONFLICT,
+                    "'" + other.getName() + "' (" + other.getId() + ") has the name " + name);
+        });
+        findAliasOfOther(nameEntity, name).ifPresent(other -> {
+            throw new WebApplicationException(HttpStatus.CONFLICT,
+                    name + " is an alias of '" + other.getNameEntity().getName() + "' (" + other.getNameEntity().getId() + ")");
+        });
+        boolean known = nameEntity.getName().trim().equalsIgnoreCase(name)
+                || formerNameRepository.findAllByNameEntity(nameEntity).stream()
+                .anyMatch(formerName -> formerName.getName().equalsIgnoreCase(name));
+        if (!known) {
+            log.info("Adding alias '" + name + "' to " + nameEntity);
+            addFormerName(nameEntity, name);
+        }
+        return findAliases(id);
+    }
+
+    /**
+     * Removes an alias of the element, ignoring case (#270); entries saved under it keep the element
+     */
+    public List<String> deleteAlias(Long id, String alias) {
+        NameEntity nameEntity = require(id);
+        String name = requireName(alias);
+        formerNameRepository.findAllByNameEntity(nameEntity).stream()
+                .filter(formerName -> formerName.getName().equalsIgnoreCase(name))
+                .forEach(formerName -> {
+                    log.info("Removing alias '" + formerName.getName() + "' of " + nameEntity);
+                    formerNameRepository.delete(formerName);
+                });
+        return findAliases(id);
+    }
+
+    /**
      * Renames the element. 409 if another element of the type has the name, ignoring case and spaces at the ends
      * (#207, #215): that is a merge, which the admin decides. Changing only the case of the same element is a rename.
      */
@@ -115,6 +169,11 @@ public class NameEntityAdminService {
         findOtherOfType(nameEntity, newName).ifPresent(other -> {
             throw new WebApplicationException(HttpStatus.CONFLICT,
                     "'" + other.getName() + "' (" + other.getId() + ") already has the name " + newName);
+        });
+        // An alias of another element stays with it (#270); an own alias may become the name
+        findAliasOfOther(nameEntity, newName).ifPresent(alias -> {
+            throw new WebApplicationException(HttpStatus.CONFLICT,
+                    newName + " is an alias of '" + alias.getNameEntity().getName() + "' (" + alias.getNameEntity().getId() + ")");
         });
         String oldName = nameEntity.getName();
         if (oldName.equals(newName)) {
@@ -251,6 +310,13 @@ public class NameEntityAdminService {
         return nameEntityRepository.findAllByType(nameEntity.getType()).stream()
                 .filter(other -> !other.getId().equals(nameEntity.getId()))
                 .filter(other -> other.getName() != null && other.getName().trim().equalsIgnoreCase(name))
+                .findAny();
+    }
+
+    private Optional<NameEntityFormerName> findAliasOfOther(NameEntity nameEntity, String name) {
+        return formerNameRepository.findAllByType(nameEntity.getType()).stream()
+                .filter(formerName -> !formerName.getNameEntity().getId().equals(nameEntity.getId()))
+                .filter(formerName -> formerName.getName().equalsIgnoreCase(name))
                 .findAny();
     }
 

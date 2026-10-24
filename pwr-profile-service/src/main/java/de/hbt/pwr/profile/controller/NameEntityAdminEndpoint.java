@@ -40,6 +40,34 @@ public class NameEntityAdminEndpoint {
         return nameEntityAdminService.countUsers(type);
     }
 
+    /**
+     * The aliases of the element, its former names included (#270)
+     */
+    @GetMapping("/{id}/aliases")
+    public List<String> findAliases(@PathVariable("id") Long id) {
+        return nameEntityAdminService.findAliases(id);
+    }
+
+    @ApiOperation(value = "Adds an alias to the profile element",
+            notes = "Another name that stands for the element (#270); the aliases afterwards")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "The alias is blank"),
+            @ApiResponse(code = 404, message = "No such element"),
+            @ApiResponse(code = 409, message = "The name of another element of the type or an alias of one")
+    })
+    @PostMapping("/{id}/aliases")
+    public List<String> addAlias(@PathVariable("id") Long id, @RequestParam("alias") String alias) {
+        return nameEntityAdminService.addAlias(id, alias);
+    }
+
+    /**
+     * Removes an alias; the aliases afterwards (#270)
+     */
+    @DeleteMapping("/{id}/aliases")
+    public List<String> deleteAlias(@PathVariable("id") Long id, @RequestParam("alias") String alias) {
+        return nameEntityAdminService.deleteAlias(id, alias);
+    }
+
     @GetMapping("/{id}/users")
     public List<String> findUsers(@PathVariable("id") Long id) {
         return nameEntityAdminService.findUsers(id);

@@ -1,4 +1,5 @@
 import {NameEntity} from '../profile-new/profile/model/NameEntity';
+import {NameEntityAlias} from '../../model/NameEntityAlias';
 
 export interface SuggestionStore {
     allTrainings: Array<NameEntity>;
@@ -11,6 +12,8 @@ export interface SuggestionStore {
     allCompanies: Array<NameEntity>;
     allProjectRoles: Array<NameEntity>;
     allSkills: Array<string>;
+    /** The aliases of all profile elements, for the suggestions and the admin area (#270) */
+    allAliases: Array<NameEntityAlias>;
 }
 
 export const emptyStore: SuggestionStore = {
@@ -23,5 +26,6 @@ export const emptyStore: SuggestionStore = {
     allCareers: [],
     allCompanies: [],
     allProjectRoles: [],
-    allSkills: []
+    allSkills: [],
+    allAliases: [],
 };

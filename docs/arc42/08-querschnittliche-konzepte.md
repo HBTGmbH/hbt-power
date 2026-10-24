@@ -120,6 +120,7 @@ flowchart LR
 - **Profil-Elemente:**
   - Sie werden ohne Leerzeichen an den Enden gespeichert; ein leerer Name wird abgelehnt (#215).
   - Umbenannte und zusammengeführte Elemente behalten ihre früheren Namen. Wer einen früheren Namen tippt, bekommt das Element (#227).
+  - Admins pflegen weitere Namen als Aliase (`DB` für `Deutsche Bahn AG`, #270). Sie gelten wie frühere Namen, sind innerhalb des Typs eindeutig, und die Eingabefelder schlagen das Element mit dem Alias als Hinweis vor.
 - **Namen von Kollegen:** Der Kurzname (`Kai B.`) berechnet der Profile Service (`ConsultantShortNames`, #216). Der Webclient zeigt ihn über `PwrConsultantName` mit dem vollen Namen im Tooltip.
 
 ## 8.6 Lokalisierung und Datum

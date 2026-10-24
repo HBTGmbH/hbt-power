@@ -1,5 +1,6 @@
 import {PowerHttpClient} from '../../../clients/PowerHttpClient';
 
+import {NameEntityAlias} from '../../../model/NameEntityAlias';
 import {NameEntity} from '../../profile-new/profile/model/NameEntity';
 import {Project} from '../../profile-new/profile/model/Project';
 import {ProfileSkill} from '../../profile-new/profile/model/ProfileSkill';
@@ -25,6 +26,11 @@ export class SuggestionServiceClient extends PowerHttpClient {
     private base(): string {
         return POWER_PROFILE_SERVICE_URL;
     }
+
+    /** The aliases of all profile elements (#270); quietly, the suggestions work without them */
+    public getAliases = (): Promise<Array<NameEntityAlias>> => {
+        return this.getQuietly(this.base() + '/suggestions/aliases');
+    };
 
     public getQualificationSuggestions = (): Promise<Array<NameEntity>> => {
         const url = this.base() + '/suggestions/qualifications';
