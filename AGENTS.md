@@ -15,7 +15,7 @@ cd pwr-<name>-service
 
 The wrappers in view-profile and edge download `maven-wrapper.jar` on first use (it is gitignored there). Keep `mvnw` executable in Git (`git update-index --chmod=+x`).
 
-Tests need no running infrastructure: the `test` profile uses in-memory H2, and `pwr-view-profile-service` starts an embedded Redis (`com.github.codemonstur:embedded-redis`, which ships binaries for macOS arm64/x64, Linux and Windows). Most tests are JUnit 4.
+Tests need no running infrastructure: the `test` profile uses in-memory H2, and `pwr-view-profile-service` starts an embedded Redis (`com.github.codemonstur:embedded-redis`, which ships binaries for macOS arm64/x64, Linux and Windows). Most tests are JUnit 4. In the statistics service, tests tagged `heap-limit` (`SimRankHeapLimitTest`, #292) run in a second surefire execution with `-Xmx64m`, so SimRank stays small; `-Dtest=` works for both.
 
 Webclient (`pwr-webclient`, CRA/react-scripts, TypeScript). Node version is pinned in `pwr-webclient/.nvmrc` (20, as in CI); npm 11 fails to install the dependencies. Env vars in npm scripts go through `cross-env` so they work on Windows:
 

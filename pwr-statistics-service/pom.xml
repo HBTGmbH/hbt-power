@@ -86,6 +86,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<excludedGroups>heap-limit</excludedGroups>
+					<!-- ./mvnw test -Dtest=SimRankHeapLimitTest runs it only in the execution below -->
+					<failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
 				</configuration>
 				<executions>
 					<execution>
