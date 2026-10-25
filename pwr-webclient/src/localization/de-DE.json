@@ -133,7 +133,7 @@
   "Profile.Skills.Dialog.Rating": "Bewertung",
   "Profile.Skills.Dialog.Versions": "Versionen",
   "Profile.Skills.Dialog.AddVersion": "Version hinzufügen",
-  "Profile.Skills.Dialog.Projects": "Einsatz in Projekten",
+  "Profile.Skills.Dialog.Projects": "Einsatz in Projekten ({0})",
   "Profile.Skills.Usage.Summary": "{0} · {1}",
   "Profile.Skills.Usage.None": "in keinem Projekt",
   "Profile.Skills.Usage.Current": "aktuell",

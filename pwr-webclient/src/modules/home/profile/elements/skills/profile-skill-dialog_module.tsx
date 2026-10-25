@@ -191,7 +191,7 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
                 {trimmedName && <PwrSpacer size="tight"/>}
             </>}
             {trimmedName && category()}
-            {usage && <PwrFormSection title={PowerLocalize.get('Profile.Skills.Dialog.Projects')}>
+            {usage && <PwrFormSection title={PowerLocalize.getFormatted('Profile.Skills.Dialog.Projects', usage.projects.length)}>
                 <PwrRow>
                     <Typography variant="body2">{formatSkillUsage(usage)}</Typography>
                     <PwrIconButton iconName={projectsShown ? 'expand_less' : 'expand_more'}
