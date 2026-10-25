@@ -35,6 +35,8 @@ const profileServiceClient = ProfileServiceClient.instance();
  */
 function afterNameEntityChange(dispatch: ThunkDispatch<any, any, any>) {
     dispatch(SuggestionAsyncActionCreator.requestAllNameEntities());
+    // A renamed or merged element has its old name as alias now (#270, #331)
+    dispatch(SuggestionAsyncActionCreator.requestAliases());
     dispatch(StatisticsActionCreator.ForgetNameEntityUsageInfo());
 }
 

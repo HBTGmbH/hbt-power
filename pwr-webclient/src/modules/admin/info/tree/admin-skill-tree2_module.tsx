@@ -68,6 +68,9 @@ interface AdminSkillTree2Dispatch {
 
     deleteSkillAlias(skillId: number, alias: string, skillName: string): void;
 
+    /** The alias becomes the name, the name an alias (#331): renaming in the tree and in all profiles (#228) */
+    promoteSkillAlias(skillName: string, alias: string): void;
+
     createCategory(parentId: number, qualifier: string): void;
 
     deleteCategory(categoryId: number, name: string, categoryCount: number, skillCount: number): void;
@@ -160,6 +163,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                 dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language, translation, skillName)),
             addSkillAlias: (skillId, alias) => dispatch(SkillActionCreator.AsyncAddSkillAlias(skillId, alias)),
             deleteSkillAlias: (skillId, alias, skillName) => dispatch(SkillActionCreator.AsyncDeleteSkillAlias(skillId, alias, skillName)),
+            promoteSkillAlias: (skillName, alias) => dispatch(AdminActionCreator.AsyncRenameSkill(skillName, alias)),
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
@@ -406,6 +410,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                     aliases={selectedSkill.aliases()}
                     onAliasAdd={alias => this.props.addSkillAlias(selectedSkill.id(), alias)}
                     onAliasDelete={alias => this.props.deleteSkillAlias(selectedSkill.id(), alias, selectedSkill.qualifier())}
+                    onAliasPromote={alias => this.props.promoteSkillAlias(selectedSkill.qualifier(), alias)}
                 />
             </PwrFormSection>
             <PwrFormSection title={PowerLocalize.get('AdminClient.Info.SkillTree.Category.Localizations')}>

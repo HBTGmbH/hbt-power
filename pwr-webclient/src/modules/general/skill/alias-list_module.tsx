@@ -1,11 +1,24 @@
 import * as React from 'react';
 import {useState} from 'react';
 import * as Immutable from 'immutable';
-import {List, ListItem, ListItemSecondaryAction, ListItemText, TextField, Typography} from '@material-ui/core';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    List,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+    TextField,
+    Typography
+} from '@material-ui/core';
 import {PwrSpacer} from '../pwr-spacer_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrIconButton} from '../pwr-icon-button';
 import {compareNames} from '../../../utils/Comparators';
+import {PwrConfirmActions} from '../pwr-form-actions';
 
 interface AliasListProps {
     /** Name of the skill or profile element the aliases belong to */
@@ -15,13 +28,23 @@ interface AliasListProps {
     onAliasAdd(alias: string): void;
 
     onAliasDelete(alias: string): void;
+
+    /** Makes the alias the name, the name an alias (#331); after a question, without it no button */
+    onAliasPromote?(alias: string): void;
 }
 
 /**
- * Shows the aliases (other spellings) of a skill or profile element (#270) and lets the admin add and remove them.
+ * Shows the aliases (other spellings) of a skill or profile element (#270) and lets the admin add and remove them,
+ * and make one of them the name (#331).
  */
 export const AliasList = (props: AliasListProps) => {
     const [newAlias, setNewAlias] = useState('');
+    const [promoting, setPromoting] = useState<string | null>(null);
+
+    const promote = () => {
+        props.onAliasPromote(promoting);
+        setPromoting(null);
+    };
 
     const canAdd = newAlias.trim().length > 0;
 
@@ -43,6 +66,11 @@ export const AliasList = (props: AliasListProps) => {
                 {sortedAliases.map(alias => <ListItem key={alias}>
                     <ListItemText primary={alias}/>
                     <ListItemSecondaryAction>
+                        {props.onAliasPromote && <PwrIconButton
+                            iconName={'upgrade'}
+                            tooltip={PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.Promote', alias)}
+                            onClick={() => setPromoting(alias)}
+                        />}
                         <PwrIconButton
                             iconName={'delete'}
                             tooltip={PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.Delete', alias)}
@@ -71,5 +99,17 @@ export const AliasList = (props: AliasListProps) => {
                 onClick={add}
             />
         </div>
+        <Dialog open={promoting !== null} onClose={() => setPromoting(null)} maxWidth={'sm'}>
+            <DialogTitle>{PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.Promote.Title', promoting || '')}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.Promote.Content', promoting || '', props.name)}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <PwrConfirmActions confirmText={PowerLocalize.get('AdminClient.Info.SkillTree.Alias.Promote.Action')}
+                                   onConfirm={promote} onReject={() => setPromoting(null)}/>
+            </DialogActions>
+        </Dialog>
     </div>;
 };
