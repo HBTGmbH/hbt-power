@@ -268,6 +268,7 @@ public class ViewProfileMergeService {
             if (category == null || category.getDisplaySkills() == null) {
                 continue;
             }
+            boolean standIn = isStandIn(category);
             List<Skill> skills = new ArrayList<>();
             for (Skill oldSkill : category.getDisplaySkills()) {
                 Optional<Skill> maybeNewSkill = newSkills.stream().filter(newSkill -> isNow(oldSkill, newSkill, lookup)).findFirst();
@@ -275,6 +276,12 @@ public class ViewProfileMergeService {
                     continue;
                 }
                 Skill newSkill = maybeNewSkill.get();
+                if (standIn) {
+                    // Shown as before, but placed below where the skill tree puts it now
+                    newSkill.setEnabled(isShown(oldSkill));
+                    takeVersionsShown(oldSkill, newSkill);
+                    continue;
+                }
                 if (placed.add(newSkill)) {
                     newSkill.setEnabled(isShown(oldSkill));
                     takeVersionsShown(oldSkill, newSkill);
@@ -312,6 +319,15 @@ public class ViewProfileMergeService {
                     placed.add(skill);
                 });
         return result;
+    }
+
+    /**
+     * The stand-in for skills the skill tree didn't know when the view profile was made
+     * ({@link de.hbt.pwr.view.client.skill.model.SkillServiceCategory#other()}, id -1), e.g. C++ before #330: nobody
+     * chose it, so its skills go where the skill tree puts them now
+     */
+    private static boolean isStandIn(Category category) {
+        return category.getId() != null && category.getId() == -1L;
     }
 
     private static List<Skill> displaySkillsOf(List<Category> displays) {
