@@ -6,6 +6,7 @@ import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.entries.Project;
 import de.hbt.pwr.view.model.entries.ProjectRole;
 import de.hbt.pwr.view.model.entries.Qualification;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -49,24 +51,39 @@ public class ViewProfileMergeService {
         this.profileServiceClient = profileServiceClient;
     }
 
-    public ViewProfile updateViewProfile(String oldId, String initials, ViewProfile.ViewProfileMergeOptions options) {
-        //1. get old ViewProfile (VP)
-        ViewProfile oldView = viewProfileRepository.findById(oldId).orElseThrow(() -> new ViewProfileNotFoundException(oldId));
-        // Only an own view profile is taken over into the new one (#255)
+    /**
+     * Updates the view profile with the current data of the profile (#332), in place: it keeps its id, name, note,
+     * creation date, language and settings, and gets what changed in the profile since, under the current names
+     */
+    public ViewProfile updateViewProfile(String id, String initials) {
+        ViewProfile oldView = viewProfileRepository.findById(id).orElseThrow(() -> new ViewProfileNotFoundException(id));
+        // Only an own view profile (#255)
         if (!ViewProfileOperationService.isOwner(oldView, initials)) {
-            throw new InvalidOwnerException(oldId, initials);
+            throw new InvalidOwnerException(id, initials);
         }
-
-        // 3. create new ViewProfile
-        ViewProfile newView = viewProfileCreatorService.createViewProfile(initials, options.name, options.viewDescription, "",
-                oldView.getLocalization());
-        return mergeViewProfiles(oldView, newView, options);
+        ViewProfileInfo oldInfo = oldView.getViewProfileInfo();
+        ViewProfile newView = viewProfileCreatorService.buildViewProfile(initials, oldInfo.getName(),
+                oldInfo.getViewDescription(), "", oldView.getLocalization());
+        return mergeViewProfiles(oldView, newView);
     }
 
-    ViewProfile mergeViewProfiles(ViewProfile oldView, ViewProfile newView, ViewProfile.ViewProfileMergeOptions options) {
-
-        newView.getViewProfileInfo().setName(options.name);
-        newView.getViewProfileInfo().setViewDescription(options.viewDescription);
+    /**
+     * The new data in the old view profile: under its id, with its name, note and creation date, and its settings
+     */
+    ViewProfile mergeViewProfiles(ViewProfile oldView, ViewProfile newView) {
+        newView.setId(oldView.getId());
+        if (oldView.getLocale() != null) {
+            newView.setLocale(oldView.getLocale());
+        }
+        ViewProfileInfo oldInfo = oldView.getViewProfileInfo();
+        ViewProfileInfo info = newView.getViewProfileInfo();
+        info.setName(oldInfo.getName());
+        info.setViewDescription(oldInfo.getViewDescription());
+        if (oldInfo.getCreationDate() != null) {
+            info.setCreationDate(oldInfo.getCreationDate());
+        }
+        // Updating counts as use (#289)
+        info.setLastUsed(LocalDate.now());
         // Settings of the view profile (#151, #174)
         newView.setShowSkillVersions(oldView.getShowSkillVersions());
         newView.setLocalization(oldView.getLocalization());
@@ -96,12 +113,7 @@ public class ViewProfileMergeService {
         // The old display categories and projects stay; their names come from the current localizations (#174)
         viewProfileLocalizationService.localize(newView);
 
-        if (!options.keepOld) {
-            // delete the old one
-            viewProfileRepository.delete(oldView);
-        }
-        newView = viewProfileRepository.save(newView);
-        return newView;
+        return viewProfileRepository.save(newView);
     }
 
     private List<Project> mergeProjects(List<Project> oldList, List<Project> newList, SkillTreeLookup lookup,

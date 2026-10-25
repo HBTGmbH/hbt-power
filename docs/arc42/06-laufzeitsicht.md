@@ -101,7 +101,7 @@ sequenceDiagram
     Note over W,V: Jede weitere Änderung (zeigen, sortieren, verschieben)<br/>ist ein PATCH – @ViewProfileAutoSave speichert danach.
 ```
 
-*Aktualisieren* (`POST /view/update/{kürzel}/{alteId}`) baut eine neue Momentaufnahme aus dem aktuellen Profil. Die Einstellungen der alten übernimmt es; umbenannte Elemente findet es über `GET /admin/name-entities/former-names` und den Skill-Baum (#230).
+*Aktualisieren* (`POST /view/update/{kürzel}/{id}`) baut die Momentaufnahme aus dem aktuellen Profil neu und speichert sie unter derselben ID, mit Name, Notiz, Erstellungsdatum und Sprache (#332); eine Kopie entsteht nicht. Die Einstellungen übernimmt es; umbenannte Elemente findet es über `GET /admin/name-entities/former-names` und den Skill-Baum (#230).
 
 ## 6.4 Dokument exportieren (DOCX)
 

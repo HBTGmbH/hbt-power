@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +46,6 @@ public class ViewProfileMergeServiceTest {
     private Language l2;
     private Project p1;
     private Project p2;
-    private ViewProfile.ViewProfileMergeOptions options;
     private ViewProfileRepository viewProfileRepository;
 
     private ViewProfile makeViewProfile() {
@@ -81,27 +81,59 @@ public class ViewProfileMergeServiceTest {
 
     private final SkillServiceClient skillServiceClient = mock(SkillServiceClient.class);
 
+    private final ViewProfileCreatorService viewProfileCreatorService = mock(ViewProfileCreatorService.class);
+
     private final ProfileServiceClient profileServiceClient = mock(ProfileServiceClient.class);
 
     @Before
     public void setUp() throws Exception {
         oldView = makeViewProfile();
-        options = new ViewProfile.ViewProfileMergeOptions();
-        options.name = "test";
-        options.viewDescription = "test description";
-        options.keepOld = true;
         viewProfileRepository = mock(ViewProfileRepository.class);
         when(viewProfileRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null, viewProfileLocalizationService,
-                skillServiceClient, profileServiceClient);
+        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, viewProfileCreatorService,
+                viewProfileLocalizationService, skillServiceClient, profileServiceClient);
     }
 
     @Test
     public void shouldOnlyTakeOverAnOwnViewProfile() {
         oldView.getViewProfileInfo().setOwnerInitials("xyz");
         when(viewProfileRepository.findById("old")).thenReturn(Optional.of(oldView));
-        assertThatThrownBy(() -> viewProfileMergeService.updateViewProfile("old", "tst", options))
+        assertThatThrownBy(() -> viewProfileMergeService.updateViewProfile("old", "tst"))
                 .isInstanceOf(InvalidOwnerException.class);
+    }
+
+    /**
+     * Updating changes the view profile itself (#332): its id, name, note, creation date and language stay, the data
+     * is the current one of the profile, and no second view profile comes up
+     */
+    @Test
+    public void updating_changesTheViewProfileInPlace() {
+        oldView.setId("old");
+        oldView.getViewProfileInfo().setOwnerInitials("tst");
+        oldView.getViewProfileInfo().setName("Für Kunde X");
+        oldView.getViewProfileInfo().setViewDescription("Notiz");
+        oldView.getViewProfileInfo().setCreationDate(LocalDate.of(2024, 3, 1));
+        oldView.setLocalization("eng");
+        when(viewProfileRepository.findById("old")).thenReturn(Optional.of(oldView));
+        ViewProfile fresh = new ViewProfile();
+        fresh.setId("fresh");
+        fresh.getViewProfileInfo().setName("Für Kunde X");
+        fresh.getViewProfileInfo().setCreationDate(LocalDate.now());
+        fresh.setDescription("Neuer Werbetext");
+        when(viewProfileCreatorService.buildViewProfile("tst", "Für Kunde X", "Notiz", "", "eng")).thenReturn(fresh);
+
+        ViewProfile updated = viewProfileMergeService.updateViewProfile("old", "tst");
+
+        assertThat(updated.getId()).isEqualTo("old");
+        assertThat(updated.getViewProfileInfo().getName()).isEqualTo("Für Kunde X");
+        assertThat(updated.getViewProfileInfo().getViewDescription()).isEqualTo("Notiz");
+        assertThat(updated.getViewProfileInfo().getCreationDate()).isEqualTo(LocalDate.of(2024, 3, 1));
+        assertThat(updated.getViewProfileInfo().getLastUsed()).isEqualTo(LocalDate.now());
+        assertThat(updated.getLocalization()).isEqualTo("eng");
+        assertThat(updated.getDescription()).isEqualTo("Neuer Werbetext");
+        verify(viewProfileRepository).save(updated);
+        verify(viewProfileRepository, never()).delete(any());
+        verify(viewProfileCreatorService, never()).createViewProfile(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -115,7 +147,7 @@ public class ViewProfileMergeServiceTest {
     @Test
     public void shouldKeepTheLanguageAndFillTheCurrentLocalizations() {
         oldView.setLocalization("deu");
-        ViewProfile newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, new ViewProfile(), options);
+        ViewProfile newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, new ViewProfile());
         assertThat(newViewProfile.getLocalization()).isEqualTo("deu");
         // The old display categories and projects stay, with their names from the current localizations (#174)
         verify(viewProfileLocalizationService).localize(newViewProfile);
@@ -124,7 +156,7 @@ public class ViewProfileMergeServiceTest {
     @Test
     public void shouldKeepHiddenSkillVersions() {
         oldView.setShowSkillVersions(false);
-        ViewProfile newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, new ViewProfile(), options);
+        ViewProfile newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, new ViewProfile());
         assertThat(newViewProfile.getShowSkillVersions()).isFalse();
     }
 
@@ -144,7 +176,7 @@ public class ViewProfileMergeServiceTest {
         newViewProfile.setLanguages(newLangs);
 
 
-        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile);
 
         assertThat(newViewProfile.getLanguages()).isNotNull();
         assertThat(newViewProfile.getLanguages()).contains(l1);
@@ -165,7 +197,7 @@ public class ViewProfileMergeServiceTest {
         newViewProfile.setProjects(newProjects);
 
 
-        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile);
 
         assertThat(newViewProfile.getProjects()).contains(p1);
         assertThat(newViewProfile.getProjects()).contains(p2);
@@ -194,7 +226,7 @@ public class ViewProfileMergeServiceTest {
         ViewProfile newViewProfile = new ViewProfile();
         newViewProfile.getProjects().add(newProject);
 
-        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile);
 
         assertThat(newViewProfile.getProjects().get(0).getSkills())
                 .extracting(Skill::getName, Skill::getEnabled)
@@ -208,7 +240,7 @@ public class ViewProfileMergeServiceTest {
         newViewProfile.getProjects().add(newProject);
         oldView.setProjects(new ArrayList<>());
 
-        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile);
 
         assertThat(newViewProfile.getProjects()).containsExactly(newProject);
     }
@@ -242,7 +274,7 @@ public class ViewProfileMergeServiceTest {
         oldView.getProjects().add(oldProject);
 
         // When merging
-        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile);
 
         // Should update the old project with new values
         Project updatedProject = newViewProfile.getProjects().iterator().next();
@@ -256,7 +288,7 @@ public class ViewProfileMergeServiceTest {
     }
 
     private ViewProfile merged(ViewProfile newView) {
-        return viewProfileMergeService.mergeViewProfiles(oldView, newView, options);
+        return viewProfileMergeService.mergeViewProfiles(oldView, newView);
     }
 
     private static Sector sector(String name, boolean enabled) {

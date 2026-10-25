@@ -65,6 +65,15 @@ public class ViewProfileCreatorService {
      */
     public ViewProfile createViewProfile(String initials, String name, String viewDescription, String localeStr,
                                          String localization) {
+        return viewProfileRepository.save(buildViewProfile(initials, name, viewDescription, localeStr, localization));
+    }
+
+    /**
+     * Like {@link #createViewProfile(String, String, String, String, String)}, but doesn't save: for updating a view
+     * profile with the current data of the profile (#332)
+     */
+    public ViewProfile buildViewProfile(String initials, String name, String viewDescription, String localeStr,
+                                        String localization) {
         Locale locale = (localeStr == null || localeStr.equals("")) ? Locale.GERMAN : Locale.forLanguageTag(localeStr);
 
         Profile profile;
@@ -75,11 +84,11 @@ public class ViewProfileCreatorService {
             // A RestClientException from the RestTemplate, or the profile service answering with an error
             throw new NoProfileAvailableException(initials);
         }
-        return createViewProfile(profile, initials, name, viewDescription, locale, localization);
+        return buildViewProfile(profile, initials, name, viewDescription, locale, localization);
     }
 
 
-    private ViewProfile createViewProfile(Profile profile, String initials, String name, String viewDescription, Locale locale,
+    private ViewProfile buildViewProfile(Profile profile, String initials, String name, String viewDescription, Locale locale,
                                           String localization) {
 
         ViewProfile result = new ViewProfile();
@@ -105,7 +114,6 @@ public class ViewProfileCreatorService {
         result.setLocalization(localization == null || localization.isBlank() ? null : localization.trim());
         viewProfileLocalizationService.localize(result);
         applyInitialSorting(result);
-        result = viewProfileRepository.save(result);
         return result;
     }
 

@@ -78,10 +78,4 @@ public class ViewProfile {
         /** Language of the skill and category names (#174), see {@link ViewProfile#getLocalization()} */
         public String localization;
     }
-
-    public static class ViewProfileMergeOptions {
-        public String viewDescription;
-        public String name;
-        public boolean keepOld;
-    }
 }
