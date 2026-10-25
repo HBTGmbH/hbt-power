@@ -111,7 +111,7 @@
   "Profile.Project.InternalNote": "Interner Vermerk",
   "Profile.Project.InternalNote.Present": "vorhanden",
   "Profile.Project.InternalNote.Empty": "leer",
-  "Profile.Project.InternalNote.Hint": "Nur intern: erscheint in keinem View-Profil und in keinem Export.",
+  "Profile.Project.InternalNote.Hint": "Nur intern: erscheint in keinem Export.",
   "Profile.Project.StartDate": "Start-Datum",
   "Profile.Project.EndDate": "End-Datum",
   "Profile.Project.ProjectRoles": "Projektrollen (max. 3)",
