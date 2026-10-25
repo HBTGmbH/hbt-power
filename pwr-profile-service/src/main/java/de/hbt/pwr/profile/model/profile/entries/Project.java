@@ -59,6 +59,13 @@ public class Project {
     private String description;
 
     /**
+     * Only for inside HBT (#336): never goes into a view profile, an export or the statistics. As long as the
+     * description, null if there is none.
+     */
+    @Column(length = HBTPowerConstants.PROJECT_DESCRIPTION_LENGTH)
+    private String internalNote;
+
+    /**
      * When the project was last saved; null for projects saved before #139
      */
     private LocalDateTime lastEdited;
@@ -79,6 +86,7 @@ public class Project {
 
     public Project copyNullId() {
         Project res = new Project(name, client, broker, this.projectRoles, skills, startDate, endDate, description);
+        res.setInternalNote(internalNote);
         res.setId(null);
         return res;
     }
@@ -153,6 +161,14 @@ public class Project {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getInternalNote() {
+        return internalNote;
+    }
+
+    public void setInternalNote(String internalNote) {
+        this.internalNote = internalNote;
     }
 
     public Set<Skill> getSkills() {

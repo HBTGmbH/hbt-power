@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static de.hbt.pwr.profile.model.HBTPowerConstants.PROJECT_DESCRIPTION_LENGTH;
+
 @Slf4j
 @Service
 public class ProfileEntryService {
@@ -252,6 +254,15 @@ public class ProfileEntryService {
         }
         requireInProfile(project.getId(), profile.getProjects(), Project::getId);
         Optional<Project> repoProject = project.getId() != null ? projectRepository.findById(project.getId()) : Optional.empty();
+
+        // An internal note of blanks is none; longer than the description can't be saved (#336)
+        if (project.getInternalNote() != null && project.getInternalNote().trim().isEmpty()) {
+            project.setInternalNote(null);
+        }
+        if (project.getInternalNote() != null && project.getInternalNote().length() > PROJECT_DESCRIPTION_LENGTH) {
+            throw new WebApplicationException(HttpStatus.BAD_REQUEST,
+                    "The internal note is longer than " + PROJECT_DESCRIPTION_LENGTH + " characters");
+        }
 
         // clean up data / relations; an emptied broker, client or role is none (#215)
         if (trimmedName(project.getBroker()) == null) {

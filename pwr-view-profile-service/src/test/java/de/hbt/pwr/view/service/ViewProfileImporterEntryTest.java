@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.*;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
@@ -381,6 +383,23 @@ public class ViewProfileImporterEntryTest {
         then(viewProfileSortService)
                 .should(times(1))
                 .sortSkillsInProjectByName(viewProfile, 0, true);
+    }
+
+    /**
+     * The internal note of a project (#336) stays in the profile service: reading the profile copes with it, and it
+     * goes into no view profile, so into no export either
+     */
+    @Test
+    public void theInternalNoteOfAProject_goesIntoNoViewProfile() throws Exception {
+        ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build();
+        ProfileProject project = mapper.readValue("{\"id\": 5, \"name\": \"Portal\", \"description\": \"Für den CV\", "
+                + "\"internalNote\": \"Nur intern: Ansprechpartner\", \"projectRoles\": [], \"skills\": []}", ProfileProject.class);
+        profileToReturn.getProjects().add(project);
+
+        invokeImport();
+
+        assertThat(viewProfile.getProjects()).extracting(Project::getDescription).containsExactly("Für den CV");
+        assertThat(mapper.writeValueAsString(viewProfile)).doesNotContain("Nur intern").doesNotContain("internalNote");
     }
 
     @Test(expected = NoProfileAvailableException.class)

@@ -92,6 +92,7 @@ flowchart LR
 - **Abgeleitete Daten:** Die Statistik hält eine Kopie und lädt sie stündlich und nach Massenänderungen neu ([6.5](06-laufzeitsicht.md#65-statistik-aktuell-halten)). Der Webclient verwirft danach seine zwischengespeicherten Nutzungsangaben.
 - **Nutzungszahlen der Profil-Elemente** (#271): Die Listen im Admin-Bereich zeigen je Element und je Skill, wie viele Berater es nutzen. Die Zahlen kommen aus der Datenbank des Profile Service (`GET /admin/name-entities/usage?type=`, `GET /admin/skills/usage`), gezählt wie „unbenutzte löschen“. Die Info-Box daneben nennt die Nutzer weiter aus der Kopie der Statistik. Nach Änderungen einzelner Profile kann sie bis zu einer Stunde hinter der Zahl in der Liste zurückliegen; nach Massenänderungen lädt die Statistik sofort neu.
 - **Momentaufnahmen:** View-Profile ändern sich nicht mit dem Profil. *Aktualisieren* übernimmt Änderungen bewusst (#230).
+- **Interner Vermerk** (#336): Eine Projektreferenz hat einen Vermerk nur für HBT. Er bleibt im Profile Service; View-Profile, Export und Statistik übernehmen ihn nicht, ihre Modelle kennen das Feld nicht. Im Projektformular ist er zugeklappt.
 
 ## 8.4 Kommunikation zwischen Services
 

@@ -34,6 +34,7 @@ import {ThunkDispatch} from 'redux-thunk';
 import {findSkillByName, PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
 import {LimitedTextField} from '../../../../general/limited-text-field-module';
 import {ProjectDescriptionHelp} from './project-description-help';
+import {ProjectInternalNote} from './project-internal-note';
 import {PROJECT_DESCRIPTION_LENGTH, PROJECT_NAME_LENGTH} from '../../../../../model/PwrConstants';
 
 interface ProjectProps {
@@ -134,6 +135,10 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     private setDescription = (description) => {
         const project = {...this.project(), description};
         this.props.updateEditingProject(project);
+    };
+
+    private setInternalNote = (internalNote: string) => {
+        this.props.updateEditingProject({...this.project(), internalNote});
     };
 
     private setEndDate = (endDate: LocalDate | null) => {
@@ -292,6 +297,12 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         multiLine
                         rows={4}
                     />
+                    <PwrSpacer size="tight"/>
+                    {/* Closed until opened (#336), again for every project */}
+                    <ProjectInternalNote key={this.project().id ?? 'new'}
+                                         value={this.project().internalNote}
+                                         disabled={this.isEditDisabled()}
+                                         onChange={this.setInternalNote}/>
                     <PwrSpacer/>
                     <Grid container spacing={2} justify={'flex-start'}>
                         <Grid item>

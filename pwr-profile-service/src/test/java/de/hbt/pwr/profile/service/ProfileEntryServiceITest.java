@@ -5,6 +5,7 @@ import de.hbt.pwr.profile.data.NameEntityRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.data.ProjectRepository;
 import de.hbt.pwr.profile.data.SkillRepository;
+import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -25,6 +27,7 @@ import java.util.HashSet;
 
 import static de.hbt.pwr.profile.model.profile.NameEntityType.COMPANY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.assertj.core.api.Assertions.tuple;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -140,6 +143,42 @@ public class ProfileEntryServiceITest extends AbstractIntegrationTest {
         profileEntryService.updateProject(project, p);
 
         assertThat(p.getProjects().size()).isEqualTo(1);
+    }
+
+    /** The internal note (#336) is saved, changed and emptied with the project; blanks are none */
+    @Test
+    public void theInternalNote_isSavedChangedAndEmptiedWithTheProject() {
+        Profile p = profileRepository.save(new Profile());
+        Project project = Project.builder().name("Portal").description("Für den CV").internalNote("Ansprechpartner: Frau X")
+                .projectRoles(new HashSet<>()).skills(new HashSet<>()).build();
+        Long id = profileEntryService.updateProject(project, p).getId();
+        projectRepository.flush();
+        assertThat(projectRepository.findById(id)).get().extracting(Project::getInternalNote).isEqualTo("Ansprechpartner: Frau X");
+
+        Project changed = projectRepository.findById(id).get();
+        changed.setInternalNote("Ansprechpartner: Herr Y");
+        profileEntryService.updateProject(changed, p);
+        projectRepository.flush();
+        assertThat(projectRepository.findById(id)).get().extracting(Project::getInternalNote).isEqualTo("Ansprechpartner: Herr Y");
+
+        Project emptied = projectRepository.findById(id).get();
+        emptied.setInternalNote("   ");
+        profileEntryService.updateProject(emptied, p);
+        projectRepository.flush();
+        assertThat(projectRepository.findById(id)).get().extracting(Project::getInternalNote).isNull();
+    }
+
+    @Test
+    public void anInternalNoteLongerThanTheDescription_isRejected() {
+        Profile p = profileRepository.save(new Profile());
+        Project project = Project.builder().name("Portal").internalNote("x".repeat(4001))
+                .projectRoles(new HashSet<>()).skills(new HashSet<>()).build();
+
+        WebApplicationException error = catchThrowableOfType(() -> profileEntryService.updateProject(project, p),
+                WebApplicationException.class);
+
+        assertThat(error.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(p.getProjects()).isEmpty();
     }
 
     @Test
