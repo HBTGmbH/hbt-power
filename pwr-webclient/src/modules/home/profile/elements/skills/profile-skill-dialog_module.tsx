@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography} from '@material-ui/core';
+import {Chip, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography} from '@material-ui/core';
 import {newProfileSkill, ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {APISkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill';
 import {APISkillCategory} from '../../../../../model/skill/SkillCategory';
@@ -14,12 +14,17 @@ import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {findSkillByName} from '../../../../../utils/Comparators';
 import {Alerts} from '../../../../../utils/Alerts';
+import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
+import {formatSkillUsage, skillUsage} from '../../../../../utils/SkillUsage';
+import {SkillProjectsTable} from './skill-projects-table';
 
 interface ProfileSkillDialogProps {
     /** The skill to edit; without one the dialog adds a new skill */
     skill?: ProfileSkill;
     /** The skills of the profile, so that adding one that exists is reported instead of overwriting it */
     profileSkills: Array<ProfileSkill>;
+    /** The saved projects of the profile, for the time the skill was used in them (#312) */
+    projects: Array<Project>;
 
     onSave(skill: ProfileSkill): void;
 
@@ -57,6 +62,7 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
     // undefined while unknown, null if the skill tree doesn't know the skill
     const [serviceSkill, setServiceSkill] = useState<APISkillServiceSkill | null | undefined>(undefined);
     const [saving, setSaving] = useState(false);
+    const [projectsShown, setProjectsShown] = useState(false);
 
     const trimmedName = name.trim();
 
@@ -172,6 +178,8 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
         return <Typography variant="body2" color="textSecondary">{text}</Typography>;
     };
 
+    const usage = adding ? undefined : skillUsage(props.skill.name, props.projects);
+
     // On the paper: onKeyDown on the dialog itself replaces the one of the modal, which closes it on Escape
     return <Dialog open onClose={props.onClose} PaperProps={{onKeyDown: handleKeyDown}} fullWidth maxWidth="sm"
                    TransitionProps={{onEntered: () => adding && document.getElementById(NAME_FIELD_ID + '_inputField')?.focus()}}>
@@ -183,6 +191,18 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
                 {trimmedName && <PwrSpacer size="tight"/>}
             </>}
             {trimmedName && category()}
+            {usage && <PwrFormSection title={PowerLocalize.getFormatted('Profile.Skills.Dialog.Projects', usage.projects.length)}>
+                <PwrRow>
+                    <Typography variant="body2">{formatSkillUsage(usage)}</Typography>
+                    <PwrIconButton iconName={projectsShown ? 'expand_less' : 'expand_more'}
+                                   tooltip={PowerLocalize.get(projectsShown ? 'Profile.Skills.Projects.Hide' : 'Profile.Skills.Projects.Show')}
+                                   disabled={usage.projects.length === 0} onClick={() => setProjectsShown(!projectsShown)}/>
+                </PwrRow>
+                <Collapse in={projectsShown}>
+                    <PwrSpacer size="tight"/>
+                    <SkillProjectsTable skillName={props.skill.name} usage={usage}/>
+                </Collapse>
+            </PwrFormSection>}
             <PwrFormSection title={PowerLocalize.get('Profile.Skills.Dialog.Rating')}>
                 <StarRating rating={rating} onRatingChange={setRating}/>
             </PwrFormSection>
