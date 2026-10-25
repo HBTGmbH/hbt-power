@@ -7,6 +7,10 @@ pwr:
     report: http://pwr-report-service:9005
     view-profile: http://pwr-view-profile-service:9008
     statistics: http://pwr-statistics-service:9007
+  security:
+    jwt:
+      # Environment variable PWR_SECURITY_JWT_AUDIENCES; the edge doesn't start without it (#324)
+      audiences: <client id>,<application id uri>
 spring:
   security:
     oauth2:
