@@ -28,6 +28,7 @@ sequenceDiagram
 
 - Danach führt die Startseite (`/start`, #263) Admins in die Beraterverwaltung und alle anderen gleich ins eigene Profil (#135). Ohne eigenes Profil oder Kürzel zeigt sie eine Meldung.
 - Läuft das Token ab, erneuert MSAL es still (`acquireTokenSilent`). Scheitert das, meldet der Webclient einmal automatisch neu an (#129).
+- Jeder API-Aufruf holt vorher ein Token (`OIDCService.getToken`) und wartet dafür, bis die Rückkehr vom Login verarbeitet ist. Ein Fehler dabei meldet nie ab (#311): Verlangt MSAL eine Anmeldung (Interaktion nötig, kein Konto), startet nach der Frage nach ungespeicherten Änderungen ein neuer Login; jeder andere Fehler lässt nur den Aufruf scheitern, mit Fehlermeldung. Abgemeldet wird nur über das Menü.
 - Profilbilder und Vorschauen lädt der Webclient mit Token als Blob und zeigt sie über eine Blob-URL. Ein `src` oder `iframe` direkt auf die API scheitert an der Edge, weil es kein Token mitschickt (#65, #67).
 
 ## 6.2 Einen Skill ins Profil eintragen
