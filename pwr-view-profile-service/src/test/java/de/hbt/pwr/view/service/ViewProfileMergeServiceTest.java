@@ -402,6 +402,32 @@ public class ViewProfileMergeServiceTest {
                 .containsExactly(tuple("1.28", false), tuple("1.29", true), tuple("1.30", true));
     }
 
+    /**
+     * A skill the skill tree didn't find when the view profile was made (C++ before #330) sat in the stand-in "Other"
+     * (id -1); updated, it goes into its category of the skill tree under the name of the tree, hidden as before
+     */
+    @Test
+    public void aSkillOfTheStandInOther_goesIntoItsCategoryOfTheSkillTree() {
+        when(skillServiceClient.getSkillByName("c++")).thenReturn(treeSkill("C++"));
+        Category standIn = new Category(-1L, "Other", true, true);
+        Skill.builder().name("c++").enabled(false).displayCategory(standIn).build();
+        Category oldLanguages = new Category(3L, "Programming Languages", true, true);
+        Skill.builder().name("Java").enabled(true).displayCategory(oldLanguages).build();
+        oldView.setDisplayCategories(new ArrayList<>(List.of(standIn, oldLanguages)));
+
+        Category newLanguages = new Category(3L, "Programming Languages", true, true);
+        Skill.builder().name("C++").enabled(true).displayCategory(newLanguages).build();
+        Skill.builder().name("Java").enabled(true).displayCategory(newLanguages).build();
+        ViewProfile newView = new ViewProfile();
+        newView.setDisplayCategories(new ArrayList<>(List.of(newLanguages)));
+
+        List<Category> categories = merged(newView).getDisplayCategories();
+
+        assertThat(categories).extracting(Category::getName).containsExactly("Programming Languages");
+        assertThat(categories.get(0).getDisplaySkills()).extracting(Skill::getName, Skill::getEnabled)
+                .containsExactly(tuple("Java", true), tuple("C++", false));
+    }
+
     @Test
     public void aNewProject_goesBehindTheOldOnes() {
         Project old1 = ViewProfileFixtures.validProject().toBuilder().id(1L).name("Eins").build();

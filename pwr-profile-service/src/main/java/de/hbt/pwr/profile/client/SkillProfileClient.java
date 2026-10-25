@@ -37,6 +37,18 @@ public class SkillProfileClient {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * The skill of the tree with this name or alias. The name is encoded completely (#330): a template in the URL
+     * leaves '+' as it is, and the skill service reads it as a space, so C++ wasn't found.
+     */
+    private URI byName(String name) {
+        return UriComponentsBuilder.fromHttpUrl(pwrSkillServiceUrl + "/skill/byName")
+                .queryParam("qualifier", "{qualifier}")
+                .encode()
+                .buildAndExpand(name)
+                .toUri();
+    }
+
     public SkillCategory updateAndGetCategory(String qualifier) {
         URI uri = UriComponentsBuilder.fromHttpUrl(pwrSkillServiceUrl + "/skill")
                 .queryParam("qualifier", "{qualifier}")
@@ -103,8 +115,7 @@ public class SkillProfileClient {
      */
     public String treeNameIgnoringCase(String name) {
         try {
-            JsonNode skill = restTemplate.getForObject(pwrSkillServiceUrl + "/skill/byName?qualifier={qualifier}",
-                    JsonNode.class, name);
+            JsonNode skill = restTemplate.getForObject(byName(name), JsonNode.class);
             String treeName = skill == null ? null : skill.path("qualifier").asText(null);
             return treeName != null && treeName.equalsIgnoreCase(name) ? treeName : name;
         } catch (RuntimeException e) {
@@ -164,7 +175,7 @@ public class SkillProfileClient {
     public JsonNode requireTreeSkill(String name) {
         JsonNode skill;
         try {
-            skill = restTemplate.getForObject(pwrSkillServiceUrl + "/skill/byName?qualifier={qualifier}", JsonNode.class, name);
+            skill = restTemplate.getForObject(byName(name), JsonNode.class);
         } catch (HttpStatusCodeException e) {
             throw new WebApplicationException(e.getStatusCode(), messageOf(e));
         }

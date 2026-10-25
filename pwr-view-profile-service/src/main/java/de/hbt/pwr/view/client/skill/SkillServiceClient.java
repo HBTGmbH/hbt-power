@@ -2,12 +2,11 @@ package de.hbt.pwr.view.client.skill;
 
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
+import java.net.URI;
 
 import static de.hbt.pwr.view.client.skill.model.SkillServiceCategory.other;
 
@@ -23,13 +22,17 @@ public class SkillServiceClient {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * The skill of the tree with this name or alias, null if there is none. The name is encoded completely (#330): a
+     * template in the URL leaves '+' as it is, and the skill service reads it as a space, so C++ wasn't found.
+     */
     public SkillServiceSkill getSkillByName(String qualifier) {
-        return restTemplate.exchange(pwrSkillServiceUrl + "/skill/byName?qualifier={qualifier}",
-                HttpMethod.GET,
-                new HttpEntity<>(null),
-                SkillServiceSkill.class,
-                Map.of("qualifier", qualifier)
-        ).getBody();
+        URI uri = UriComponentsBuilder.fromHttpUrl(pwrSkillServiceUrl + "/skill/byName")
+                .queryParam("qualifier", "{qualifier}")
+                .encode()
+                .buildAndExpand(qualifier)
+                .toUri();
+        return restTemplate.getForObject(uri, SkillServiceSkill.class);
     }
 
     public SkillServiceSkill getDefaultSkillByName(String name) {

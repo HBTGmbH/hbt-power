@@ -125,6 +125,17 @@ public class SkillProfileClientTest {
         assertThat(client.treeNameIgnoringCase(".net")).isEqualTo(".NET");
     }
 
+    /** A '+' left as it is arrives as a space, and the skill isn't found (#330) */
+    @Test
+    public void treeNameIgnoringCase_encodesTheNameCompletely() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=c%2B%2B"))
+                .andExpect(method(GET))
+                .andRespond(withSuccess("{\"id\": 9, \"qualifier\": \"C++\"}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.treeNameIgnoringCase("c++")).isEqualTo("C++");
+        server.verify();
+    }
+
     @Test
     public void treeNameIgnoringCase_keepsAnAlias() {
         server.expect(requestTo("http://skill/skill/byName?qualifier=.NET%20Core"))
@@ -180,6 +191,15 @@ public class SkillProfileClientTest {
                 .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \"Kubernetes\", \"aliases\": [\"K8S\"]}", MediaType.APPLICATION_JSON));
 
         assertThat(client.requireTreeSkill("kubernetes").path("id").asLong()).isEqualTo(7);
+    }
+
+    @Test
+    public void requireTreeSkill_encodesTheNameCompletely() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=Notepad%2B%2B"))
+                .andRespond(withSuccess("{\"id\": 4, \"qualifier\": \"Notepad++\", \"aliases\": []}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.requireTreeSkill("Notepad++").path("id").asLong()).isEqualTo(4);
+        server.verify();
     }
 
     @Test
