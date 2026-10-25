@@ -15,9 +15,13 @@ import Badge from '@material-ui/core/Badge';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrButton} from '../../../../general/pwr-button';
 import {ProfileSkillDialog} from './profile-skill-dialog_module';
+import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
+import {formatSkillUsage, skillUsage} from '../../../../../utils/SkillUsage';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
+    /** The saved projects, for the time each skill was used in them (#312) */
+    projects: Array<Project>;
     initials: string;
 }
 
@@ -49,6 +53,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
     static mapStateToProps(state: ApplicationState): ProfileSkillsProps {
         return {
             skills: state.profileStore.profile.skills.sort(PROFILE_SKILLS_BY_NAME),
+            projects: state.profileStore.profile.projects,
             initials: state.profileStore.consultant.initials
         };
     }
@@ -116,6 +121,9 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <StarRating rating={skill.rating}
                                 onRatingChange={newRating => this.handleChangeRating(newRating, skill)}/>
+                    <Typography variant="caption" color="textSecondary" component="div">
+                        {formatSkillUsage(skillUsage(skill.name, this.props.projects))}
+                    </Typography>
                 </Grid>
             </Grid>
         </Grid>;
@@ -153,6 +161,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
         return (<Grid container spacing={1}>
             {(this.state.addOpen || this.state.selectedSkill) &&
             <ProfileSkillDialog skill={this.state.selectedSkill} profileSkills={this.props.skills}
+                                projects={this.props.projects}
                                 onSave={this.handleSaveSkill} onClose={this.closeDialog}/>}
             <Grid item container xs={12} justify="flex-end">
                 <PwrButton color="primary" variant="contained" text={PowerLocalize.get('Profile.Skills.Dialog.AddTitle')}

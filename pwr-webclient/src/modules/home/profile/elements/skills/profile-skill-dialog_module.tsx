@@ -14,12 +14,17 @@ import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {findSkillByName} from '../../../../../utils/Comparators';
 import {Alerts} from '../../../../../utils/Alerts';
+import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
+import {formatSkillUsage, skillUsage} from '../../../../../utils/SkillUsage';
+import {SkillProjectsDialog} from './skill-projects-dialog';
 
 interface ProfileSkillDialogProps {
     /** The skill to edit; without one the dialog adds a new skill */
     skill?: ProfileSkill;
     /** The skills of the profile, so that adding one that exists is reported instead of overwriting it */
     profileSkills: Array<ProfileSkill>;
+    /** The saved projects of the profile, for the time the skill was used in them (#312) */
+    projects: Array<Project>;
 
     onSave(skill: ProfileSkill): void;
 
@@ -57,6 +62,7 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
     // undefined while unknown, null if the skill tree doesn't know the skill
     const [serviceSkill, setServiceSkill] = useState<APISkillServiceSkill | null | undefined>(undefined);
     const [saving, setSaving] = useState(false);
+    const [projectsOpen, setProjectsOpen] = useState(false);
 
     const trimmedName = name.trim();
 
@@ -172,8 +178,11 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
         return <Typography variant="body2" color="textSecondary">{text}</Typography>;
     };
 
+    const usage = adding ? undefined : skillUsage(props.skill.name, props.projects);
+
     // On the paper: onKeyDown on the dialog itself replaces the one of the modal, which closes it on Escape
-    return <Dialog open onClose={props.onClose} PaperProps={{onKeyDown: handleKeyDown}} fullWidth maxWidth="sm"
+    return <>
+    <Dialog open onClose={props.onClose} PaperProps={{onKeyDown: handleKeyDown}} fullWidth maxWidth="sm"
                    TransitionProps={{onEntered: () => adding && document.getElementById(NAME_FIELD_ID + '_inputField')?.focus()}}>
         <DialogTitle>{adding ? PowerLocalize.get('Profile.Skills.Dialog.AddTitle') : props.skill.name}</DialogTitle>
         <DialogContent>
@@ -183,6 +192,13 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
                 {trimmedName && <PwrSpacer size="tight"/>}
             </>}
             {trimmedName && category()}
+            {usage && <PwrFormSection title={PowerLocalize.get('Profile.Skills.Dialog.Projects')}>
+                <PwrRow>
+                    <Typography variant="body2">{formatSkillUsage(usage)}</Typography>
+                    <PwrIconButton iconName="work_outline" tooltip={PowerLocalize.get('Profile.Skills.Projects.Show')}
+                                   disabled={usage.projects.length === 0} onClick={() => setProjectsOpen(true)}/>
+                </PwrRow>
+            </PwrFormSection>}
             <PwrFormSection title={PowerLocalize.get('Profile.Skills.Dialog.Rating')}>
                 <StarRating rating={rating} onRatingChange={setRating}/>
             </PwrFormSection>
@@ -211,5 +227,9 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
                             saveIcon={adding ? 'add' : undefined}
                             saveDisabled={!canSave} onSave={save} onCancel={props.onClose}/>
         </DialogActions>
-    </Dialog>;
+    </Dialog>
+    {/* Beside the dialog, not in it: keys in the list must not reach the dialog's Enter handler */}
+    {projectsOpen && <SkillProjectsDialog skillName={props.skill.name} usage={usage}
+                                          onClose={() => setProjectsOpen(false)}/>}
+    </>;
 };
