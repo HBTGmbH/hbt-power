@@ -139,6 +139,9 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         return this.props.skillHierarchies.get(this.selectedSkillName());
     };
 
+    /** How many consultants use the skill; undefined while the numbers are loading */
+    private usageOf = (name: string): number | undefined => this.state.usage ? this.state.usage[name] : undefined;
+
     render() {
         let res;
         if (this.state.filterString !== '') {
@@ -168,13 +171,19 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                                         selectedKey={selectedSkillName}
                                         onSelect={this.handleSkillSelect}
                                         emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
-                                        columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: name => name},
+                                        // The names come sorted; sortable like the other profile elements (#346)
+                                        initialSort={{column: 0, ascending: true}}
+                                        columns={[{
+                                            header: PowerLocalize.get('AdminClient.Overview.Name'),
+                                            render: name => name,
+                                            sortValue: name => name
+                                        },
                                             {
                                                 header: PowerLocalize.get('AdminClient.Overview.Users'),
                                                 width: USAGE_COLUMN_WIDTH,
-                                        alignRight: true,
-                                                render: name => <PwrUsageCount
-                                                    count={this.state.usage ? this.state.usage[name] : undefined}/>
+                                                alignRight: true,
+                                                render: name => <PwrUsageCount count={this.usageOf(name)}/>,
+                                                sortValue: this.usageOf
                                             }]}/>}
                     info={<UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
                                             usedBy={usedBy ? usedBy.toArray() : undefined}
