@@ -203,7 +203,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         const skills = immutableUnshift(this.toProjectSkill(skillName), this.project().skills);
         this.setState({skillSearchValue: ''});
         this.props.updateEditingProject({...this.project(), skills});
-        Alerts.showSuccess(PowerLocalize.getFormatted("Profile.Project.SkillAdded", skillName));
     };
 
     /**

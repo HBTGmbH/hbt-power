@@ -25,7 +25,7 @@ HBT Power ist 2016 als Web-Anwendung mit dem Spring-Cloud-Netflix-Stack entstand
 |---|---|
 | Korrekte, konsistente Daten | Ein Besitzer je Datenbestand; Namen normalisiert auf den Skill-Baum; Löschen in fester Reihenfolge; Housekeeping; Statistik nach Massenänderungen neu geladen |
 | Sicherheit und Datenschutz | Ein einziger Eingang mit Tokenprüfung; Identität nur aus den Headern der Edge; Admin-Pfade getrennt; Binärdaten nur mit Token |
-| Bedienbarkeit | Gemeinsame Komponenten und Regeln für Formulare, Löschen und Navigation; Änderungen ohne Ladeüberlagerung (`patchInBackground`) |
+| Bedienbarkeit | Gemeinsame Komponenten und Regeln für Formulare, Löschen und Navigation; Änderungen ohne Ladeüberlagerung, der Reihe nach je Eintrag (`saveInOrder`, #320) |
 | Wartbarkeit | Kleine, getrennt baubare Teile; Regeln in `AGENTS.md`; CI und Definition of Done; Commit als Stand |
 | Qualität der Dokumente | Eine Vorlage für Export und Vorschau; Hausschrift eingebettet, mit Ersatz Gewicht für Gewicht |
 

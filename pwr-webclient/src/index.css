@@ -290,14 +290,6 @@ body {
     height: 80px;
 }
 
-.refresh-indicator {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-}
-
 .admin-app-bar-spacer {
     margin-top: 70px;
 }
@@ -668,17 +660,17 @@ label.pwr-category-level-label {
     }
 }
 
-/* Saving in the background (#149): a thin bar along the lower edge of the header, shown after 300 ms */
-.pwr-view-profile-saving {
+/* Requests running (#320, PwrRequestProgress): a thin bar along the lower edge of the app bar, shown after 300 ms */
+.pwr-request-progress {
     position: absolute !important;
     left: 0;
     right: 0;
     bottom: 0;
     opacity: 0;
-    animation: pwr-view-profile-saving-show 0s linear 300ms forwards;
+    animation: pwr-request-progress-show 0s linear 300ms forwards;
 }
 
-@keyframes pwr-view-profile-saving-show {
+@keyframes pwr-request-progress-show {
     to {
         opacity: 1;
     }

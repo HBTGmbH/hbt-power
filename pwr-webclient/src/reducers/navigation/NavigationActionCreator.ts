@@ -1,6 +1,5 @@
 import {ActionType} from '../ActionType';
 import {Paths} from '../../Paths';
-import {Alerts} from '../../utils/Alerts';
 import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
 import {AbstractAction} from '../BaseActions';
 import {ThunkDispatch} from 'redux-thunk';
@@ -28,13 +27,6 @@ export interface SetCurrentLocationAction extends AbstractAction {
 }
 
 
-export function success<T>(msg: string) {
-  return (response: T) => {
-    Alerts.showSuccess(msg);
-    return response;
-  };
-}
-
 export function navigate(to: string, dispatch: ThunkDispatch<any, any, any>): void {
   PWR_HISTORY.push(to);
   dispatch(NavigationActionCreator.SetCurrentLocation(to));
@@ -49,11 +41,6 @@ export function navigateReplacing(to: string, dispatch: ThunkDispatch<any, any, 
 }
 
 export const NavigationActionCreator = {
-  showSuccess: (msg: string) => Alerts.showSuccess(msg),
-  success: (msg: string) => (response: any) => {
-    Alerts.showSuccess(msg);
-    return response;
-  },
   SetCurrentLocation: (location: string): SetCurrentLocationAction => ({
     type: ActionType.SetCurrentLocation,
     currentLocation: location

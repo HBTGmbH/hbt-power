@@ -183,7 +183,6 @@ export class AdminActionCreator {
                 .then(_ => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
                 // A new first name can change the short names of others (#216)
                 .then(() => dispatch(loadConsultantNames()))
-                .then(() => Alerts.showSuccess('Created consultant ' + consultantInfo.initials()))
                 .catch(console.error);
         };
     }
@@ -194,7 +193,6 @@ export class AdminActionCreator {
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
                 .then(() => dispatch(loadConsultantNames()))
-                .then(_ => Alerts.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
                 .catch(console.error);
         };
     }

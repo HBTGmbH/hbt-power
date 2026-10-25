@@ -27,7 +27,6 @@ export class ConsultantClient extends PowerHttpClient {
 
     public getConsultant(initials: string): Promise<Consultant> {
         const url = this.base() + '/consultants/' + initials;
-        this.beginRequest();
         return this.get(url);
     }
 
@@ -36,7 +35,6 @@ export class ConsultantClient extends PowerHttpClient {
      */
     public findConsultant(initials: string): Promise<Consultant | null> {
         const url = this.base() + '/consultants/' + encodeURIComponent(initials);
-        this.beginRequest();
         return this.getOrNull(url);
     }
 }

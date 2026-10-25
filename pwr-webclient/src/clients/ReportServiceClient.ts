@@ -29,12 +29,11 @@ export class ReportServiceClient extends PowerHttpClient {
 
     public getReportDataForUser(initials: string): Promise<ReportData[]> {
         const url = this.base() + '/report/' + initials;
-        this.beginRequest();
         return this.get(url);
     }
 
     /**
-     * Like getReportDataForUser, but without loading spinner and error alert: for polling while a report is created
+     * Like getReportDataForUser, but without error alert: for polling while a report is created
      */
     public pollReportDataForUser(initials: string): Promise<ReportData[]> {
         return this.getQuietly(this.base() + '/report/' + initials);
@@ -42,7 +41,6 @@ export class ReportServiceClient extends PowerHttpClient {
 
     public getReport(id): Promise<any> {
         const url = this.base() + '/report/file/' + id;
-        this.beginRequest();
         return this.get(url, {responseType: 'arraybuffer'});
     }
 
@@ -52,7 +50,7 @@ export class ReportServiceClient extends PowerHttpClient {
     }
 
     /**
-     * The housekeeping checks of the service (#242), without loading spinner and error alert: the housekeeping page
+     * The housekeeping checks of the service (#242), without error alert: the housekeeping page
      * shows a service that does not answer next to the others
      */
     public getHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
@@ -67,14 +65,12 @@ export class ReportServiceClient extends PowerHttpClient {
     /** Deletes what the check of old data finds now; the answer says how many */
     public cleanOldHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/old/' + encodeURIComponent(check);
-        this.beginRequest();
         return this.delete(url);
     };
 
     /** Deletes what the check finds now; the answer says how many */
     public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);
-        this.beginRequest();
         return this.delete(url);
     };
 }

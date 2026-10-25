@@ -31,7 +31,6 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     
     public getConsultant = (initials: string): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + initials;
-        this.beginRequest();
         return this.get(url);
     };
      */
@@ -43,37 +42,31 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     public getParentCategories(initials: string, viewProfileId: string, skillName: string): Promise<Map<number, ViewCategory>> {
         const url = this.base() + '/' + encodeURIComponent(initials) + '/view/' + encodeURIComponent(viewProfileId)
             + '/parent/' + encodeURIComponent(skillName);
-        this.beginRequest();
         return this.get(url);
     }
 
     public createChangedViewProfile(initials: string, oldId: string, body: any): Promise<ViewProfile> {
         const url = this.base() + '/view/update/' + initials + '/' + oldId;
-        this.beginRequest();
         return this.post(url, body);
     }
 
     public getViewProfile(initials: string, id: string): Promise<ViewProfile> {
         const url = this.base() + '/view/' + initials + '/' + id;
-        this.beginRequest();
         return this.get(url);
     }
 
     public getViewProfileIds(initials: string): Promise<Array<string>> {
         const url = this.base() + '/view/' + initials;
-        this.beginRequest();
         return this.get(url);
     }
 
     public postViewProfile(initials: string, body: any): Promise<ViewProfile> {
         const url = this.base() + '/view/' + initials;
-        this.beginRequest();
         return this.post(url, body);
     }
 
     public deleteViewProfile(initials: string, id: string) { // result ignored
         const url = this.base() + '/view/' + initials + '/' + id;
-        this.beginRequest();
         return this.delete(url);
     }
 
@@ -81,81 +74,79 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.base() + '/' + initials + '/view/' + id + '/';
     }
 
-    // Editing a view profile (move, show/hide, sort, display category, description): without the loading overlay
+    // Editing a view profile (move, show/hide, sort, display category, description): one after the other per view profile (#320, ViewProfileActionCreator)
     public patchMoveEntry(initials: string, id: string, movableEntry: string, sourceIndex: number, targetIndex: number): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + movableEntry + '/position/' + sourceIndex + '/' + targetIndex;
-        return this.patchInBackground(url);
+        return this.patch(url);
     }
 
     public patchMoveNestedEntry(initials: string, id: string, container: string, containerIndex: number, movableEntry: string, sourceIndex: number, targetIndex: number): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + container + '/' + containerIndex + '/' + movableEntry + '/position/' + sourceIndex + '/' + targetIndex;
-        return this.patchInBackground(url);
+        return this.patch(url);
     }
 
     public patchToggleEntry(initials: string, id: string, toggleableEntry: string, index: number, isEnabled: boolean): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + toggleableEntry + '/' + index + '/visibility/' + isEnabled;
-        return this.patchInBackground(url);
+        return this.patch(url);
     }
 
     public patchToggleNestedEntry(initials: string, id: string, container: string, containerIndex: number, toggleableEntry: string, index: number, isEnabled: boolean): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + container + '/' + containerIndex + '/' + toggleableEntry + '/' + index + '/visibility/' + isEnabled;
-        return this.patchInBackground(url);
+        return this.patch(url);
     }
 
     public patchSortEntry(initials: string, id: string, entryType: SortableEntryType, field: SortableEntryField, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + SortableEntryType[entryType] + '/' + field + '/order';
-        return this.patchInBackground(url, null, config);
+        return this.patch(url, null, config);
     }
 
     public patchToggleSkill(initials: string, id: string, isEnabled: boolean, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/visibility/' + isEnabled;
-        return this.patchInBackground(url, null, config);
+        return this.patch(url, null, config);
     }
 
     public patchSetDisplayCategory(initials: string, id: string, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/display-category';
-        return this.patchInBackground(url, null, config);
+        return this.patch(url, null, config);
     }
 
     public patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number,
                                 entryType: SortableEntryType, field: SortableEntryField, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + container + '/' + containerIndex + '/' + SortableEntryType[entryType] + '/' + field + '/order';
-        return this.patchInBackground(url, null, config);
+        return this.patch(url, null, config);
     }
 
     public patchToggleVersion(initials: string, id: string, skillName: string, versionName: string, isEnabled: boolean, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/visibility/version/' + isEnabled;
-        return this.patchInBackground(url, null, config);
+        return this.patch(url, null, config);
     }
 
     /** Where the skills of a display category can move to, with the number that fit (#171) */
     public getMoveTargets(initials: string, id: string, displayCategoryIndex: number): Promise<Array<DisplayCategoryTarget>> {
         const url = this.patchBase(initials, id) + 'DISPLAY_CATEGORY/' + displayCategoryIndex + '/targets';
-        this.beginRequest();
         return this.get(url);
     }
 
     /** Moves the skills of a display category that fit into the target category (#171) */
     public patchMoveAllSkills(initials: string, id: string, displayCategoryIndex: number, targetId: number): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'DISPLAY_CATEGORY/' + displayCategoryIndex + '/move';
-        return this.patchInBackground(url, null, {params: {'target-id': targetId}});
+        return this.patch(url, null, {params: {'target-id': targetId}});
     }
 
     /** Language of the skill and category names (#174), null for the names of the skill tree */
     public patchLocalization(initials: string, id: string, language: string | null): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'localization';
-        return this.patchInBackground(url, null, {params: language ? {language: language} : {}});
+        return this.patch(url, null, {params: language ? {language: language} : {}});
     }
 
     /** Versions of all skills on or off (#151); the choice per version stays */
     public patchShowSkillVersions(initials: string, id: string, show: boolean): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/versions/' + show;
-        return this.patchInBackground(url);
+        return this.patch(url);
     }
 
     public postReport(initials: string, viewProfileId: string, templateId: string) { // result ignored
         const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/' + templateId + '/report';
-        this.beginRequest();
         return this.post(url);
     }
 
@@ -166,7 +157,6 @@ export class ViewProfileServiceClient extends PowerHttpClient {
      */
     public getReportPreview(initials: string, viewProfileId: string, templateId: string): Promise<Blob> {
         const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/' + templateId + '/preview';
-        this.beginRequest();
         return this.getExpecting<Blob>(url, [422], {responseType: 'blob'})
             .then(blob => new Blob([blob], {type: 'application/pdf'}));
     }
@@ -176,16 +166,16 @@ export class ViewProfileServiceClient extends PowerHttpClient {
      */
     public patchInfo(initials: string, viewProfileId: string, name: string, viewDescription: string): Promise<ViewProfile> {
         const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/info';
-        return this.patchInBackground(url, {name, viewDescription});
+        return this.patch(url, {name, viewDescription});
     }
 
     public patchDescription(initials: string, viewProfileId: string, description: string, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, viewProfileId) + 'DESCRIPTION';
-        return this.patchInBackground(url, description, config);
+        return this.patch(url, description, config);
     }
 
     /**
-     * The housekeeping checks of the service (#242), without loading spinner and error alert: the housekeeping page
+     * The housekeeping checks of the service (#242), without error alert: the housekeeping page
      * shows a service that does not answer next to the others
      */
     public getHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
@@ -200,14 +190,12 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     /** Deletes what the check of old data finds now; the answer says how many */
     public cleanOldHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/old/' + encodeURIComponent(check);
-        this.beginRequest();
         return this.delete(url);
     };
 
     /** Deletes what the check finds now; the answer says how many */
     public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);
-        this.beginRequest();
         return this.delete(url);
     };
 }

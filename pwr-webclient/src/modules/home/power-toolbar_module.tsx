@@ -20,6 +20,7 @@ import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {matchPath, withRouter} from 'react-router-dom';
 import {ProfileStore} from '../../reducers/profile-new/ProfileStore';
 import {projectsUrl} from './profile/elements/project/project-url-sync';
+import {PwrRequestProgress} from '../general/pwr-request-progress';
 
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
@@ -369,6 +370,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             </IconButton>
                         </Tooltip>
                     </Toolbar>
+                    <PwrRequestProgress/>
                 </AppBar>
             </div>
         );

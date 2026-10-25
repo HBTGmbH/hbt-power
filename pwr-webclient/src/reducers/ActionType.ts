@@ -111,8 +111,7 @@ export enum ActionType {
     ClearParentCategories = '[ViewProfile] ClearParentCategories',
 
     // == Cross Cutting
-    SetRequestPending = '[Cross Cutting] SetRequestPending',
-    ChangeBackgroundRequests = '[Cross Cutting] ChangeBackgroundRequests',
+    ChangePendingRequests = '[Cross Cutting] ChangePendingRequests',
     SetLoginStatus = '[Cross Cutting] Set Login Status',
     SetLoginError = '[Cross Cutting] Set Login Error',
 

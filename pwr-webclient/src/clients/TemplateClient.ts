@@ -25,7 +25,6 @@ export class TemplateClient extends PowerHttpClient {
 
     public getAllTemplates(): Promise<Array<string>> {
         const url = this.base() + '/template/';
-        this.beginRequest();
         return this.get(url);
     }
 
@@ -34,7 +33,6 @@ export class TemplateClient extends PowerHttpClient {
      */
     public uploadAsTemplate(formData: any, config: AxiosRequestConfig): Promise<Template> {
         const url = this.base() + '/admin/template/';
-        this.beginRequest();
         return this.post(url, formData, config);
     }
 
@@ -43,13 +41,11 @@ export class TemplateClient extends PowerHttpClient {
      */
     public deleteTemplate(id: string) {
         const url = this.base() + '/admin/template/' + id;
-        this.beginRequest();
         return this.delete(url);
     }
 
     public getTemplateById(id: string): Promise<Template> {
         const url = this.base() + '/template/' + id;
-        this.beginRequest();
         return this.get(url);
     }
 
@@ -59,7 +55,6 @@ export class TemplateClient extends PowerHttpClient {
      */
     public changeTemplate(template: Template) {
         const url = this.base() + '/admin/template/' + template.id;
-        this.beginRequest();
         return this.post(url, {name: template.name, description: template.description});
     }
 }

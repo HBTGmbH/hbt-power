@@ -1,6 +1,5 @@
 import * as redux from 'redux';
 import {ApplicationState} from '../../reducerIndex';
-import {success} from '../../navigation/NavigationActionCreator';
 import {Language} from './model/Language';
 import {Profile} from './model/Profile';
 import {ProfileEntry} from './model/ProfileEntry';
@@ -14,7 +13,7 @@ import {FurtherTraining} from './model/FurtherTraining';
 import {Education} from './model/Education';
 import {ProfileUpdateServiceClient} from './client/ProfileUpdateServiceClient';
 import {projectDeleteAction, projectLoadAction, projectUpdateSuccessAction} from './actions/ProjectActions';
-import {Alerts} from '../../../utils/Alerts';
+import {saveInOrder} from '../../../utils/SaveQueue';
 import {
     baseProfileLoadAction,
     entryDeleteAction,
@@ -33,13 +32,10 @@ import {ThunkDispatch} from 'redux-thunk';
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 
-const handleError = (error: any) => {
-    if (error && error.silent) {
-        return;
-    }
-    Alerts.showError(error.status + ' -- ' + error.message);
-    console.error(error);
-};
+const skillQueue = (initials: string, skillId: number) => 'profile-skill/' + initials + '/' + skillId;
+
+/** The client has shown the error, and the state stays as it was (#320) */
+const handleError = (error: any) => console.error(error);
 
 export class ProfileDataAsyncActionCreator {
 
@@ -58,7 +54,6 @@ export class ProfileDataAsyncActionCreator {
             const initials = getState().profileStore.consultant.initials;
             profileUpdateServiceClient.saveDescription(initials, description)
                 .then(profile => dispatch(baseProfileLoadAction(profile)))
-                .then(ignored => Alerts.showLocalizedSuccess('Action.SaveDescription.Success'))
                 .catch(handleError);
         };
     }
@@ -100,7 +95,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveLanguage(initials: string, entity: Language) {
         return (dispatch: redux.Dispatch<AbstractAction>) => {
             profileUpdateServiceClient.saveLanguage(initials, entity).then(value => {
-                    Alerts.showSuccess('Sprache: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.LANGUAGE as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -129,7 +123,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveQualification(initials: string, entity: Qualification) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.saveQualification(initials, entity).then(value => {
-                    Alerts.showSuccess('Qualifikation: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.QUALIFICATION as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -159,7 +152,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveSector(initials: string, entity: IndustrialSector) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.saveSector(initials, entity).then(value => {
-                    Alerts.showSuccess('Branche: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.SECTOR as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -190,7 +182,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveKeySkill(initials: string, entity: SpecialField) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.saveSpecialField(initials, entity).then(value => {
-                    Alerts.showSuccess('Spezialgebiet: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.SPECIAL_FIELD as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -220,7 +211,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveCareer(initials: string, entity: Career) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.saveCareer(initials, entity).then(value => {
-                    Alerts.showSuccess('Werdegang: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.CAREER as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -251,7 +241,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveTraining(initials: string, entity: FurtherTraining) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.saveTraining(initials, entity).then(value => {
-                    Alerts.showSuccess('Weiterbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.TRAINING as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -282,7 +271,6 @@ export class ProfileDataAsyncActionCreator {
     public static saveEducation(initials: string, entity: Education) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.saveEducation(initials, entity).then(value => {
-                    Alerts.showSuccess('Ausbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.EDUCATION as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -309,12 +297,40 @@ export class ProfileDataAsyncActionCreator {
     }
 
     // --------------------------- ---------------------- Skill ---------------------- ----------------------------//
+    /**
+     * A new skill, or one changed in the dialog. Changes of an existing skill go to the server one after the other
+     * (#320), like its rating.
+     */
     public static saveProfileSkill(initials: string, entity: ProfileSkill) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.saveProfileSkill(initials, entity)
-                .then(value => dispatch(skillUpdateAction(value)))
-                .then(success(`Skill ${entity.name} has been saved.`))
-                .catch(error => handleError(error));
+            const save = () => profileUpdateServiceClient.saveProfileSkill(initials, entity)
+                .then(value => dispatch(skillUpdateAction(value)));
+            if (entity.id) {
+                saveInOrder(skillQueue(initials, entity.id), null, save);
+            } else {
+                save().catch(error => handleError(error));
+            }
+        };
+    }
+
+    /**
+     * The rating, saved right away by a click on the stars: one change after the other per skill, and of several
+     * clicks while one is being saved only the last is sent, so the server and the page end at the last click (#320).
+     * The skill is taken from the state when its turn comes, so it carries what the change before saved.
+     *
+     * @param onSettled once this rating, or a later one that replaced it, is answered, successfully or not
+     */
+    public static saveProfileSkillRating(initials: string, skillId: number, rating: number, onSettled: () => void) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+            saveInOrder(skillQueue(initials, skillId), 'rating', () => {
+                const skill = getState().profileStore.profile.skills.find(s => s.id === skillId);
+                if (!skill || getState().profileStore.consultant.initials !== initials) {
+                    // Deleted, or another profile opened, meanwhile
+                    return Promise.resolve();
+                }
+                return profileUpdateServiceClient.saveProfileSkill(initials, {...skill, rating})
+                    .then(value => dispatch(skillUpdateAction(value)));
+            }, onSettled);
         };
     }
 
@@ -323,7 +339,6 @@ export class ProfileDataAsyncActionCreator {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.deleteProfileSkill(initials, skill.id)
                 .then(() => dispatch(skillDeleteAction(skill.id)))
-                .then(success(`Skill ${skill.name} has been deleted.`))
                 .catch(error => handleError(error));
         };
     }
@@ -346,7 +361,6 @@ export class ProfileDataAsyncActionCreator {
                 .then(project => {
                     dispatch(projectUpdateSuccessAction(project));
                     dispatch(ProfileDataAsyncActionCreator.loadProfileSkills(initials));
-                    Alerts.showSuccess('Project: ' + project.name + ' saved.');
                 })
                 .catch(error => handleError(error));
         };

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {PowerToolbar} from './power-toolbar_module';
-import {ProfileLoadingSpinner} from './profile/profile-loading-spinner_module';
 import {Route, useParams} from 'react-router-dom';
 import {ViewProfileOverview} from './view/view-profile-overview_module';
 import {ConsultantSkillSearch} from '../general/search/consultant-skill-search_module.';
@@ -49,6 +48,5 @@ export const PowerClient = () => {
             <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
             <Route path={Paths.USER_REPORTS} component={ReportHistory}/>
         </div>
-        <ProfileLoadingSpinner/>
     </div>;
 }
