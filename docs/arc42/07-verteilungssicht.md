@@ -48,7 +48,7 @@ flowchart TB
 |---|---|---|
 | **Ingress** (`jonasal/nginx-certbot`) | TLS, `/` → Webclient, `/api/` → Edge (`/api` wird entfernt) | Er löst die Container-Namen laufend über den DNS von Docker auf (`resolver`, `upstream … resolve`). Das ist die Lehre aus dem Ausfall vom 2026-10-20 ([Kapitel 11](11-risiken-und-technische-schulden.md)). |
 | **pwr-webclient** | nginx mit den statischen Dateien | `configure_api.sh` setzt beim Start die Service-URLs und die IDs der Anmeldung in `config.js` ein. |
-| **pwr-edge-service** | Tokenprüfung, Routing | Der Issuer kommt aus einer Umgebungsvariablen. |
+| **pwr-edge-service** | Tokenprüfung, Routing | Issuer und erlaubte Audiences (`PWR_SECURITY_JWT_AUDIENCES`, #324) kommen aus Umgebungsvariablen. Ohne Audience startet die Edge nicht. |
 | **Profile, Skill, Report** | Fachliche Services mit MariaDB | Zugangsdaten und `DB_HIBERNATE_DDL_AUTO=update` kommen aus Umgebungsvariablen ([ADR-08](09-architekturentscheidungen.md#adr-08-schema-mit-hibernate-ddl-auto-update-ohne-migrationswerkzeug)). |
 | **View-Profile, Statistics** | Fachliche Services mit Redis | Sie nutzen eine Redis-Instanz mit getrennten logischen Datenbanken. |
 | **pwr-skill-service** | | Lucene-Index im Volume `lucene-data`, bei jedem Start neu aufgebaut |

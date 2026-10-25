@@ -24,7 +24,7 @@ flowchart LR
 ```
 
 - **Anmeldung:** Der Webclient meldet über MSAL (OIDC, Redirect) an Entra ID an. Jeder Aufruf trägt das Access-Token als `Authorization: Bearer` (`PowerHttpClient`).
-- **Nur die Edge prüft.** Sie validiert das JWT über den Issuer. Die Rollen kommen aus dem Claim `roles` ohne Präfix.
+- **Nur die Edge prüft.** Sie validiert das JWT: Signatur (Schlüssel vom Issuer), Issuer, Gültigkeit und Audience. Angenommen werden nur Tokens für die API von Power, deren `aud` einen der Werte aus `pwr.security.jwt.audiences` nennt, Client-ID oder App-ID-URI je nach Token-Version (`AudienceValidator`, #324). Ohne diese Property startet die Edge nicht. Die Rollen kommen aus dem Claim `roles` ohne Präfix.
   - Vorher weist sie jeden nicht normalisierten Pfad mit `400` ab (`NormalizedPathFilter`, #260): Segmente `.` und `..`, `//`, `;`, kodierte `/`, `\` oder `%` und unnötig kodierte Zeichen wie `%2e`. Die Services normalisieren den Pfad selbst; sonst könnte ein Pfad, den die Edge nicht als `/admin` erkennt, beim Service auf einem Admin-Endpunkt landen.
   - Erste Regel: `/pwr-<service>/admin/**` verlangt `Power.Admin`.
   - Danach: alles andere verlangt `Power.User` oder `Power.Admin`.
