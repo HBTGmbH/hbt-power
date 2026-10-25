@@ -40,6 +40,7 @@ export class Paths {
     public static readonly USER_PROFILE_PROJECTS = CONFIG.APP_PATH + '/app/:initials/profile/projects';
     public static readonly USER_PROFILE_NEW_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/new';
     public static readonly USER_PROFILE_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId/:slug?';
+    /** Only for old links: there is no edit mode any more (#338), they lead to the project */
     public static readonly USER_PROFILE_PROJECT_EDIT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId/:slug?/edit';
     public static readonly USER_PROFILE_SKILLS = CONFIG.APP_PATH + '/app/:initials/profile/skills';
     public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/:initials/reports';

@@ -9,7 +9,8 @@ import {PROJECT_DESCRIPTION_LENGTH} from '../../../../../model/PwrConstants';
 
 interface ProjectInternalNoteProps {
     value: string | null | undefined;
-    disabled: boolean;
+    /** Read only; the project form has no read mode (#338) */
+    disabled?: boolean;
 
     onChange(internalNote: string): void;
 }

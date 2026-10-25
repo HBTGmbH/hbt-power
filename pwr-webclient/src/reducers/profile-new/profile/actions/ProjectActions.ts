@@ -24,10 +24,6 @@ export interface SelectProjectAction extends AbstractAction {
     value: number;
 }
 
-export interface EditSelectedProjectAction extends AbstractAction {
-    type: ActionType.EditSelectedProject;
-}
-
 export interface CancelEditSelectedProjectAction extends AbstractAction {
     type: ActionType.CancelEditSelectedProject;
 }
@@ -70,12 +66,6 @@ export function setEditingProjectAction(project: Project): SetEditingProjectActi
     return {
         project: project,
         type: ActionType.SetEditingProject
-    };
-}
-
-export function editSelectedProjectAction(): EditSelectedProjectAction {
-    return {
-        type: ActionType.EditSelectedProject
     };
 }
 

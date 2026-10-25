@@ -111,11 +111,9 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             return handleSelectProject(selectedIndex, cancelEditMode(store));
         }
         case ActionType.SetEditingProject: {
+            // No read mode (#338): every change starts editing, which keeps it over reloads until saved or discarded
             const editedProject = (action as SetEditingProjectAction).project;
-            return {...store, selectedProject: editedProject};
-        }
-        case ActionType.EditSelectedProject: {
-            return handleSetEditMode(store);
+            return {...store, selectedProject: editedProject, isProjectEditing: true};
         }
         case ActionType.CancelEditSelectedProject: {
             if (store.selectedProject.id === null) {
