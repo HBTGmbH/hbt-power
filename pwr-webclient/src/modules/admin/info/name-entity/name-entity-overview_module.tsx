@@ -74,6 +74,9 @@ interface NameEntityOverviewDispatch {
 
     deleteAlias(nameEntity: NameEntity, alias: string): void;
 
+    /** The alias becomes the name, the name an alias (#331): renaming to the alias */
+    promoteAlias(nameEntity: NameEntity, alias: string, onDone: (renamed: NameEntity) => void): void;
+
     setLocalization(nameEntity: NameEntity, language: string, qualifier: string,
                     onDone: (localizations: Array<NameEntityLocalization>) => void): void;
 
@@ -275,6 +278,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
             deleteNameEntity: (nameEntity, users) => dispatch(AdminActionCreator.AsyncDeleteNameEntity(nameEntity, users)),
             addAlias: (nameEntity, alias) => dispatch(AdminActionCreator.AsyncAddNameEntityAlias(nameEntity, alias)),
             deleteAlias: (nameEntity, alias) => dispatch(AdminActionCreator.AsyncDeleteNameEntityAlias(nameEntity, alias)),
+            promoteAlias: (nameEntity, alias, onDone) => dispatch(AdminActionCreator.AsyncRenameNameEntity(nameEntity, alias, onDone)),
             setLocalization: (nameEntity, language, qualifier, onDone) =>
                 dispatch(AdminActionCreator.AsyncSetNameEntityLocalization(nameEntity, language, qualifier, onDone)),
             deleteLocalization: (nameEntity, language, translation, onDone) =>
@@ -336,7 +340,8 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                        name={displayName(selected)}
                        aliases={Immutable.List(aliases)}
                        onAliasAdd={alias => this.props.addAlias(selected, alias)}
-                       onAliasDelete={alias => this.props.deleteAlias(selected, alias)}/>
+                       onAliasDelete={alias => this.props.deleteAlias(selected, alias)}
+                       onAliasPromote={alias => this.props.promoteAlias(selected, alias, this.handleSelectEntity)}/>
         </PwrFormSection>;
     };
 
