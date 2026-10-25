@@ -193,13 +193,15 @@ export class PowerHttpClient {
                 };
             }
         }
-        // Requests with responseType 'blob' get their error body as a Blob as well
-        if (!error.response.data || error.response.data instanceof Blob) {
+        // Requests with responseType 'blob' get their error body as a Blob as well, and a proxy in front of a service
+        // that doesn't answer sends text or HTML
+        const data = error.response.data;
+        if (!data || typeof data !== 'object' || data instanceof Blob) {
             console.error('Intercepted server error', error.response);
             return {
                 status: error.response.status,
                 message: 'An unknown server error occurred',
-                error: error.response.statusText
+                error: error.response.statusText || String(error.response.status)
             };
         }
         console.error('Intercepted api error', error.response.data, error.response);
