@@ -28,6 +28,8 @@ export function selectedProjectHasChanged(state: ProfileStore): boolean {
         || project.startDate !== editingProject.startDate
         || project.endDate !== editingProject.endDate
         || project.description !== editingProject.description
+        // The service saves an emptied note as none (#336)
+        || (project.internalNote || '') !== (editingProject.internalNote || '')
         || !areEqualByName(project.client, editingProject.client)
         || !areEqualByName(project.broker, editingProject.broker)
         || !haveSameNames(project.projectRoles, editingProject.projectRoles)
@@ -37,6 +39,7 @@ export function selectedProjectHasChanged(state: ProfileStore): boolean {
 function newProjectHasInput(project: Project): boolean {
     return !!project.name
         || !!project.description
+        || !!project.internalNote
         || !!nameEntityName(project.client)
         || !!nameEntityName(project.broker)
         || (project.projectRoles || []).length > 0
