@@ -182,7 +182,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 autoFocus
                                 fullWidth
                                 label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
-                                id={'id'}
+                                id={'ProfileEntry.Name'}
                                 data={this.props.suggestions}
                                 aliases={this.props.aliases}
                                 searchTerm={this.state.searchText}
@@ -220,7 +220,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                     <PwrAutoComplete
                                         fullWidth
                                         label={PowerLocalize.get('ProfileEntry.Degree')}
-                                        id={'id'}
+                                        id={'ProfileEntry.Degree'}
                                         data={this.props.degrees}
                                         searchTerm={this.state.degree}
                                         onSearchChange={(value) => this.handleDegreeSelectChange(value)}
