@@ -1,5 +1,10 @@
 import * as React from 'react';
+import {useState} from 'react';
 import {ButtonBase} from '@material-ui/core';
+import ArrowUpward from '@material-ui/icons/ArrowUpward';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import {compareNames} from '../../utils/Comparators';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {makeStyles, Theme} from '@material-ui/core/styles';
 
 export interface PwrListTableColumn<T> {
@@ -12,6 +17,17 @@ export interface PwrListTableColumn<T> {
 
     /** Right aligns header and cells, e.g. for numbers */
     alignRight?: boolean;
+
+    /**
+     * Makes the column sortable by a click on its header (#342): texts sort like names (compareNames), numbers by value;
+     * undefined (e.g. still loading) always at the end
+     */
+    sortValue?(item: T): string | number | undefined;
+}
+
+export interface PwrListTableSort {
+    column: number;
+    ascending: boolean;
 }
 
 interface PwrListTableProps<T> {
@@ -22,6 +38,8 @@ interface PwrListTableProps<T> {
     /** Shown as the only row of an empty table */
     emptyText?: string;
     selectedKey?: string;
+    /** The sorting to start with, e.g. the order the items come in; without, the items stay as they come */
+    initialSort?: PwrListTableSort;
 
     itemKey(item: T): string;
 
@@ -86,7 +104,38 @@ const useStyles = makeStyles(theme => ({
     empty: {
         color: theme.palette.text.secondary,
     },
+    sortButton: {
+        font: 'inherit',
+        color: 'inherit',
+        gap: theme.spacing(0.5),
+        borderRadius: theme.shape.borderRadius,
+        '&:hover': {
+            color: theme.palette.text.primary,
+        },
+    },
+    sortIcon: {
+        fontSize: 14,
+    },
 }));
+
+function sortItems<T>(items: Array<T>, columns: Array<PwrListTableColumn<T>>, sort: PwrListTableSort | null): Array<T> {
+    const column = sort && columns[sort.column];
+    if (!column || !column.sortValue) {
+        return items;
+    }
+    const direction = sort.ascending ? 1 : -1;
+    return [...items].sort((a, b) => {
+        const valueA = column.sortValue(a);
+        const valueB = column.sortValue(b);
+        if (valueA === undefined || valueB === undefined) {
+            return (valueA === undefined ? 1 : 0) - (valueB === undefined ? 1 : 0);
+        }
+        const compared = typeof valueA === 'number' && typeof valueB === 'number'
+            ? valueA - valueB
+            : compareNames(String(valueA), String(valueB));
+        return direction * compared;
+    });
+}
 
 function moveFocus(event: React.KeyboardEvent<HTMLElement>) {
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
@@ -103,10 +152,16 @@ function moveFocus(event: React.KeyboardEvent<HTMLElement>) {
 
 /**
  * A list as table in the look of the view profile tables (#199): a grey header row, rows of at least 40 px with a line
- * between them. With onSelect the rows can be selected; the selected one is highlighted.
+ * between them. With onSelect the rows can be selected; the selected one is highlighted. Columns with a sortValue sort
+ * by a click on their header, a second click turns the direction (#342).
  */
 export function PwrListTable<T>(props: PwrListTableProps<T>) {
     const classes = useStyles();
+    const [sort, setSort] = useState<PwrListTableSort | null>(props.initialSort || null);
+    const items = sortItems(props.items, props.columns, sort);
+    const sortBy = (column: number) => setSort(sort && sort.column === column
+        ? {column, ascending: !sort.ascending}
+        : {column, ascending: true});
     const template = {
         gridTemplateColumns: props.columns.map(column => column.width ? column.width + 'px' : 'minmax(0, 1fr)').join(' ')
     };
@@ -130,16 +185,37 @@ export function PwrListTable<T>(props: PwrListTableProps<T>) {
         </ButtonBase>;
     };
 
+    const renderHeader = (column: PwrListTableColumn<T>, index: number) => {
+        const active = sort && sort.column === index;
+        const ariaSort = !column.sortValue ? undefined : !active ? 'none' : sort.ascending ? 'ascending' : 'descending';
+        if (!column.sortValue) {
+            // Without sorting the header of a selectable list is decoration: the rows name their content themselves
+            return <div key={index} className={cellClass(column)} role={asTable ? 'columnheader' : undefined}
+                        aria-hidden={asTable ? undefined : true}>{column.header}</div>;
+        }
+        const state = PowerLocalize.get(!active ? 'ListTable.Sort.None'
+            : sort.ascending ? 'ListTable.Sort.Ascending' : 'ListTable.Sort.Descending');
+        const Arrow = active && !sort.ascending ? ArrowDownward : ArrowUpward;
+        return <div key={index} className={cellClass(column)} role={asTable ? 'columnheader' : undefined}
+                    aria-sort={asTable ? ariaSort : undefined}>
+            <ButtonBase className={classes.sortButton} focusVisibleClassName={classes.focusVisible}
+                        aria-label={PowerLocalize.getFormatted('ListTable.Sort.By', column.header, state)}
+                        onClick={() => sortBy(index)}>
+                {column.header}
+                {/* Only the active column shows its direction; the others show nothing */}
+                {active && <Arrow className={classes.sortIcon}/>}
+            </ButtonBase>
+        </div>;
+    };
+
     return <div aria-label={props.label} role={asTable ? 'table' : 'group'} onKeyDown={moveFocus}>
-        <div className={classes.row + ' ' + classes.head} style={template}
-             role={asTable ? 'row' : undefined} aria-hidden={asTable ? undefined : true}>
-            {props.columns.map((column, index) => <div key={index} className={cellClass(column)}
-                                                       role={asTable ? 'columnheader' : undefined}>{column.header}</div>)}
+        <div className={classes.row + ' ' + classes.head} style={template} role={asTable ? 'row' : undefined}>
+            {props.columns.map(renderHeader)}
         </div>
-        {props.items.length === 0 && props.emptyText
+        {items.length === 0 && props.emptyText
             ? <div className={classes.row + ' ' + classes.empty} role={asTable ? 'row' : undefined}>
                 <div role={asTable ? 'cell' : undefined}>{props.emptyText}</div>
             </div>
-            : props.items.map(renderRow)}
+            : items.map(renderRow)}
     </div>;
 }
