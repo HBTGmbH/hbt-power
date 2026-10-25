@@ -1,11 +1,18 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Collapse, Icon, Typography} from '@material-ui/core';
+import {Collapse, Icon, makeStyles, Typography} from '@material-ui/core';
 import {PwrButton} from '../../../../general/pwr-button';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {LimitedTextField} from '../../../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {PROJECT_DESCRIPTION_LENGTH} from '../../../../../model/PwrConstants';
+
+const useStyles = makeStyles(theme => ({
+    // The label flush with the hint, the field and the headings of the form, not indented by the padding of the button
+    toggle: {
+        marginLeft: -theme.spacing(1),
+    },
+}));
 
 interface ProjectInternalNoteProps {
     value: string | null | undefined;
@@ -21,12 +28,13 @@ interface ProjectInternalNoteProps {
  * project (key), so another project starts closed again.
  */
 export const ProjectInternalNote = (props: ProjectInternalNoteProps) => {
+    const classes = useStyles();
     const [open, setOpen] = useState(false);
     const present = !!props.value && props.value.trim().length > 0;
     const label = PowerLocalize.get('Profile.Project.InternalNote')
         + ' · ' + PowerLocalize.get(present ? 'Profile.Project.InternalNote.Present' : 'Profile.Project.InternalNote.Empty');
     return <div>
-        <PwrButton color="primary" text={label} ariaExpanded={open} ariaControls="project-internal-note"
+        <PwrButton color="primary" text={label} className={classes.toggle} ariaExpanded={open} ariaControls="project-internal-note"
                    icon={<Icon className="material-icons">{open ? 'expand_less' : 'expand_more'}</Icon>}
                    onClick={() => setOpen(!open)}/>
         <Collapse in={open}>
