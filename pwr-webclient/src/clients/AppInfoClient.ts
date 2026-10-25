@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {PowerHttpClient} from './PowerHttpClient';
 import {ActuatorInfo, ClientInfo, ComponentInfo, ofActuatorInfo, ofClientInfo, unavailable} from '../model/metadata/ComponentInfo';
 
@@ -37,8 +38,16 @@ export class AppInfoClient extends PowerHttpClient {
             .catch(() => unavailable(name));
     }
 
+    /**
+     * build_info.json is a static file of the webclient: loaded without a token, since asking MSAL for one before the
+     * login is handled fails, and a failed token request logs the user out
+     */
+    private buildInfo(): Promise<ClientInfo> {
+        return axios.get<ClientInfo>(CLIENT_BUILD_INFO_LOCATION).then(response => response.data);
+    }
+
     private clientInfo(name: string): Promise<ComponentInfo> {
-        return this.getQuietly<ClientInfo>(CLIENT_BUILD_INFO_LOCATION)
+        return this.buildInfo()
             .then(info => ofClientInfo(name, info))
             .catch(() => unavailable(name));
     }
@@ -48,7 +57,7 @@ export class AppInfoClient extends PowerHttpClient {
      * container is replaced (502): quietly, no spinner, no alert
      */
     public getDeliveredCommit(): Promise<string | null> {
-        return this.getQuietly<ClientInfo>(CLIENT_BUILD_INFO_LOCATION)
+        return this.buildInfo()
             .then(info => (info && info.commit) || null)
             .catch(() => null);
     }
