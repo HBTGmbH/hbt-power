@@ -13,6 +13,7 @@ import {LoginModule} from './modules/login_module';
 import {PowerClient} from './modules/home/power-client_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {UnsavedChangesDialog} from './modules/navigation/unsaved-changes-dialog';
+import {SessionExpiredDialog} from './modules/navigation/session-expired-dialog';
 import {PwrConfirmDeferredActionDialog} from './modules/general/pwr-confirm-deferred-action-dialog';
 import {PowerLocalize} from './localization/PowerLocalizer';
 import {PWR_HISTORY} from './reducers/navigation/NavigationActionCreator';
@@ -49,6 +50,7 @@ export class AppWrapper extends React.Component<{}, {}> {
                                 <AuthenticatedRoute requiresAdmin path={Paths.ADMIN_BASE} component={AdminClient}/>
                                 <ConsultantNamesLoader/>
                                 <UnsavedChangesDialog/>
+                                <SessionExpiredDialog/>
                                 <PwrConfirmDeferredActionDialog/>
                                 <PwrNewVersionNotice/>
                             </div>

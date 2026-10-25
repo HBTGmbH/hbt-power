@@ -98,6 +98,8 @@ export enum ActionType {
     SetCurrentLocation = '[Navigation] SetCurrentLocation',
     OpenUnsavedChangesDialog = '[Navigation] OpenUnsavedChangesDialog',
     CloseUnsavedChangesDialog = '[Navigation] CloseUnsavedChangesDialog',
+    OpenSessionExpiredDialog = '[Cross Cutting] OpenSessionExpiredDialog',
+    CloseSessionExpiredDialog = '[Cross Cutting] CloseSessionExpiredDialog',
 
     // == View Profile
     SetViewProfile = '[ViewProfile] SetViewProfile',

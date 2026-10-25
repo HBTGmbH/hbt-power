@@ -3,7 +3,7 @@ import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
 import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
-import {NavigationActionCreator, navigateReplacing} from '../navigation/NavigationActionCreator';
+import {NavigationActionCreator, navigateReplacing, PWR_HISTORY} from '../navigation/NavigationActionCreator';
 import {Alerts} from '../../utils/Alerts';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Paths} from '../../Paths';
@@ -99,7 +99,10 @@ export class CrossCuttingAsyncActionCreator {
                 dispatch(AdminActionCreator.AsyncValidateAuthentication());
             }
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.SUCCESS));
-            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.START));
+            // MSAL returns to the page the login started on (#323): only the login page itself leads to the start
+            if (PWR_HISTORY.location.pathname === Paths.APP_ROOT) {
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.START));
+            }
         };
     }
 

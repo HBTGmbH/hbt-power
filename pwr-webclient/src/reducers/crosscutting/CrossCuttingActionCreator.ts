@@ -35,6 +35,8 @@ export const CrossCuttingActionCreator = {
     endRequest: () => SetRequestPending(false),
     startBackgroundRequest: (): ChangeBackgroundRequestsAction => ({type: ActionType.ChangeBackgroundRequests, delta: 1}),
     endBackgroundRequest: (): ChangeBackgroundRequestsAction => ({type: ActionType.ChangeBackgroundRequests, delta: -1}),
+    openSessionExpiredDialog: (): AbstractAction => ({type: ActionType.OpenSessionExpiredDialog}),
+    closeSessionExpiredDialog: (): AbstractAction => ({type: ActionType.CloseSessionExpiredDialog}),
     SetLoginStatus: (loginStatus: LoginStatus) => ({
         type: ActionType.SetLoginStatus,
         loginStatus

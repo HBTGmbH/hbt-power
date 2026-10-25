@@ -1,5 +1,5 @@
 import * as Msal from '@azure/msal-browser';
-import {RedirectRequest, SilentRequest} from '@azure/msal-browser';
+import {PopupRequest, RedirectRequest, SilentRequest, SsoSilentRequest} from '@azure/msal-browser';
 import {AuthenticationResult} from '@azure/msal-common';
 import {CONFIG} from './Config';
 
@@ -57,11 +57,48 @@ export class MSALInstance {
         return this.msalInstance.acquireTokenSilent(loginRequest);
     }
 
-    public doLogin(): void {
+    /**
+     * @param redirectStartPage where the app continues after the return from Microsoft; the page starting the login if
+     * not given
+     */
+    public doLogin(redirectStartPage?: string): void {
         const loginRequest: RedirectRequest = {
             scopes: this.scopes,
+            redirectStartPage,
         }
         this.accessMsal().loginRedirect(loginRequest);
+    }
+
+    /**
+     * A new login without any interaction, if Microsoft still has a session (#323)
+     */
+    public ssoSilent(loginHint?: string): Promise<AuthenticationResult> {
+        const request: SsoSilentRequest = {
+            scopes: this.scopes,
+            loginHint,
+        }
+        return this.msalInstance.ssoSilent(request);
+    }
+
+    /**
+     * A new login in a popup (#323). Browsers only open it in reaction to a click, so call it right from the click
+     * handler, without waiting for anything before.
+     */
+    public acquireTokenPopup(loginHint?: string): Promise<AuthenticationResult> {
+        const request: PopupRequest = {
+            scopes: this.scopes,
+            loginHint,
+        }
+        return this.msalInstance.acquireTokenPopup(request);
+    }
+
+    /**
+     * Whether this window is a popup MSAL opened for a login: MSAL in the opener reads the answer from its URL and
+     * closes it, the app must not start in it (#323)
+     */
+    public static isLoginPopup(): boolean {
+        return !!window.opener && window.opener !== window && typeof window.name === 'string'
+            && window.name.indexOf('msal.') === 0;
     }
 
 }

@@ -34,7 +34,7 @@ import {ThunkDispatch} from 'redux-thunk';
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 
 const handleError = (error: any) => {
-    if (error && error.loginRequired) {
+    if (error && error.silent) {
         return;
     }
     Alerts.showError(error.status + ' -- ' + error.message);
