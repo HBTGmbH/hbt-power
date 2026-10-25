@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ButtonBase} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, Theme} from '@material-ui/core/styles';
 
 export interface PwrListTableColumn<T> {
     header: string;
@@ -28,6 +28,16 @@ interface PwrListTableProps<T> {
     /** Makes the rows buttons: click, Enter or space selects, the arrow keys move between them */
     onSelect?(item: T): void;
 }
+
+/**
+ * The selected row: a light grey area, the bar on the left marks it without relying on the grey alone, the text semi
+ * bold. Also for lists that are no PwrListTable, so a selection looks the same everywhere (#343).
+ */
+export const selectedRowStyle = (theme: Theme) => ({
+    backgroundColor: theme.palette.action.selected,
+    boxShadow: 'inset 3px 0 0 ' + theme.palette.primary.main,
+    fontWeight: 500,
+});
 
 // The look of the view profile tables (#149, .pwr-view-entries-* in index.css). px, not rem: Bootstrap sets the root
 // font size to 10px.
@@ -65,12 +75,7 @@ const useStyles = makeStyles(theme => ({
         outline: '2px solid ' + theme.palette.primary.main,
         outlineOffset: -2,
     },
-    selected: {
-        backgroundColor: theme.palette.action.selected,
-        // The bar on the left marks it without relying on the grey alone
-        boxShadow: 'inset 3px 0 0 ' + theme.palette.primary.main,
-        fontWeight: 500,
-    },
+    selected: selectedRowStyle(theme),
     cell: {
         minWidth: 0,
         overflowWrap: 'anywhere',

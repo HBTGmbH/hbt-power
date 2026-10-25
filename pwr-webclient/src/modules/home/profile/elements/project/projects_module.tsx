@@ -8,7 +8,7 @@ import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {SelectedProject} from './single-project_module';
 import {StringUtils} from '../../../../../utils/StringUtil';
-import {Divider, Icon, List, Paper, Typography, useMediaQuery} from '@material-ui/core';
+import {Divider, Icon, List, makeStyles, Paper, Typography, useMediaQuery} from '@material-ui/core';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
@@ -23,6 +23,7 @@ import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {ProjectUrlSync} from './project-url-sync';
+import {selectedRowStyle} from '../../../../general/pwr-list-table';
 
 interface ProjectsProps {
     projects: Array<Project>
@@ -35,6 +36,8 @@ interface ProjectsProps {
 interface ProjectsLocalProps {
     /** Below 992px (Bootstrap md): list or form, never both (master-detail) */
     narrow: boolean;
+    /** The selected project marked like the selected row of a PwrListTable (#343) */
+    selectedClassName: string;
 
     showList(): void;
 }
@@ -82,13 +85,6 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
         this.props.addNewProject();
     };
 
-    private chooseClassName(index): string {
-        if (this.props.selectedIndex === index) {
-            return 'pwr-selected-list-item';
-        }
-        return '';
-    }
-
     private handleClick = (projectIndex: number) => {
         this.props.selectProject(projectIndex);
     };
@@ -98,8 +94,9 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
         const client = StringUtils.defaultString(nameEntityName(project.client));
         const period = PowerLocalize.getFormatted('Profile.Project.List.Period',
             formatToShortDisplay(project.startDate), formatToShortDisplay(project.endDate));
-        return <ListItem className={this.chooseClassName(index)} button key={project.id}
-                         onClick={event => this.handleClick(index)}>
+        const selected = this.props.selectedIndex === index;
+        return <ListItem button key={project.id} selected={selected} classes={{selected: this.props.selectedClassName}}
+                         aria-current={selected || undefined} onClick={event => this.handleClick(index)}>
             {/* Delete as an icon in the list, as with the other entries of the profile (#145); not for a new,
                 unsaved project, which "cancel" removes. The click must not select the project. */}
             <ListItemIcon className="pwr-project-list-delete" onClick={event => event.stopPropagation()}>
@@ -208,14 +205,25 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
 
 const ConnectedProjects = connect(ProjectsModule.mapStateToProps, ProjectsModule.mapDispatchToProps)(ProjectsModule);
 
+const useStyles = makeStyles(theme => ({
+    // Above the selected look of the ListItem, also while hovered; the name semi bold like in PwrListTable
+    selected: {
+        '&&, &&:hover': selectedRowStyle(theme),
+        '& .MuiListItemText-primary': {
+            fontWeight: 500,
+        },
+    },
+}));
+
 /** Bootstrap md, as the columns of the desktop layout */
 const NARROW = '(max-width: 991.98px)';
 
 export const Projects = () => {
+    const classes = useStyles();
     const narrow = useMediaQuery(NARROW);
     const history = useHistory();
     const {initials} = useParams<{ initials: string }>();
     // a navigation, not an action: PWR_HISTORY.block asks before unsaved changes are left
     const showList = () => history.push(Paths.build(Paths.USER_PROFILE_PROJECTS, {initials}));
-    return <ConnectedProjects narrow={narrow} showList={showList}/>;
+    return <ConnectedProjects narrow={narrow} showList={showList} selectedClassName={classes.selected}/>;
 };
