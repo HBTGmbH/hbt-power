@@ -40,7 +40,7 @@ function initialsClaim(claims: object | undefined): string | undefined {
  * Whether only a new login gets a token: MSAL wants an interaction, or knows no account (fresh tab). Anything else,
  * like a network error, only fails the call (#311)
  */
-function requiresLogin(error: any): boolean {
+export function requiresLogin(error: any): boolean {
     return error instanceof InteractionRequiredAuthError
         || (!!error && error.errorCode === BrowserAuthErrorMessage.noAccountError.code);
 }
