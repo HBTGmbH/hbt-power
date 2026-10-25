@@ -8,7 +8,7 @@ import {PwrFormSubCaption} from '../../../../general/pwr-typography';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import Typography from '@material-ui/core/Typography';
-import {StarRating} from '../../../../star-rating_module.';
+import {StarRating} from '../../../../star-rating_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';

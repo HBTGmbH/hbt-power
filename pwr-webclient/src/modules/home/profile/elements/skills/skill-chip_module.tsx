@@ -3,7 +3,7 @@ import {CSSProperties} from 'react';
 import {Chip, Tooltip} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import UndoIcon from '@material-ui/icons/Undo';
-import {StarRating} from '../../../../star-rating_module.';
+import {StarRating} from '../../../../star-rating_module';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import Popover from '@material-ui/core/Popover/Popover';
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';

@@ -6,7 +6,7 @@ import {APISkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill
 import {APISkillCategory} from '../../../../../model/skill/SkillCategory';
 import {SkillServiceClient} from '../../../../../clients/SkillServiceClient';
 import {SkillSearcher} from '../../../../general/skill-search_module';
-import {StarRating} from '../../../../star-rating_module.';
+import {StarRating} from '../../../../star-rating_module';
 import {PwrFormSection, PwrRow} from '../../../../general/pwr-form-section';
 import {PwrFormActions} from '../../../../general/pwr-form-actions';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
