@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography} from '@material-ui/core';
+import {Chip, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography} from '@material-ui/core';
 import {newProfileSkill, ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {APISkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill';
 import {APISkillCategory} from '../../../../../model/skill/SkillCategory';
@@ -16,7 +16,7 @@ import {findSkillByName} from '../../../../../utils/Comparators';
 import {Alerts} from '../../../../../utils/Alerts';
 import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
 import {formatSkillUsage, skillUsage} from '../../../../../utils/SkillUsage';
-import {SkillProjectsDialog} from './skill-projects-dialog';
+import {SkillProjectsTable} from './skill-projects-table';
 
 interface ProfileSkillDialogProps {
     /** The skill to edit; without one the dialog adds a new skill */
@@ -62,7 +62,7 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
     // undefined while unknown, null if the skill tree doesn't know the skill
     const [serviceSkill, setServiceSkill] = useState<APISkillServiceSkill | null | undefined>(undefined);
     const [saving, setSaving] = useState(false);
-    const [projectsOpen, setProjectsOpen] = useState(false);
+    const [projectsShown, setProjectsShown] = useState(false);
 
     const trimmedName = name.trim();
 
@@ -181,8 +181,7 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
     const usage = adding ? undefined : skillUsage(props.skill.name, props.projects);
 
     // On the paper: onKeyDown on the dialog itself replaces the one of the modal, which closes it on Escape
-    return <>
-    <Dialog open onClose={props.onClose} PaperProps={{onKeyDown: handleKeyDown}} fullWidth maxWidth="sm"
+    return <Dialog open onClose={props.onClose} PaperProps={{onKeyDown: handleKeyDown}} fullWidth maxWidth="sm"
                    TransitionProps={{onEntered: () => adding && document.getElementById(NAME_FIELD_ID + '_inputField')?.focus()}}>
         <DialogTitle>{adding ? PowerLocalize.get('Profile.Skills.Dialog.AddTitle') : props.skill.name}</DialogTitle>
         <DialogContent>
@@ -195,9 +194,14 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
             {usage && <PwrFormSection title={PowerLocalize.get('Profile.Skills.Dialog.Projects')}>
                 <PwrRow>
                     <Typography variant="body2">{formatSkillUsage(usage)}</Typography>
-                    <PwrIconButton iconName="work_outline" tooltip={PowerLocalize.get('Profile.Skills.Projects.Show')}
-                                   disabled={usage.projects.length === 0} onClick={() => setProjectsOpen(true)}/>
+                    <PwrIconButton iconName={projectsShown ? 'expand_less' : 'expand_more'}
+                                   tooltip={PowerLocalize.get(projectsShown ? 'Profile.Skills.Projects.Hide' : 'Profile.Skills.Projects.Show')}
+                                   disabled={usage.projects.length === 0} onClick={() => setProjectsShown(!projectsShown)}/>
                 </PwrRow>
+                <Collapse in={projectsShown}>
+                    <PwrSpacer size="tight"/>
+                    <SkillProjectsTable skillName={props.skill.name} usage={usage}/>
+                </Collapse>
             </PwrFormSection>}
             <PwrFormSection title={PowerLocalize.get('Profile.Skills.Dialog.Rating')}>
                 <StarRating rating={rating} onRatingChange={setRating}/>
@@ -227,9 +231,5 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
                             saveIcon={adding ? 'add' : undefined}
                             saveDisabled={!canSave} onSave={save} onCancel={props.onClose}/>
         </DialogActions>
-    </Dialog>
-    {/* Beside the dialog, not in it: keys in the list must not reach the dialog's Enter handler */}
-    {projectsOpen && <SkillProjectsDialog skillName={props.skill.name} usage={usage}
-                                          onClose={() => setProjectsOpen(false)}/>}
-    </>;
+    </Dialog>;
 };
