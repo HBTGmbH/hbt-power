@@ -2,7 +2,7 @@ import axios, {AxiosError, AxiosInstance, AxiosPromise, AxiosRequestConfig, Axio
 import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
 import {Alerts} from '../utils/Alerts';
-import {OIDCService} from '../OIDCService';
+import {OIDCService, requiresLogin} from '../OIDCService';
 import {AuthError} from '@azure/msal-browser';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
@@ -15,6 +15,8 @@ export interface PowerApiError {
     status: number;
     error: string;
     message: string;
+    /** No token without a new login, which starts right away: nobody needs to show this error (#311) */
+    loginRequired?: boolean;
 }
 
 /**
@@ -181,7 +183,7 @@ export class PowerHttpClient {
     private determineError = (error: AxiosError): PowerApiError => {
         if ((error as any) instanceof AuthError) {
             // No token, so no request was sent (#311)
-            return {status: -1, message: PowerLocalize.get('Login.TokenFailed'), error: 'Login'};
+            return {status: -1, message: PowerLocalize.get('Login.TokenFailed'), error: 'Login', loginRequired: requiresLogin(error)};
         }
         if ((error as any).status === 403) {
             return {
@@ -225,8 +227,9 @@ export class PowerHttpClient {
 
     private handleError = (error: AxiosError): PowerApiError => {
         const apiError = this.determineError(error);
-        const message = apiError.error + ': ' + apiError.message;
-        Alerts.showError(message);
+        if (!apiError.loginRequired) {
+            Alerts.showError(apiError.error + ': ' + apiError.message);
+        }
         return apiError;
     };
 
