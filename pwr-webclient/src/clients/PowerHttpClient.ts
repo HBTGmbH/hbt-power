@@ -3,6 +3,8 @@ import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
 import {Alerts} from '../utils/Alerts';
 import {OIDCService} from '../OIDCService';
+import {AuthError} from '@azure/msal-browser';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 
 /**
  * A general API error. All services conform to this error.
@@ -22,7 +24,7 @@ export class PowerHttpClient {
 
 
     get<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios().then(client => this.executeRequest(client.get(url, config)));
+        return this.executeRequest(this.getAxios().then(client => client.get(url, config)));
     }
 
     /**
@@ -30,7 +32,7 @@ export class PowerHttpClient {
      */
     getOrNull<R>(url: string, config?: AxiosRequestConfig): Promise<R | null> {
         const notFoundIsAnAnswer = (status: number) => (status >= 200 && status < 300) || status === 404;
-        return this.getAxios().then(client => this.executeRequest<R | null>(
+        return this.executeRequest<R | null>(this.getAxios().then(client =>
             client.get<R>(url, {...config, validateStatus: notFoundIsAnAnswer})
                 .then(response => response.status === 404 ? {...response, data: null} : response) as AxiosPromise<R | null>));
     }
@@ -41,7 +43,7 @@ export class PowerHttpClient {
      */
     getExpecting<R>(url: string, expectedStatuses: Array<number>, config?: AxiosRequestConfig): Promise<R> {
         const isAnswer = (status: number) => (status >= 200 && status < 300) || expectedStatuses.includes(status);
-        return this.getAxios().then(client => this.executeRequest<AxiosResponse<R>>(
+        return this.executeRequest<AxiosResponse<R>>(this.getAxios().then(client =>
             client.get<R>(url, {...config, validateStatus: isAnswer})
                 .then(response => ({...response, data: response})) as AxiosPromise<AxiosResponse<R>>))
             .then(response => {
@@ -73,15 +75,15 @@ export class PowerHttpClient {
     }
 
     delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
+        return this.executeRequest(this.getAxios().then(client => client.delete(url, config)));
     }
 
     head<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios().then(client => this.executeRequest(client.head(url, config)));
+        return this.executeRequest(this.getAxios().then(client => client.head(url, config)));
     }
 
     post<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios().then(client => this.executeRequest(client.post(url, data, config)));
+        return this.executeRequest(this.getAxios().then(client => client.post(url, data, config)));
     }
 
     /**
@@ -90,7 +92,7 @@ export class PowerHttpClient {
      */
     postExpecting<R>(url: string, expectedStatuses: Array<number>, data?: any, config?: AxiosRequestConfig): Promise<R> {
         const isAnswer = (status: number) => (status >= 200 && status < 300) || expectedStatuses.includes(status);
-        return this.getAxios().then(client => this.executeRequest<AxiosResponse<R>>(
+        return this.executeRequest<AxiosResponse<R>>(this.getAxios().then(client =>
             client.post<R>(url, data, {...config, validateStatus: isAnswer})
                 .then(response => ({...response, data: response})) as AxiosPromise<AxiosResponse<R>>))
             .then(response => {
@@ -108,11 +110,11 @@ export class PowerHttpClient {
     }
 
     put<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios().then(client => this.executeRequest(client.put(url, data, config)));
+        return this.executeRequest(this.getAxios().then(client => client.put(url, data, config)));
     }
 
     patch<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios().then(client => this.executeRequest(client.patch(url, data, config)));
+        return this.executeRequest(this.getAxios().then(client => client.patch(url, data, config)));
     }
 
     /**
@@ -167,6 +169,7 @@ export class PowerHttpClient {
      * Takes an axios promise (which represents a request) and executes it.
      * If the request is successful, metadata is discarded and only the entity is returned
      * If the request has an error, a default notification is posted to the user and the error is rethrown (allowing you to react to it if you wish to)
+     * The promise includes getting the token, so a failure there ends the spinner and is shown too (#311)
      * @param promise
      */
     private executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
@@ -176,6 +179,10 @@ export class PowerHttpClient {
     };
 
     private determineError = (error: AxiosError): PowerApiError => {
+        if ((error as any) instanceof AuthError) {
+            // No token, so no request was sent (#311)
+            return {status: -1, message: PowerLocalize.get('Login.TokenFailed'), error: 'Login'};
+        }
         if ((error as any).status === 403) {
             return {
                 status: 403,

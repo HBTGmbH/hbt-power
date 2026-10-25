@@ -1,8 +1,6 @@
 import * as Msal from '@azure/msal-browser';
 import {RedirectRequest, SilentRequest} from '@azure/msal-browser';
 import {AuthenticationResult} from '@azure/msal-common';
-import {store} from './reducers/reducerIndex';
-import {CrossCuttingAsyncActionCreator} from './reducers/crosscutting/CrossCuttingAsyncActionCreator';
 import {CONFIG} from './Config';
 
 /**
@@ -36,6 +34,9 @@ export class MSALInstance {
         return this.msalInstance;
     }
 
+    /**
+     * Fails with the error of MSAL; what follows from it decides OIDCService, never a logout (#311)
+     */
     public getToken(): Promise<string> {
         const loginRequest: SilentRequest = {
             scopes: this.scopes,
@@ -44,7 +45,6 @@ export class MSALInstance {
         return this.msalInstance.acquireTokenSilent(loginRequest)
             .then(value => value.accessToken)
             .catch((error) => {
-                store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser() as any);
                 console.log('Failed to getToken', error);
                 throw error;
             })

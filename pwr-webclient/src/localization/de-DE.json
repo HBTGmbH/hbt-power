@@ -477,6 +477,7 @@
   "App.NewVersion.Message": "Eine neue Version von Power ist verfügbar.",
   "App.NewVersion.Reload": "Neu laden",
   "Login.LoginAzure": "Login mit Microsoft365",
+  "Login.TokenFailed": "Die Sitzung konnte nicht erneuert werden. Versuche es bitte noch einmal.",
   "ProfileSelect.OpeningOwnProfile": "Dein Profil wird geöffnet …",
   "ProfileSelect.NoProfileFor": "Zu „{0}“ gibt es kein Profil.",
   "ProfileSelect.NoOwnProfile": "Zu deinem Konto („{0}“) gibt es kein Profil. Wende dich an einen Admin.",

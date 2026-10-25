@@ -5,6 +5,8 @@ import {NavigationActionCreator} from './reducers/navigation/NavigationActionCre
 import {Paths} from './Paths';
 import {CONFIG} from './Config';
 import {AuthenticationResult} from '@azure/msal-common';
+import {BrowserAuthErrorMessage, InteractionRequiredAuthError} from '@azure/msal-browser';
+import {confirmLeavingUnsavedChanges} from './reducers/navigation/UnsavedChanges';
 
 const LOCAL_DEV_USER_NAME = 'Local Developer';
 
@@ -34,12 +36,25 @@ function initialsClaim(claims: object | undefined): string | undefined {
     return typeof value === 'string' && value.trim().length > 0 ? value.trim().toLowerCase() : undefined;
 }
 
+/**
+ * Whether only a new login gets a token: MSAL wants an interaction, or knows no account (fresh tab). Anything else,
+ * like a network error, only fails the call (#311)
+ */
+function requiresLogin(error: any): boolean {
+    return error instanceof InteractionRequiredAuthError
+        || (!!error && error.errorCode === BrowserAuthErrorMessage.noAccountError.code);
+}
+
 export class OIDCService {
 
     private readonly msalInstance: MSALInstance;
     private static _instance?: OIDCService;
     /** The login a return from Microsoft brought, null if there was none */
     private redirectHandled: Promise<AuthenticationResult | null>;
+    /** A login started by a failed token request is being asked about or under way */
+    private loginAgainPending = false;
+    /** A redirect to Microsoft has started, the page is about to leave */
+    private loginStarted = false;
 
     constructor() {
         if (CONFIG.LOCAL_DEV) {
@@ -79,7 +94,7 @@ export class OIDCService {
             return;
         }
         sessionStorage.removeItem(LOGGED_OUT);
-        this.msalInstance.doLogin();
+        this.startLogin();
     }
 
     public logout(): void {
@@ -122,12 +137,17 @@ export class OIDCService {
         });
     }
 
+    private startLogin(): void {
+        this.loginStarted = true;
+        this.msalInstance.doLogin();
+    }
+
     private loginAutomaticallyOrShowLoginPage(): void {
         const attemptFailed = sessionStorage.getItem(AUTO_LOGIN_STARTED) !== null;
         sessionStorage.removeItem(AUTO_LOGIN_STARTED);
         if (!attemptFailed && sessionStorage.getItem(LOGGED_OUT) === null) {
             sessionStorage.setItem(AUTO_LOGIN_STARTED, 'true');
-            this.msalInstance.doLogin();
+            this.startLogin();
             return;
         }
         store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT) as any);
@@ -135,12 +155,36 @@ export class OIDCService {
 
     /**
      * Resolves to undefined in local dev mode, as there is no token to send.
+     * Waits for a return from Microsoft first, which sets the active account. A failure never logs out (#311): if
+     * MSAL needs a login, the login starts again (after asking about unsaved changes); the call fails either way.
      */
     public getToken(): Promise<string | undefined> {
         if (CONFIG.LOCAL_DEV) {
             return Promise.resolve(undefined);
         }
-        return this.msalInstance.getToken();
+        return this.redirectHandled
+            .then(() => this.msalInstance.getToken())
+            .catch(error => {
+                if (requiresLogin(error)) {
+                    this.loginAgain();
+                }
+                throw error;
+            });
+    }
+
+    /**
+     * Once for all calls that fail together, and not while a login started elsewhere (renewLogin) is under way
+     */
+    private loginAgain(): void {
+        if (this.loginAgainPending || this.loginStarted) {
+            return;
+        }
+        this.loginAgainPending = true;
+        const done = () => this.loginAgainPending = false;
+        store.dispatch(confirmLeavingUnsavedChanges(() => {
+            this.loginAutomaticallyOrShowLoginPage();
+            done();
+        }, done) as any);
     }
 
     /**
