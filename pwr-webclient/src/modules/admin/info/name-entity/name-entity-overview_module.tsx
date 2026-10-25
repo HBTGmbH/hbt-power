@@ -417,12 +417,19 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                                 selectedKey={selected && String(selected.id)}
                                 onSelect={this.handleSelectEntity}
                                 emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
-                                columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: renderName},
+                                // The entries come sorted by name (#342)
+                                initialSort={{column: 0, ascending: true}}
+                                columns={[{
+                                    header: PowerLocalize.get('AdminClient.Overview.Name'),
+                                    render: renderName,
+                                    sortValue: nameEntity => nameEntity.name || ''
+                                },
                                     {
                                         header: PowerLocalize.get('AdminClient.Overview.Users'),
                                         width: USAGE_COLUMN_WIDTH,
                                         alignRight: true,
-                                        render: nameEntity => <PwrUsageCount count={this.usageOf(nameEntity)}/>
+                                        render: nameEntity => <PwrUsageCount count={this.usageOf(nameEntity)}/>,
+                                        sortValue: nameEntity => this.usageOf(nameEntity)
                                     }]}/>}
             info={this.renderInfoBox(selected)}
         />
