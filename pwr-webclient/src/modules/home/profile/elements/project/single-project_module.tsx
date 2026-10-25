@@ -15,7 +15,6 @@ import {connect} from 'react-redux';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {
     cancelEditSelectedProjectAction,
-    editSelectedProjectAction,
     setEditingProjectAction
 } from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 import {NameEntityType} from '../../../../../reducers/profile-new/profile/model/NameEntityType';
@@ -36,13 +35,15 @@ import {LimitedTextField} from '../../../../general/limited-text-field-module';
 import {ProjectDescriptionHelp} from './project-description-help';
 import {ProjectInternalNote} from './project-internal-note';
 import {PROJECT_DESCRIPTION_LENGTH, PROJECT_NAME_LENGTH} from '../../../../../model/PwrConstants';
+import {selectedProjectHasChanged} from '../../../../../utils/PwrStoreUtils';
 
 interface ProjectProps {
     initials: string;
     editedProject: Project;
-    isEditing: boolean;
+    /** Something differs from the saved project, or a new project has input (#338) */
+    hasChanges: boolean;
     /**
-     * Skills of the project as saved, while it is being edited (empty for a new project), otherwise null
+     * Skills of the project as saved (empty for a new project)
      */
     savedSkills: Array<ProfileSkill> | null;
 }
@@ -59,8 +60,6 @@ interface ProjectLocalState {
 interface ProjectDispatch {
     // Non-Persistent Actions
     updateEditingProject(project: Project): void;
-
-    beginEdit();
 
     cancelEdit();
 
@@ -83,14 +82,14 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         const initials = !!(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
         const edited = state.profileStore.selectedProject;
         let savedSkills: Array<ProfileSkill> | null = null;
-        if (edited && state.profileStore.isProjectEditing) {
+        if (edited) {
             const saved = state.profileStore.profile.projects.find(project => edited.id !== null && project.id === edited.id);
             savedSkills = saved ? saved.skills : [];
         }
         return {
             initials: initials,
             editedProject: edited,
-            isEditing: state.profileStore.isProjectEditing,
+            hasChanges: selectedProjectHasChanged(state.profileStore),
             savedSkills
         };
     }
@@ -99,7 +98,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         return {
             saveSelectedProject: () => dispatch(ProfileDataAsyncActionCreator.saveSelectedProject()),
             updateEditingProject: (project: Project) => dispatch(setEditingProjectAction(project)),
-            beginEdit: () => dispatch(editSelectedProjectAction()),
             cancelEdit: () => dispatch(cancelEditSelectedProjectAction()),
         };
     };
@@ -118,13 +116,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     };
 
 
-    private isEditDisabled() {
-        return !this.isEditEnabled();
-    }
-
-    private isEditEnabled() {
-        return this.props.isEditing;
-    }
 
 
     private setName = (name: string) => {
@@ -186,10 +177,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.updateEditingProject({...this.project(), projectRoles});
     };
 
-    private beginEdit = () => {
-        this.props.beginEdit();
-    };
-
     private cancelEdit = () => {
         this.props.cancelEdit();
     };
@@ -248,7 +235,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     }
 
     private toSkillChip(skill: ProfileSkill) {
-        return <SkillChip key={skill.name} disabled={this.isEditDisabled()} skill={skill}
+        return <SkillChip key={skill.name} skill={skill}
                           change={this.skillChange(skill)}
                           onDelete={skill => this.removeSkill(skill.name)}
                           onRestore={this.restoreSkill}
@@ -265,15 +252,13 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
             return <span>{PowerLocalize.get('Profile.Project.NoneSelected')}</span>;
         }
         return (
-            <div className={this.isEditDisabled() ? 'pwr-read-only' : ''}>
+            <div>
                 {/* Spacing scale (#40): fields of a group 16 px apart, sections 32 px. At the top the tight space, so the
                     first field is level with the first project of the list */}
                 <PwrSpacer size="tight"/>
                 <PwrFormSection first>
                     {/* Maximum length as in the other forms (#141); no counter in read mode */}
                     <LimitedTextField
-                        disabled={this.isEditDisabled()}
-                        hideProgress={this.isEditDisabled()}
                         id="project-title"
                         label={PowerLocalize.get('Profile.Project.Name')}
                         maxCharacters={PROJECT_NAME_LENGTH}
@@ -283,8 +268,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     />
                     <PwrSpacer/>
                     <LimitedTextField
-                        disabled={this.isEditDisabled()}
-                        hideProgress={this.isEditDisabled()}
                         id="project-description"
                         label={PowerLocalize.get('Profile.Project.Description')}
                         maxCharacters={PROJECT_DESCRIPTION_LENGTH}
@@ -301,13 +284,11 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     {/* Closed until opened (#336), again for every project */}
                     <ProjectInternalNote key={this.project().id ?? 'new'}
                                          value={this.project().internalNote}
-                                         disabled={this.isEditDisabled()}
                                          onChange={this.setInternalNote}/>
                     <PwrSpacer/>
                     <Grid container spacing={2} justify={'flex-start'}>
                         <Grid item>
                             <PwrDatePicker label={PowerLocalize.get('Profile.Project.StartDate')}
-                                           disabled={this.isEditDisabled()}
                                            onChange={this.setStartDate}
                                            value={this.project().startDate}
                                            type={DatePickerType.MONTH_YEAR}
@@ -316,7 +297,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         </Grid>
                         <Grid item>
                             <PwrDatePicker label={PowerLocalize.get('Profile.Project.EndDate')}
-                                           disabled={this.isEditDisabled()}
                                            onChange={this.setEndDate}
                                            value={this.project().endDate}
                                            type={DatePickerType.MONTH_YEAR}
@@ -326,7 +306,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <PwrSpacer/>
                     <PwrProjectRoleAutocomplete fullWidth={true}
                                                 multi={true}
-                                                disabled={this.isEditDisabled()}
                                                 searchTerm={this.state.projectRoleSearchValue}
                                                 onChangeRole={role => this.setState({projectRoleSearchValue: role.name})}
                                                 onAddRole={role => this.addProjectRole(role)}
@@ -339,18 +318,15 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <PwrCompanyAutocomplete fullWidth={true}
                                             label={PowerLocalize.get('Profile.Project.Client')}
                                             searchTerm={this.client()}
-                                            disabled={this.isEditDisabled()}
                                             onSearchChange={this.setClientName}/>
                     <PwrSpacer/>
                     <PwrCompanyAutocomplete fullWidth={true}
                                             label={PowerLocalize.get('Profile.Project.Broker')}
                                             searchTerm={this.broker()}
-                                            disabled={this.isEditDisabled()}
                                             onSearchChange={this.setBrokerName}/>
                 </PwrFormSection>
                 <PwrFormSection title={PowerLocalize.get('Profile.Project.Skills')}>
-                    {/* Adding skills only in edit mode (#145): in read mode the section shows just the skills */}
-                    {this.isEditEnabled() && <>
+                    <>
                         <SkillSearcher
                             id="SelectedProject.SkillSearcher"
                             fullWidth
@@ -366,16 +342,20 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         <PwrSpacer/>
                         <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
                         <PwrSpacer size="tight"/>
-                    </>}
+                    </>
                     <PwrRow>
                         {this.displayedSkills().map(skill => this.toSkillChip(skill))}
                     </PwrRow>
                 </PwrFormSection>
                 {/* Deleting lives in the project list, as an icon like the other entries (#145) */}
-                <PwrFormActions editing={this.isEditEnabled()}
-                                onEdit={this.beginEdit}
+                {/* No read mode (#338): Save and Discard only do something once something changed; a new project can
+                    always be discarded, which removes it */}
+                <PwrFormActions editing
                                 onSave={this.save}
-                                onCancel={this.cancelEdit}/>
+                                saveDisabled={!this.props.hasChanges}
+                                onCancel={this.cancelEdit}
+                                cancelText={PowerLocalize.get('Profile.Project.Discard')}
+                                cancelDisabled={!this.props.hasChanges && this.project().id !== null}/>
                 {/* Room below the buttons at the end of the scroll area */}
                 <PwrSpacer/>
             </div>

@@ -6,13 +6,11 @@ import {ProfileStore} from '../../../../../reducers/profile-new/ProfileStore';
 import {Paths} from '../../../../../Paths';
 import {
     addNewProject,
-    cancelEditSelectedProjectAction,
-    editSelectedProjectAction,
     selectProject
 } from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 
 /**
- * URL of the projects tab for the selected project and its edit mode.
+ * URL of the projects tab for the selected project. There is no read mode (#338), so no URL for an edit mode either.
  */
 export function projectsUrl(initials: string, store: ProfileStore): string {
     const project = store.selectedProject;
@@ -22,41 +20,41 @@ export function projectsUrl(initials: string, store: ProfileStore): string {
     if (project.id === null) {
         return Paths.build(Paths.USER_PROFILE_NEW_PROJECT, {initials});
     }
-    const path = store.isProjectEditing ? Paths.USER_PROFILE_PROJECT_EDIT : Paths.USER_PROFILE_PROJECT;
-    // Slug from the saved name: it does not follow the typing in the edit mode
+    // Slug from the saved name: it does not follow the typing
     const saved = (store.profile.projects || []).find(other => other.id === project.id);
-    return Paths.build(path, {initials, projectId: String(project.id), slug: Paths.projectSlug(saved && saved.name)});
+    return Paths.build(Paths.USER_PROFILE_PROJECT, {initials, projectId: String(project.id), slug: Paths.projectSlug(saved && saved.name)});
 }
 
 interface UrlTarget {
     isNew: boolean;
     projectId: number | null;
-    edit: boolean;
 }
 
 function parseTarget(pathname: string): UrlTarget {
     if (matchPath(pathname, {path: Paths.USER_PROFILE_NEW_PROJECT, exact: true})) {
-        return {isNew: true, projectId: null, edit: true};
+        return {isNew: true, projectId: null};
     }
+    // Old links of the edit mode (…/edit, before #338) lead to the project
     const edit = matchPath<{ projectId: string }>(pathname, {path: Paths.USER_PROFILE_PROJECT_EDIT, exact: true});
     const view = matchPath<{ projectId: string }>(pathname, {path: Paths.USER_PROFILE_PROJECT, exact: true});
     const match = edit || view;
     const projectId = match ? Number(match.params.projectId) : NaN;
-    return {isNew: false, projectId: isNaN(projectId) ? null : projectId, edit: !!edit};
+    return {isNew: false, projectId: isNaN(projectId) ? null : projectId};
 }
 
 /**
- * Both URLs show the same project: the slug is not evaluated, a stale or missing one leads to the same project
+ * Both URLs show the same project: the slug is not evaluated, a stale or missing one leads to the same project, and
+ * an old link with /edit too
  */
 function sameProject(pathname: string, other: string): boolean {
     const a = parseTarget(pathname);
     const b = parseTarget(other);
-    return a.projectId !== null && a.projectId === b.projectId && a.edit === b.edit;
+    return a.projectId !== null && a.projectId === b.projectId;
 }
 
 /**
  * Keeps the URL of the projects tab and the project selection in the store in sync, in both directions:
- * - Selecting, editing, saving, cancelling or adding a project changes the store, the URL follows.
+ * - Selecting, saving, discarding or adding a project changes the store, the URL follows.
  * - Reload, back/forward and links change the URL, the store follows through the same actions, so the
  *   confirmation for unsaved changes (UnsavedChangesDialog) applies. If it is rejected, the URL is reset.
  */
@@ -141,10 +139,6 @@ export const ProjectUrlSync = () => {
             if (!selected || selected.id !== wanted.projectId) {
                 // A stale index (e.g. after switching the consultant) would be ignored by the reducer, deselect first
                 dispatch(selectProject(index === store.selectedProjectIndex ? -1 : index));
-            } else if (wanted.edit && !store.isProjectEditing) {
-                dispatch(editSelectedProjectAction());
-            } else if (!wanted.edit && store.isProjectEditing) {
-                dispatch(cancelEditSelectedProjectAction());
             }
         }
         attemptedAt.current = storeUrl;

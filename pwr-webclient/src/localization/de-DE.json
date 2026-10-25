@@ -107,6 +107,7 @@
   "Profile.Project.List.Period": "{0} – {1}",
   "Profile.Project.Name": "Titel/Name",
   "Profile.Project.Description": "Beschreibung",
+  "Profile.Project.Discard": "Änderungen verwerfen",
   "Profile.Project.InternalNote": "Interner Vermerk",
   "Profile.Project.InternalNote.Present": "vorhanden",
   "Profile.Project.InternalNote.Empty": "leer",

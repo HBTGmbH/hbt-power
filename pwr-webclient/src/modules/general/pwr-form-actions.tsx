@@ -16,6 +16,9 @@ interface PwrFormActionsProps {
     /** Only where deleting is possible; asks first through makeDeferrable like before */
     onDelete?(): void;
     saveDisabled?: boolean;
+    /** Abbrechen by default; e.g. Änderungen verwerfen where the form has no read mode (#338) */
+    cancelText?: string;
+    cancelDisabled?: boolean;
     /** Label and Material icon of the main action in edit mode, Save by default (e.g. Create, Apply in dialogs) */
     saveText?: string;
     saveIcon?: string;
@@ -61,7 +64,8 @@ export const PwrFormActions = (props: PwrFormActionsProps) => {
                        icon={<Icon className="material-icons">{props.editIcon || 'edit'}</Icon>} onClick={props.onEdit}/>}
             {props.children}
             {props.editing && props.onCancel &&
-            <PwrButton color="primary" text={PowerLocalize.get('Action.Cancel')} onClick={props.onCancel}/>}
+            <PwrButton color="primary" text={props.cancelText || PowerLocalize.get('Action.Cancel')}
+                       disabled={props.cancelDisabled} onClick={props.onCancel}/>}
             {props.onDelete &&
             <PwrButton color="default" className={classes.delete} text={PowerLocalize.get('Action.Delete')}
                        icon={<Icon className="material-icons">delete</Icon>} onClick={props.onDelete}/>}
