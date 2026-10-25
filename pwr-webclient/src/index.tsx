@@ -12,6 +12,7 @@ import {OIDCService} from './OIDCService';
 import {Provider} from "react-redux";
 import {PWR_HISTORY, setTransitionConfirmation} from './reducers/navigation/NavigationActionCreator';
 import {confirmLeavingUnsavedChanges} from './reducers/navigation/UnsavedChanges';
+import {MSALInstance} from './MSALInstance';
 
 export function registerPageLeavePrevention() {
     // Prevents navigation
@@ -38,11 +39,15 @@ export function registerUnsavedChangesGuard() {
             ? 'unsaved-changes' : undefined);
 }
 
-registerPageLeavePrevention();
-registerUnsavedChangesGuard();
-// Init OIDC
-OIDCService.instance();
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(<AppWrapper/>);
+// In the popup of a new login the app doesn't start: MSAL in the window that opened it reads the answer from the URL
+// and closes the popup (#323)
+if (!MSALInstance.isLoginPopup()) {
+    registerPageLeavePrevention();
+    registerUnsavedChangesGuard();
+    // Init OIDC
+    OIDCService.instance();
+    const container = document.getElementById('root');
+    const root = createRoot(container);
+    root.render(<AppWrapper/>);
+}
 

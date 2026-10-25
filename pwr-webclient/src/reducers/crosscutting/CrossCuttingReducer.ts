@@ -21,6 +21,12 @@ export class CrossCuttingReducer {
         if (action.type === ActionType.SetRequestPending) {
             return {...store, ...{requestPending: (action as SetRequestPendingAction).requestPending}};
         }
+        if (action.type === ActionType.OpenSessionExpiredDialog) {
+            return {...store, sessionExpiredDialogOpen: true};
+        }
+        if (action.type === ActionType.CloseSessionExpiredDialog) {
+            return {...store, sessionExpiredDialogOpen: false};
+        }
         if (action.type === ActionType.ChangeBackgroundRequests) {
             const count = store.backgroundRequests + (action as ChangeBackgroundRequestsAction).delta;
             return {...store, backgroundRequests: Math.max(0, count)};
