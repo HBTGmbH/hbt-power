@@ -4,7 +4,7 @@
 |---|---|
 | **Admin** | Benutzer mit der App-Rolle `Power.Admin`. Sieht alle Berater und pflegt Stammdaten. |
 | **Admin-Bereich** | Der Teil des Webclients unter `/admin/home/…`, und die Pfade `/admin/**` der Services, die nur Admins erreichen |
-| **Aktualisieren** | Übernimmt die Änderungen des Profils in ein bestehendes View-Profil und behält dessen Einstellungen (`ViewProfileMergeService`) |
+| **Aktualisieren** | Übernimmt die Änderungen des Profils in ein bestehendes View-Profil, an Ort und Stelle, und behält dessen Einstellungen (`ViewProfileMergeService`, #332) |
 | **Alias** | Weiterer Name eines Skills im Skill-Baum (z. B. `JS` für `JavaScript`). Global eindeutig ohne Groß-/Kleinschreibung. |
 | **Anzeigekategorie** | Kategorie des Skill-Baums, unter der ein View-Profil Skills gruppiert (`display` in `SkillCategory`) |
 | **Berater** (`Consultant`) | Mitarbeiterin oder Mitarbeiter der HBT mit Profil, identifiziert durch das Kürzel |

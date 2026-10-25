@@ -4,7 +4,6 @@ import {ActionType} from '../ActionType';
 import {ApplicationState} from '../reducerIndex';
 import {AxiosRequestConfig} from 'axios';
 import {SortableEntryField, SortableEntryType} from '../../model/view/NameComparableType';
-import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
 import {ViewSkill} from '../../model/view/ViewSkill';
 import {ViewCategory} from '../../model/view/ViewCategory';
@@ -13,7 +12,6 @@ import {Paths} from '../../Paths';
 import {ViewProfileServiceClient} from '../../clients/ViewProfileServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {saveInOrder} from '../../utils/SaveQueue';
 import {RemoveViewProfileAction, SetParentCategoryAction, SetSortInProgressAction, SetViewProfileAction} from './ViewProfileActions';
 
@@ -104,19 +102,15 @@ export class ViewProfileActionCreator {
         };
     }
 
-    public static AsyncCreateChangedViewProfile(initials: string, oldId: string, newName: string, newDescription: string, keepOld: boolean) {
-        return function (dispatch: redux.Dispatch) {
-            let body = {
-                name: newName,
-                viewDescription: newDescription,
-                keepOld: keepOld
-            };
-            viewProfileClient.createChangedViewProfile(initials, oldId, body)
-                .then(viewProfile => ViewProfileActionCreator.read(viewProfile, dispatch))
-                // Not on the page of the old one, which stays open
-                .then(() => Alerts.showSuccess(PowerLocalize.get('ViewProfile.Created')))
-                // The client shows the error
-                .catch((error) => console.error(error));
+    /**
+     * With the current data of the profile, in place (#332): the page shows the result right away. In the queue of the
+     * view profile (#320), so it neither overtakes an edit nor is overtaken by one.
+     */
+    public static AsyncUpdateViewProfile(viewProfileId: string) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+            const initials = getState().profileStore.consultant.initials;
+            ViewProfileActionCreator.saveInOrder(viewProfileId, null, dispatch,
+                () => viewProfileClient.updateViewProfile(initials, viewProfileId));
         };
     }
 

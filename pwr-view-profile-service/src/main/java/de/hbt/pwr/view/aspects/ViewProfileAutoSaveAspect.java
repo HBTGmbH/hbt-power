@@ -50,7 +50,11 @@ public class ViewProfileAutoSaveAspect {
     @After("isAutoSave() && isPublicOperation() && args(viewProfile,..)")
     private void anyViewProfileSavable(JoinPoint joinPoint, ViewProfile viewProfile) { //NOSONAR
         LOG.debug(ViewProfileAutoSaveAspect.class + " invoked after " + joinPoint.getSignature().toString() + ". Performing auto-save...");
-        if(viewProfile != null) {
+        if (viewProfile != null && viewProfile.getId() == null) {
+            // Not stored yet, being built (sorted while created or updated, #332): whoever builds it saves it, an
+            // update under the id of the view profile it updates
+            LOG.debug("...skipped, not stored yet.");
+        } else if (viewProfile != null) {
             // Every change counts as use (#289)
             viewProfile.getViewProfileInfo().setLastUsed(LocalDate.now());
             viewProfileRepository.save(viewProfile);

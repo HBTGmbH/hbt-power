@@ -77,14 +77,12 @@ public class ViewProfileAccessTest {
         mockMvc.perform(asUser(post("/view/xyz"), "tst")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"A\"}"))
                 .andExpect(status().isForbidden());
-        mockMvc.perform(asUser(post("/view/update/xyz/vp1"), "tst")
-                        .contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"A\"}"))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(asUser(post("/view/update/xyz/vp1"), "tst")).andExpect(status().isForbidden());
 
         verify(viewProfileService, never()).getViewProfileIdsForInitials(anyString());
         verify(viewProfileService, never()).deleteWithOwnerCheck(anyString(), anyString());
         verify(viewProfileCreatorService, never()).createViewProfile(any(), any(), any(), any(), any());
-        verify(viewProfileMergeService, never()).updateViewProfile(any(), any(), any());
+        verify(viewProfileMergeService, never()).updateViewProfile(any(), any());
     }
 
     @Test
@@ -96,6 +94,17 @@ public class ViewProfileAccessTest {
     public void adminReadsTheViewProfilesOfEveryone() throws Exception {
         mockMvc.perform(get("/view/xyz").header(USER_ADMIN_HEADER, "true").header(USER_INITIALS_HEADER, "adm"))
                 .andExpect(status().isOk());
+    }
+
+    /** Updating changes the view profile in place (#332), for the owner and an admin */
+    @Test
+    public void ownerAndAdminUpdateAViewProfile() throws Exception {
+        mockMvc.perform(asUser(post("/view/update/tst/vp1"), "tst")).andExpect(status().isOk());
+        mockMvc.perform(post("/view/update/xyz/vp2").header(USER_ADMIN_HEADER, "true").header(USER_INITIALS_HEADER, "adm"))
+                .andExpect(status().isOk());
+
+        verify(viewProfileMergeService).updateViewProfile("vp1", "tst");
+        verify(viewProfileMergeService).updateViewProfile("vp2", "xyz");
     }
 
     @Test

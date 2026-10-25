@@ -45,9 +45,10 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.get(url);
     }
 
-    public createChangedViewProfile(initials: string, oldId: string, body: any): Promise<ViewProfile> {
-        const url = this.base() + '/view/update/' + initials + '/' + oldId;
-        return this.post(url, body);
+    /** With the current data of the profile, in place (#332): same id, name, note and settings */
+    public updateViewProfile(initials: string, id: string): Promise<ViewProfile> {
+        const url = this.base() + '/view/update/' + initials + '/' + id;
+        return this.post(url);
     }
 
     public getViewProfile(initials: string, id: string): Promise<ViewProfile> {

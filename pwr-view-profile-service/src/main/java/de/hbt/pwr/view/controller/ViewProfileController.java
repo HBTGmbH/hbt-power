@@ -114,13 +114,14 @@ public class ViewProfileController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @PostMapping("/update/{initials}/{oldId}")
+    /**
+     * Updates the view profile with the current data of the profile, in place (#332): same id, name, note and
+     * settings
+     */
+    @PostMapping("/update/{initials}/{id}")
     public ResponseEntity<ViewProfile> updateViewProfile(@PathVariable("initials") String initials,
-                                                         @PathVariable("oldId") String oldId,
-                                                         @RequestBody ViewProfile.ViewProfileMergeOptions options) {
-
-        ViewProfile newVP = viewProfileMergeService.updateViewProfile(oldId, initials, options);
-        return ResponseEntity.ok(newVP);
+                                                         @PathVariable("id") String id) {
+        return ResponseEntity.ok(viewProfileMergeService.updateViewProfile(id, initials));
     }
 
     @GetMapping(path = "/{initials}")
