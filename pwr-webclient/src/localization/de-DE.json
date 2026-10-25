@@ -479,6 +479,7 @@
   "Login.LoginAzure": "Login mit Microsoft365",
   "Login.TokenFailed": "Die Sitzung konnte nicht erneuert werden. Versuche es bitte noch einmal.",
   "ProfileSelect.OpeningOwnProfile": "Dein Profil wird geöffnet …",
+  "ProfileSelect.RenewingLogin": "Die Anmeldung wird erneuert …",
   "ProfileSelect.NoProfileFor": "Zu „{0}“ gibt es kein Profil.",
   "ProfileSelect.NoOwnProfile": "Zu deinem Konto („{0}“) gibt es kein Profil. Wende dich an einen Admin.",
   "ProfileSelect.NotYourProfile": "Das Profil „{0}“ kannst du nicht öffnen: Du siehst nur dein eigenes Profil.",
