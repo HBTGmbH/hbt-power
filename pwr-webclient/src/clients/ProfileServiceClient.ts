@@ -35,14 +35,12 @@ export class ProfileServiceClient extends PowerHttpClient {
 
     public getConsultant = (initials: string): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + initials;
-        this.beginRequest();
         return this.get(url);
     };
 
     // Listing and managing the consultants is under /admin (#218)
     public getConsultants = (): Promise<Array<APIConsultant>> => {
         const url = this.base() + '/admin/consultants';
-        this.beginRequest();
         return this.get(url);
     };
 
@@ -55,19 +53,16 @@ export class ProfileServiceClient extends PowerHttpClient {
 
     public createConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
         const url = this.base() + '/admin/consultants';
-        this.beginRequest();
         return this.post(url, consultant);
     };
 
     public updateConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
         const url = this.base() + '/admin/consultants/' + consultant.initials;
-        this.beginRequest();
         return this.patch(url, consultant);
     };
 
     public getSkillSuggestions = (): Promise<Array<String>> => {
         const url = this.base() + '/suggestions/skills';
-        this.beginRequest();
         return this.get(url);
     };
 
@@ -81,21 +76,18 @@ export class ProfileServiceClient extends PowerHttpClient {
         if (version && version.trim().length > 0) {
             params.version = version.trim();
         }
-        this.beginRequest();
         return this.postExpecting(url, [400, 404, 409], null, {params});
     };
 
     /** Renames a skill of the skill tree, in the tree and in all profiles (#228); the old name becomes an alias */
     public renameSkill = (name: string, newName: string): Promise<void> => {
         const url = this.base() + '/admin/skills/rename';
-        this.beginRequest();
         return this.post(url, null, {params: {name, newName}});
     };
 
     /** Deletes a skill from all profiles and projects and from the skill tree (#229) */
     public deleteSkillEverywhere = (name: string): Promise<void> => {
         const url = this.base() + '/admin/skills';
-        this.beginRequest();
         return this.delete(url, {params: {name}});
     };
 
@@ -119,88 +111,74 @@ export class ProfileServiceClient extends PowerHttpClient {
     /** The initials of the consultants whose profile uses the element, counted in the database */
     public getNameEntityUsers = (id: number): Promise<Array<string>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/users';
-        this.beginRequest();
         return this.get(url);
     };
 
     public renameNameEntity = (id: number, name: string): Promise<NameEntity> => {
         const url = this.base() + '/admin/name-entities/' + id;
-        this.beginRequest();
         return this.patch(url, null, {params: {name}});
     };
 
     public mergeNameEntity = (id: number, targetId: number): Promise<NameEntity> => {
         const url = this.base() + '/admin/name-entities/' + id + '/merge';
-        this.beginRequest();
         return this.post(url, null, {params: {target: targetId}});
     };
 
     public deleteNameEntity = (id: number): Promise<void> => {
         const url = this.base() + '/admin/name-entities/' + id;
-        this.beginRequest();
         return this.delete(url);
     };
 
     /** Adds an alias (#270); 400 for a blank one, 409 if it is the name or an alias of another element of the type */
     public addNameEntityAlias = (id: number, alias: string): Promise<Array<string>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/aliases';
-        this.beginRequest();
         return this.postExpecting(url, [400, 409], null, {params: {alias}});
     };
 
     public deleteNameEntityAlias = (id: number, alias: string): Promise<Array<string>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/aliases';
-        this.beginRequest();
         return this.delete(url, {params: {alias}});
     };
 
     /** The names of the element in other languages (#291) */
     public getNameEntityLocalizations = (id: number): Promise<Array<NameEntityLocalization>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/localizations';
-        this.beginRequest();
         return this.get(url);
     };
 
     /** Sets the name in the language, replacing the one there was; the localizations afterwards */
     public setNameEntityLocalization = (id: number, language: string, qualifier: string): Promise<Array<NameEntityLocalization>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/localizations/' + encodeURIComponent(language);
-        this.beginRequest();
         return this.put(url, null, {params: {qualifier}});
     };
 
     public deleteNameEntityLocalization = (id: number, language: string): Promise<Array<NameEntityLocalization>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/localizations/' + encodeURIComponent(language);
-        this.beginRequest();
         return this.delete(url);
     };
 
     public getUnusedNameEntities = (type: string): Promise<Array<NameEntity>> => {
         const url = this.base() + '/admin/name-entities/unused';
-        this.beginRequest();
         return this.get(url, {params: {type}});
     };
 
     public deleteUnusedNameEntities = (type: string): Promise<Array<NameEntity>> => {
         const url = this.base() + '/admin/name-entities/unused';
-        this.beginRequest();
         return this.delete(url, {params: {type}});
     };
 
     public authenticateAdmin = (): Promise<void> => {
         const url = this.base() + '/admin/';
-        this.beginRequest();
         return this.head(url);
     };
 
     public deleteConsultant = (initials: string): Promise<void> => {
         const url = this.base() + `/admin/consultants/${initials}`;
-        this.beginRequest();
         return this.delete(url);
     };
 
     public getAllConsultantInfos = (): Promise<ConsultantInfoDTO[]> => {
         const url = this.base() + `/admin/consultants/info`;
-        this.beginRequest();
         return this.get(url);
     };
 
@@ -213,14 +191,12 @@ export class ProfileServiceClient extends PowerHttpClient {
         };
         const formData = new FormData();
         formData.append("file", picture);
-        this.beginRequest();
         return this.post<{id: string}>(url, formData, config)
             .then(response => response.id)
     }
 
     public deleteProfilePicture = (id: string): Promise<void> => {
         const url = this.base() + `/admin/profile-pictures/${id}`;
-        this.beginRequest();
         return this.delete(url);
     }
 
@@ -230,7 +206,6 @@ export class ProfileServiceClient extends PowerHttpClient {
      */
     public getProfilePicture = (profilePictureId: string): Promise<Blob | null> => {
         const url = this.base() + `/profile-pictures/${profilePictureId}`;
-        this.beginRequest();
         return this.getOrNull<Blob>(url, {responseType: 'blob'})
             .then(blob => blob && blob.size > 0 ? blob : null);
     }
@@ -238,7 +213,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     // ------------------------------------------------------------------------------------- profile check (#139)
 
     /**
-     * In the background, without spinner and alert: the card stays away if the check fails
+     * In the background, without alert: the card stays away if the check fails
      */
     public getProfileCheck = (initials: string): Promise<ProfileCheck> => {
         return this.getQuietly(this.base() + '/profile/' + encodeURIComponent(initials) + '/check');
@@ -248,7 +223,6 @@ export class ProfileServiceClient extends PowerHttpClient {
      * "My profile is up to date"; the edge service adds who confirmed
      */
     public confirmProfile = (initials: string): Promise<ProfileCheck> => {
-        this.beginRequest();
         return this.post(this.base() + '/profile/' + encodeURIComponent(initials) + '/check/confirmation');
     };
 
@@ -263,7 +237,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     /**
-     * The housekeeping checks of the service (#242), without loading spinner and error alert: the housekeeping page
+     * The housekeeping checks of the service (#242), without error alert: the housekeeping page
      * shows a service that does not answer next to the others
      */
     public getHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
@@ -281,7 +255,6 @@ export class ProfileServiceClient extends PowerHttpClient {
     /** Deletes what the check finds now; the answer says how many */
     public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);
-        this.beginRequest();
         return this.delete(url);
     };
 }

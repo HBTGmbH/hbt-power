@@ -10,6 +10,8 @@ import {IconButtonClassKey} from '@material-ui/core/IconButton';
 
 interface StarRatingProps {
     rating: number;
+    /** The rating is clicked but not saved yet (#320): shown faded, the stars stay usable */
+    pending?: boolean;
 
     onRatingChange(newRating: number): void;
 }
@@ -51,7 +53,7 @@ const SingleButtonBase = (props: SingleButtonProps) => {
 const SingleButton = withStyles(styles)(SingleButtonBase);
 
 export const StarRating: React.FunctionComponent<StarRatingProps> = (props: StarRatingProps) => {
-    return (<span>
+    return (<span style={props.pending ? {opacity: 0.5} : undefined} aria-busy={props.pending || undefined}>
             <SingleButton starRatingProps={props} position={1}/>
             <SingleButton starRatingProps={props} position={2}/>
             <SingleButton starRatingProps={props} position={3}/>

@@ -58,22 +58,22 @@ export class PowerHttpClient {
     }
 
     /**
-     * Like get, but without loading spinner and error alert: for background information whose absence the caller
+     * Like get, but without error alert: for background information whose absence the caller
      * shows itself
      */
     getQuietly<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios()
+        return PowerHttpClient.counted(this.getAxios()
             .then(client => client.get<R>(url, config))
-            .then(response => response.data);
+            .then(response => response.data));
     }
 
     /**
-     * Like post, but without loading spinner and error alert: for background information the caller shows itself
+     * Like post, but without error alert: for background information the caller shows itself
      */
     postQuietly<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
-        return this.getAxios()
+        return PowerHttpClient.counted(this.getAxios()
             .then(client => client.post<R>(url, data, config))
-            .then(response => response.data);
+            .then(response => response.data));
     }
 
     delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
@@ -120,21 +120,6 @@ export class PowerHttpClient {
     }
 
     /**
-     * Like patch, but without the loading overlay, which would get in the way of every click: for small changes the
-     * page shows right away (#149). Counted as a background request instead, errors are shown as usual.
-     */
-    patchInBackground<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
-        store.dispatch(CrossCuttingActionCreator.startBackgroundRequest());
-        return this.getAxios()
-            .then(client => client.patch<R>(url, data, config))
-            .then(response => response.data)
-            .catch(error => {
-                throw this.handleError(error);
-            })
-            .finally(() => store.dispatch(CrossCuttingActionCreator.endBackgroundRequest()));
-    }
-
-    /**
      * Overwrite this method if a client does not conform to the {@link PowerApiError] interface
      */
     extractApiError = (error: AxiosError): PowerApiError => {
@@ -151,34 +136,28 @@ export class PowerHttpClient {
     };
 
     /**
-     * Override this if you want to change the behavior of request beginning
-     */
-    beginRequest = () => {
-        store.dispatch(CrossCuttingActionCreator.startRequest());
-    };
-
-    endRequest = <T>(response: AxiosResponse<T>): T => {
-        store.dispatch(CrossCuttingActionCreator.endRequest());
-        return response.data;
-    };
-
-    errorRequest = (error: AxiosError): any => {
-        store.dispatch(CrossCuttingActionCreator.endRequest());
-        throw(this.handleError(error));
-    };
-
-    /**
      * Takes an axios promise (which represents a request) and executes it.
      * If the request is successful, metadata is discarded and only the entity is returned
      * If the request has an error, a default notification is posted to the user and the error is rethrown (allowing you to react to it if you wish to)
-     * The promise includes getting the token, so a failure there ends the spinner and is shown too (#311)
+     * The promise includes getting the token, so a failure there ends the request and is shown too (#311)
      * @param promise
      */
     private executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
-        return promise
-            .then(this.endRequest)
-            .catch(this.errorRequest);
+        return PowerHttpClient.counted(promise
+            .then(response => response.data)
+            .catch(error => {
+                throw this.handleError(error);
+            }));
     };
+
+    /**
+     * Every request counts while it runs (#320): the thin bar below the app bar shows it (PwrRequestProgress), on
+     * every page and without getting in the way of the next click
+     */
+    private static counted<T>(request: Promise<T>): Promise<T> {
+        store.dispatch(CrossCuttingActionCreator.startRequest());
+        return request.finally(() => store.dispatch(CrossCuttingActionCreator.endRequest()));
+    }
 
     private determineError = (error: AxiosError): PowerApiError => {
         if ((error as any) instanceof LoginNotCompletedError) {
@@ -214,13 +193,15 @@ export class PowerHttpClient {
                 };
             }
         }
-        // Requests with responseType 'blob' get their error body as a Blob as well
-        if (!error.response.data || error.response.data instanceof Blob) {
+        // Requests with responseType 'blob' get their error body as a Blob as well, and a proxy in front of a service
+        // that doesn't answer sends text or HTML
+        const data = error.response.data;
+        if (!data || typeof data !== 'object' || data instanceof Blob) {
             console.error('Intercepted server error', error.response);
             return {
                 status: error.response.status,
                 message: 'An unknown server error occurred',
-                error: error.response.statusText
+                error: error.response.statusText || String(error.response.status)
             };
         }
         console.error('Intercepted api error', error.response.data, error.response);

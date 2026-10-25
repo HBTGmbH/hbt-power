@@ -1,10 +1,9 @@
 import {CrossCuttingStore, empty} from '../../model/crosscutting/CrossCuttingStore';
 import {ActionType} from '../ActionType';
 import {
-    ChangeBackgroundRequestsAction,
+    ChangePendingRequestsAction,
     SetLoginErrorAction,
-    SetLoginStatusAction,
-    SetRequestPendingAction
+    SetLoginStatusAction
 } from './CrossCuttingActionCreator';
 import {AbstractAction} from '../BaseActions';
 
@@ -18,18 +17,15 @@ export class CrossCuttingReducer {
         if (action.type === ActionType.SetLoginStatus) {
             return {...store, ...{loginStatus: (action as SetLoginStatusAction).loginStatus}};
         }
-        if (action.type === ActionType.SetRequestPending) {
-            return {...store, ...{requestPending: (action as SetRequestPendingAction).requestPending}};
-        }
         if (action.type === ActionType.OpenSessionExpiredDialog) {
             return {...store, sessionExpiredDialogOpen: true};
         }
         if (action.type === ActionType.CloseSessionExpiredDialog) {
             return {...store, sessionExpiredDialogOpen: false};
         }
-        if (action.type === ActionType.ChangeBackgroundRequests) {
-            const count = store.backgroundRequests + (action as ChangeBackgroundRequestsAction).delta;
-            return {...store, backgroundRequests: Math.max(0, count)};
+        if (action.type === ActionType.ChangePendingRequests) {
+            const count = store.pendingRequests + (action as ChangePendingRequestsAction).delta;
+            return {...store, pendingRequests: Math.max(0, count)};
         }
         return store;
     }

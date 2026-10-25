@@ -33,10 +33,16 @@ interface ProfileSkillsLocalState {
     /** The skill being edited in the dialog */
     selectedSkill: ProfileSkill;
     addOpen: boolean;
+    /**
+     * Per skill id the rating last clicked while it is being saved (#320), shown in place of the saved one; with a
+     * number per click, so only the answer to the last click ends it
+     */
+    pendingRatings: Map<number, {rating: number, click: number}>;
 }
 
 interface ProfileSkillsDispatch {
     saveSkill(initials: string, skill: ProfileSkill);
+    saveRating(initials: string, skillId: number, rating: number, onSettled: () => void);
     deleteSkill(initials: string, skill: ProfileSkill);
 }
 
@@ -47,7 +53,19 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
         this.state = {
             selectedSkill: null,
             addOpen: false,
+            pendingRatings: new Map(),
         };
+    }
+
+    private clicks = 0;
+    private mounted = false;
+
+    componentDidMount() {
+        this.mounted = true;
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     static mapStateToProps(state: ApplicationState): ProfileSkillsProps {
@@ -62,6 +80,8 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
         return {
             deleteSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.deleteProfileSkill(initials, skill)),
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
+            saveRating: (initials, skillId, rating, onSettled) =>
+                dispatch(ProfileDataAsyncActionCreator.saveProfileSkillRating(initials, skillId, rating, onSettled)),
         };
     }
 
@@ -71,9 +91,27 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
         });
     };
 
+    /**
+     * Saved right away, shown faded until the answer (#320); then the stars show the saved rating, after an error the
+     * one before
+     */
     private handleChangeRating = (newRating: number, skill: ProfileSkill) => {
-        const skillToSave: ProfileSkill = {...skill, ...{rating: newRating}};
-        this.props.saveSkill(this.props.initials, skillToSave);
+        const click = ++this.clicks;
+        this.setState(state => ({pendingRatings: new Map(state.pendingRatings).set(skill.id, {rating: newRating, click})}));
+        this.props.saveRating(this.props.initials, skill.id, newRating, () => {
+            if (!this.mounted) {
+                return;
+            }
+            this.setState(state => {
+                const pending = state.pendingRatings.get(skill.id);
+                if (!pending || pending.click !== click) {
+                    return null;
+                }
+                const pendingRatings = new Map(state.pendingRatings);
+                pendingRatings.delete(skill.id);
+                return {pendingRatings};
+            });
+        });
     };
 
     private handleSaveSkill = (skill: ProfileSkill) => {
@@ -96,6 +134,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
     };
 
     private toSkill = (skill: ProfileSkill) => {
+        const pending = this.state.pendingRatings.get(skill.id);
         return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}
                      alignItems={'center'} style={{marginBottom: '15px'}}>
             <Grid item container xs={2} sm={2} md={2} lg={2} xl={2} justify={'flex-end'}>
@@ -119,7 +158,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
 
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <StarRating rating={skill.rating}
+                    <StarRating rating={pending ? pending.rating : skill.rating} pending={!!pending}
                                 onRatingChange={newRating => this.handleChangeRating(newRating, skill)}/>
                     <Typography variant="caption" color="textSecondary" component="div">
                         {formatSkillUsage(skillUsage(skill.name, this.props.projects))}

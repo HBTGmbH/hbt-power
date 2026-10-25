@@ -19,7 +19,7 @@ function edgeServiceUrl(): string {
 
 /**
  * Version and commit of every component, for the app info. A component that cannot be reached is reported as
- * unavailable: no loading spinner, no error alert.
+ * unavailable: no error alert.
  */
 export class AppInfoClient extends PowerHttpClient {
 
@@ -54,7 +54,7 @@ export class AppInfoClient extends PowerHttpClient {
 
     /**
      * The commit of the webclient the server delivers now (#247); null if it cannot be loaded, e.g. while the
-     * container is replaced (502): quietly, no spinner, no alert
+     * container is replaced (502): quietly, no alert
      */
     public getDeliveredCommit(): Promise<string | null> {
         return this.buildInfo()

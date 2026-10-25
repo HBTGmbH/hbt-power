@@ -359,7 +359,7 @@ flowchart TB
         MW["Middleware: deferredActionMiddleware,<br/>asyncActionUnWrapper, thunk"]
     end
     subgraph Clients[clients]
-        HTTP["PowerHttpClient<br/>Token, Spinner, Fehlermeldungen"]
+        HTTP["PowerHttpClient<br/>Token, Anfragezähler, Fehlermeldungen"]
         CL["ProfileServiceClient, SkillServiceClient,<br/>ViewProfileServiceClient, TemplateClient,<br/>ReportServiceClient, StatisticsServiceClient, AppInfoClient"]
     end
     AUTH["OIDCService, MSALInstance<br/>Anmeldung, Rollen, Kürzel"]

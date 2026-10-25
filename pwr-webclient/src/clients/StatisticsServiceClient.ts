@@ -33,50 +33,42 @@ export class StatisticsServiceClient extends PowerHttpClient {
 
     public getSkillUsagesAbsolute = (): Promise<Array<APISkillUsageMetric>> => {
         const url = this.base() + '/statistics/skill/usage/absolute';
-        this.beginRequest();
         return this.get(url);
     };
 
     public getSkillUsageRelative = (): Promise<Array<APISkillUsageMetric>> => {
         const url = this.base() + '/statistics/skill/usage/relative';
-        this.beginRequest();
         return this.get(url);
     };
 
     public getProfileStatistics = (initials: string): Promise<APIProfileSkillMetric> => {
         const url = this.base() + '/statistics/skill/common/' + initials;
-        this.beginRequest();
         return this.get(url);
     };
 
     public headStatisticsServiceAvailable = () => {
         const url = this.base() + '/statistics/ping';
-        this.beginRequest();
         return this.get(url);
     };
 
     public getConsultantClusterInfo = (initials: string): Promise<APIConsultantClusterInfo> => {
         const url = this.base() + '/statistics/network/consultant/' + initials;
-        this.beginRequest();
         return this.get(url);
     };
 
     public getScatterSkills = (): Promise<Array<APIScatterSkill>> => {
         const url = this.base() + '/statistics/skill/level';
-        this.beginRequest();
         return this.get(url);
     };
 
     public postFindConsultantBySkills = (skills: string[]): Promise<Array<any>> => {
         const url = this.base() + '/statistics/consultant/find/skills';
-        this.beginRequest();
         return this.post(url, skills);
     };
 
 
     public getNameEntityUsageInfo(config: AxiosRequestConfig): Promise<Array<APIConsultant>> {
         const url = this.base() + '/admin/statistics/entries/referencing';
-        this.beginRequest();
         return this.get(url, config);
     }
 
@@ -85,7 +77,6 @@ export class StatisticsServiceClient extends PowerHttpClient {
         let config: AxiosRequestConfig = {
             params: {'skill': skillName}
         };
-        this.beginRequest();
         return this.get(url, config);
     }
 }

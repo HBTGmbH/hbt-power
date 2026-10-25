@@ -4,7 +4,6 @@ import {ActionType} from '../ActionType';
 import {ApplicationState} from '../reducerIndex';
 import {AxiosRequestConfig} from 'axios';
 import {SortableEntryField, SortableEntryType} from '../../model/view/NameComparableType';
-import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
 import {ViewSkill} from '../../model/view/ViewSkill';
@@ -15,6 +14,7 @@ import {ViewProfileServiceClient} from '../../clients/ViewProfileServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {saveInOrder} from '../../utils/SaveQueue';
 import {RemoveViewProfileAction, SetParentCategoryAction, SetSortInProgressAction, SetViewProfileAction} from './ViewProfileActions';
 
 const viewProfileClient = ViewProfileServiceClient.instance();
@@ -71,22 +71,24 @@ export class ViewProfileActionCreator {
         };
     }
 
-    private static succeedAndRead(viewProfileResponse: ViewProfile, dispatch: redux.Dispatch) {
-        ViewProfileActionCreator.read(viewProfileResponse, dispatch);
-        dispatch(CrossCuttingActionCreator.endRequest());
-    }
-
-    /**
-     * The state after an edit saved in the background (#149, PowerHttpClient.patchInBackground): no loading overlay
-     * to end
-     */
     private static read(viewProfileResponse: ViewProfile, dispatch: redux.Dispatch) {
         dispatch(ViewProfileActionCreator.SetViewProfile(new ViewProfile(viewProfileResponse)));
     }
 
+    /**
+     * An edit on the view profile page, which saves right away (#149): one after the other per view profile (#320),
+     * since the view-profile service reads and writes back the whole view profile for every change and answers with
+     * it, so parallel changes could undo each other. Of several changes with the same key in a row only the last one
+     * is sent; moves have none, each of them counts.
+     */
+    private static saveInOrder(viewProfileId: string, key: string | null, dispatch: redux.Dispatch,
+                               send: () => Promise<ViewProfile>, onSettled?: () => void) {
+        saveInOrder('view-profile/' + viewProfileId, key,
+            () => send().then(response => ViewProfileActionCreator.read(response, dispatch)), onSettled);
+    }
+
     public static AsyncCreateViewProfile(name: string, description: string, localization: string | null = null) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let body = {
                 name: name,
@@ -95,40 +97,37 @@ export class ViewProfileActionCreator {
                 localization: localization
             };
             viewProfileClient.postViewProfile(initials, body)
-                .then((viewProfile) => ViewProfileActionCreator.succeedAndRead(viewProfile, dispatch))
-                .then(() => Alerts.showSuccess(PowerLocalize.get('ViewProfile.Created')))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Create')));
+                // It shows at the top of the list
+                .then((viewProfile) => ViewProfileActionCreator.read(viewProfile, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncCreateChangedViewProfile(initials: string, oldId: string, newName: string, newDescription: string, keepOld: boolean) {
         return function (dispatch: redux.Dispatch) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let body = {
                 name: newName,
                 viewDescription: newDescription,
                 keepOld: keepOld
             };
             viewProfileClient.createChangedViewProfile(initials, oldId, body)
-                .then(viewProfile => ViewProfileActionCreator.succeedAndRead(viewProfile, dispatch))
+                .then(viewProfile => ViewProfileActionCreator.read(viewProfile, dispatch))
+                // Not on the page of the old one, which stays open
                 .then(() => Alerts.showSuccess(PowerLocalize.get('ViewProfile.Created')))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Create')));
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncMoveEntry(id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
+            // The indexes are those shown: no further move until this one is shown
             dispatch(ViewProfileActionCreator.SetSortInProgress(true));
-            viewProfileClient.patchMoveEntry(initials, id, movableEntry, sourceIndex, targetIndex)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error; the page must not stay blocked
-                .catch((error) => console.error(error))
-                .finally(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)));
+            ViewProfileActionCreator.saveInOrder(id, null, dispatch,
+                () => viewProfileClient.patchMoveEntry(initials, id, movableEntry, sourceIndex, targetIndex),
+                () => dispatch(ViewProfileActionCreator.SetSortInProgress(false)));
         };
     }
 
@@ -136,12 +135,11 @@ export class ViewProfileActionCreator {
                                          movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
+            // The indexes are those shown: no further move until this one is shown
             dispatch(ViewProfileActionCreator.SetSortInProgress(true));
-            viewProfileClient.patchMoveNestedEntry(initials, id, container, containerIndex, movableEntry, sourceIndex, targetIndex)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error; the page must not stay blocked
-                .catch((error) => console.error(error))
-                .finally(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)));
+            ViewProfileActionCreator.saveInOrder(id, null, dispatch,
+                () => viewProfileClient.patchMoveNestedEntry(initials, id, container, containerIndex, movableEntry, sourceIndex, targetIndex),
+                () => dispatch(ViewProfileActionCreator.SetSortInProgress(false)));
         };
     }
 
@@ -149,20 +147,16 @@ export class ViewProfileActionCreator {
                                            toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            viewProfileClient.patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'visibility/' + container + '/' + containerIndex + '/' + toggleableEntry + '/' + index, dispatch,
+                () => viewProfileClient.patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled));
         };
     }
 
     public static AsyncToggleEntry(id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            viewProfileClient.patchToggleEntry(initials, id, toggleableEntry, index, isEnabled)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'visibility/' + toggleableEntry + '/' + index, dispatch,
+                () => viewProfileClient.patchToggleEntry(initials, id, toggleableEntry, index, isEnabled));
         };
     }
 
@@ -170,10 +164,8 @@ export class ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
-            viewProfileClient.patchSortEntry(initials, id, entryType, field, config)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'order/' + entryType + '/' + field, dispatch,
+                () => viewProfileClient.patchSortEntry(initials, id, entryType, field, config));
         };
     }
 
@@ -181,10 +173,8 @@ export class ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName}};
-            viewProfileClient.patchToggleSkill(initials, viewProfileId, isEnabled, config)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(viewProfileId, 'visibility/SKILL/' + skillName, dispatch,
+                () => viewProfileClient.patchToggleSkill(initials, viewProfileId, isEnabled, config));
         };
     }
 
@@ -197,10 +187,8 @@ export class ViewProfileActionCreator {
                     'display-category': newDisplayCategoryName
                 }
             };
-            viewProfileClient.patchSetDisplayCategory(initials, viewProfileId, config)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(viewProfileId, 'display-category/' + skillName, dispatch,
+                () => viewProfileClient.patchSetDisplayCategory(initials, viewProfileId, config));
         };
     }
 
@@ -209,26 +197,21 @@ export class ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
-            viewProfileClient.patchSortNestedEntry(initials, id, container, containerIndex, entryType, field, config)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'order/' + container + '/' + containerIndex + '/' + entryType + '/' + field, dispatch,
+                () => viewProfileClient.patchSortNestedEntry(initials, id, container, containerIndex, entryType, field, config));
         };
     }
 
 
     /**
-     * Asks first (DeferredActionMiddleware). The client runs the loading indicator and shows a failure.
+     * Asks first (DeferredActionMiddleware). The client shows a failure.
      */
     @makeDeferrable(ActionType.AsyncDeleteViewProfile)
     public static AsyncDeleteViewProfile(id: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             const initials = getState().profileStore.consultant.initials;
             viewProfileClient.deleteViewProfile(initials, id)
-                .then(() => {
-                    dispatch(ViewProfileActionCreator.RemoveViewProfile(id));
-                    Alerts.showSuccess(PowerLocalize.get('ViewProfile.Deleted'));
-                })
+                .then(() => dispatch(ViewProfileActionCreator.RemoveViewProfile(id)))
                 .catch((error) => console.error(error));
         };
     }
@@ -241,25 +224,21 @@ export class ViewProfileActionCreator {
             viewProfileClient.getViewProfile(initials, id)
                 .then((response) => {
                     if (isCurrentConsultant(getState, initials)) {
-                        ViewProfileActionCreator.succeedAndRead(response, dispatch);
+                        ViewProfileActionCreator.read(response, dispatch);
                     }
                 })
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Load')));
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncGenerateDocX(viewProfileId: string, templateId: string) {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            dispatch(CrossCuttingActionCreator.startRequest());
             viewProfileClient.postReport(initials, viewProfileId, templateId)
-                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
                 .then(() => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.build(Paths.USER_REPORTS, {initials}))))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Generate')));
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
@@ -267,10 +246,8 @@ export class ViewProfileActionCreator {
     public static AsyncSetInfo(viewProfileId: string, name: string, viewDescription: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            viewProfileClient.patchInfo(initials, viewProfileId, name, viewDescription)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(viewProfileId, 'info', dispatch,
+                () => viewProfileClient.patchInfo(initials, viewProfileId, name, viewDescription));
         };
     }
 
@@ -281,14 +258,12 @@ export class ViewProfileActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             dispatch(ViewProfileActionCreator.ClearViewProfiles());
-            dispatch(CrossCuttingActionCreator.startRequest());
             viewProfileClient.getViewProfileIds(initials)
                 // A late answer for a consultant no longer selected is dropped (#221)
                 .then((response) => isCurrentConsultant(getState, initials)
                     && response.forEach(id => dispatch(ViewProfileActionCreator.AsyncLoadViewProfile(initials, id))))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.LoadAll')));
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
@@ -296,10 +271,8 @@ export class ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {headers: {'Content-Type': 'text/plain'}};
-            viewProfileClient.patchDescription(initials, viewProfileId, description, config)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(viewProfileId, 'description', dispatch,
+                () => viewProfileClient.patchDescription(initials, viewProfileId, description, config));
         };
     }
 
@@ -308,9 +281,8 @@ export class ViewProfileActionCreator {
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.getParentCategories(initials, viewProfileId, skill.name)
                 .then((response) => dispatch(ViewProfileActionCreator.SetParentForSkill(response)))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.getFormatted('ViewProfile.Error.SkillParents', skill.name)));
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
@@ -318,40 +290,32 @@ export class ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName, 'version-name': versionName}};
-            viewProfileClient.patchToggleVersion(initials, id, skillName, versionName, isEnabled, config)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'visibility/version/' + skillName + '/' + versionName, dispatch,
+                () => viewProfileClient.patchToggleVersion(initials, id, skillName, versionName, isEnabled, config));
         };
     }
 
     public static AsyncMoveAllSkills(id: string, displayCategoryIndex: number, targetId: number) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            viewProfileClient.patchMoveAllSkills(initials, id, displayCategoryIndex, targetId)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, null, dispatch,
+                () => viewProfileClient.patchMoveAllSkills(initials, id, displayCategoryIndex, targetId));
         };
     }
 
     public static AsyncSetShowSkillVersions(id: string, show: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            viewProfileClient.patchShowSkillVersions(initials, id, show)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'show-versions', dispatch,
+                () => viewProfileClient.patchShowSkillVersions(initials, id, show));
         };
     }
 
     public static AsyncSetLocalization(id: string, language: string | null) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            viewProfileClient.patchLocalization(initials, id, language)
-                .then((response) => ViewProfileActionCreator.read(response, dispatch))
-                // The client shows the error
-                .catch((error) => console.error(error));
+            ViewProfileActionCreator.saveInOrder(id, 'localization', dispatch,
+                () => viewProfileClient.patchLocalization(initials, id, language));
         };
     }
 }

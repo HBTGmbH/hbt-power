@@ -18,7 +18,7 @@ import {NavigationActionCreator} from '../../reducers/navigation/NavigationActio
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import {ReportManager} from './reportmanager/report-manager_module';
-import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_module';
+import {PwrRequestProgress} from '../general/pwr-request-progress';
 import {AppInfoButton, LoggedInUserAvatar} from '../metadata/app-info_module';
 import {ThunkDispatch} from 'redux-thunk';
 import {AdminMenu} from './admin-menu';
@@ -84,6 +84,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                                     </IconButton>
                                 </Tooltip>
                             </Toolbar>
+                            <PwrRequestProgress/>
                         </AppBar>
                     </Paper>
                 </div>
@@ -108,7 +109,6 @@ class AdminClientModule extends React.Component<AdminClientProps
                         <Route path={Paths.ADMIN_INFO_USED_SKILLS} component={UsedSkillOverview}/>
                         <Route path={Paths.ADMIN_HOUSEKEEPING} component={Housekeeping}/>
                     </div>
-                    <ProfileLoadingSpinner/>
                 </div>
             </div>);
     }

@@ -146,7 +146,9 @@ flowchart LR
 
 - **Webclient:** Jeder Fehler wird als Toast gemeldet und weitergeworfen.
   - `getQuietly`, `getOrNull` und `…Expecting` sind Varianten für erwartete oder stille Fälle.
-  - `patchInBackground` zeigt statt der Ladeüberlagerung einen schmalen Balken.
+  - Jede Anfrage zählt, solange sie läuft; ein schmaler Balken an der App-Bar zeigt es auf allen Seiten (`PwrRequestProgress`, #320), einen Spinner in der Bildmitte gibt es nicht.
+  - Der Zustand ändert sich erst mit der Antwort des Servers; nach einem Fehler bleibt er, wie er war, und es gibt genau eine Meldung. Kleine Speichervorgänge melden keinen Erfolg.
+  - Änderungen ohne Formular, die sofort speichern (Bewertung, Ein-/Ausblenden und Sortieren im View-Profil), gehen je Skill bzw. je View-Profil der Reihe nach an den Server (`saveInOrder`); von mehreren wartenden Änderungen am selben Eintrag wird nur die letzte gesendet.
 - **Logging:** Standard von Spring Boot, in der Produktion als Container-Log mit Rotation. Bereinigungen und Massenänderungen loggen, was sie getan haben (Anzahl und IDs).
 - **Überwachung:** Jeder Service veröffentlicht nur `health` und `info` (`/actuator/info` mit `git.commit`, `git-commit-id-plugin`). Ein Monitoring außerhalb davon gibt es im Repository nicht.
 

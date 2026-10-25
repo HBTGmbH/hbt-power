@@ -4,9 +4,7 @@ import {Template} from '../../model/view/Template';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
-import {Alerts} from '../../utils/Alerts';
 import {TemplateClient} from '../../clients/TemplateClient';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {confirmDeleteByName} from '../deferred/DeferredActions';
@@ -71,28 +69,19 @@ export class TemplateActionCreator {
 
     private static AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getTemplateById(id)
                 .then((template) => TemplateActionCreator.TemplateReceived(template, dispatch))
-                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
-
-                .catch((error: AxiosError) => console.error('AsyncLoadTemplate', error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
-
+                .catch((error: AxiosError) => console.error('AsyncLoadTemplate', error));
 
         };
     }
 
     public static AsyncLoadAllTemplates() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(TemplateActions.ClearTemplates());
             templateClient.getAllTemplates()
                 .then((response) => response.forEach(id => dispatch(TemplateActionCreator.AsyncLoadTemplate(id))))
-                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
-
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
+                .catch((error) => console.error(error));
         };
     }
 
@@ -114,14 +103,14 @@ export class TemplateActionCreator {
             };
             dispatch(AdminActionCreator.SetReportUploadPending(true));
             templateClient.uploadAsTemplate(formData, config)
-                .then(() => dispatch(AdminActionCreator.SetReportUploadPending(false)))
+                // It shows in the list
                 .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
-                .then(() => Alerts.showSuccess('Template erfolgreich hochgeladen!'))
-                .then(() => dispatch(AdminActionCreator.SetReportUploadProgress(0)))
-
-                .catch((error) => Alerts.showError('Upload Fehlgeschlagen: ' + error.toString()))
-                .catch(() => dispatch(AdminActionCreator.SetReportUploadPending(false)))
-                .catch(() => dispatch(AdminActionCreator.SetReportUploadProgress(0)));
+                // The client shows the error
+                .catch((error) => console.error(error))
+                .finally(() => {
+                    dispatch(AdminActionCreator.SetReportUploadPending(false));
+                    dispatch(AdminActionCreator.SetReportUploadProgress(0));
+                });
         };
     }
 }

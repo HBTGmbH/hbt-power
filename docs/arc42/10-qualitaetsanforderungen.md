@@ -58,7 +58,7 @@ mindmap
 | Q11 | Barrierefreiheit | Text, Warnungen, Fehler und Symbole auf dem Theme-Hintergrund | Text mit mindestens 4,5:1, bedeutungstragende Grafik mit mindestens 3:1 | #201 |
 | Q12 | Schutz vor Fehlbedienung | Ein Admin will ein Profil-Element löschen, das 40 Profile benutzen. | Der Dialog nennt die Folgen und gibt `Löschen` erst frei, wenn der Name zweimal eingegeben ist. | #181, [ADR-22](09-architekturentscheidungen.md#adr-22-löschen-in-der-oberfläche-absichern) |
 | Q13 | Leistung | Ein Berater öffnet die PDF-Vorschau. | In der Regel unter einer Sekunde. Bleibt BIRT hängen, bricht das Rendern nach 10 Sekunden mit einer Meldung ab. | #155 |
-| Q14 | Leistung | Ein Berater blendet in einem View-Profil Einträge ein und aus. | Die Änderung erscheint sofort ohne Ladeüberlagerung; nur ein schmaler Balken zeigt laufende Anfragen. | #149, `patchInBackground` |
+| Q14 | Leistung | Ein Berater blendet in einem View-Profil Einträge ein und aus. | Die Änderung erscheint ohne Ladeüberlagerung; nur ein schmaler Balken an der App-Bar zeigt laufende Anfragen. Schnelle Klicks hintereinander enden beim letzten. | #149, #320, `saveInOrder` |
 | Q15 | Dokumentqualität | Ein Export in der Produktion | Text in Simplon Norm, eingebettet; ohne die Schrift Noto Sans im selben Gewicht. | #81, #82 |
 | Q16 | Wartbarkeit | Eine Änderung nur am Skill Service | Der PR baut und testet nur den Skill Service; nach dem Merge wird nur sein Image neu gebaut und ausgetauscht. | #6, [ADR-18](09-architekturentscheidungen.md#adr-18-ci-je-ordner-mit-pfadfiltern-und-getrenntem-publish) |
 | Q17 | Wartbarkeit | Jemand will wissen, welcher Stand in der Produktion läuft. | Das Info-Symbol zeigt den Commit jedes Teils. | #71, #77 |
