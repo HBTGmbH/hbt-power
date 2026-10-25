@@ -79,11 +79,21 @@ type Styles =
     & WithStyles<'suggestion'>
     & WithStyles<'suggestionsList'>;
 
+/** Numbers the fields without an id of their own, so that no id appears twice on a page (#327) */
+let fieldsWithoutId = 0;
+
 export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
+    private readonly ownId = 'pwr-auto-complete-' + (++fieldsWithoutId);
+
     state = {
         suggestions: [],
         input: null,
     };
+
+    /** The id given, otherwise one of its own: Autosuggest builds the ids of the suggestions from it too */
+    private id(): string | number {
+        return this.props.id !== undefined && this.props.id !== null && this.props.id !== '' ? this.props.id : this.ownId;
+    }
 
     dataFilteredBy = (value: string) => {
         if (this.props.disableFiltering) {
@@ -163,7 +173,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         return (
             <TextField
                 error={!!this.props.validationError}
-                id={this.props.id + '_inputField'}
+                id={this.id() + '_inputField'}
                 label={label}
                 fullWidth={this.props.fullWidth}
                 disabled={this.props.disabled}
@@ -283,7 +293,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
         return (
             <Autosuggest
-                id={this.props.id}
+                id={String(this.id())}
                 {...autosuggestProps}
                 inputProps={inputProps}
                 ref={this.storeInputReference}
