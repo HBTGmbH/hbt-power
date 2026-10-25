@@ -14,15 +14,23 @@ import {OIDCService} from '../OIDCService';
 /**
  * Where the app starts after the login (#263): admins in the consultant management, everyone else in their own
  * profile, found by the initials in the token (#135). The page itself only shows while the own profile is looked up,
- * and a message if there is none or the account has no initials. Nobody chooses a profile here any more: a user
+ * and a message if there is none or the account has no initials. Without an account (MSAL lost it while the app
+ * still counts as logged in) the login starts again (#311). Nobody chooses a profile here any more: a user
  * only sees the own one (#255), admins open one from the consultant management.
  */
 export const StartPage = () => {
     const dispatch = useDispatch();
     const account = OIDCService.instance().getCurrentAccount();
     const isAdmin = !!account && account.roles.includes('Power.Admin');
+    const hasAccount = !!account;
     const ownInitials = account && account.initials;
-    const [message, setMessage] = useState(ownInitials ? '' : PowerLocalize.get('ProfileSelect.NoOwnInitials'));
+    const [message, setMessage] = useState(!hasAccount || ownInitials ? '' : PowerLocalize.get('ProfileSelect.NoOwnInitials'));
+
+    useEffect(() => {
+        if (!hasAccount) {
+            OIDCService.instance().loginAgain();
+        }
+    }, [hasAccount]);
 
     useEffect(() => {
         if (isAdmin || !ownInitials) {
@@ -69,7 +77,9 @@ export const StartPage = () => {
                     <div className="vertical-align">
                         {message
                             ? <Typography color="error" className="pwr-profile-select-message">{message}</Typography>
-                            : <Typography color="textSecondary">{PowerLocalize.get('ProfileSelect.OpeningOwnProfile')}</Typography>}
+                            : <Typography color="textSecondary">
+                                {PowerLocalize.get(hasAccount ? 'ProfileSelect.OpeningOwnProfile' : 'ProfileSelect.RenewingLogin')}
+                            </Typography>}
                     </div>
                 </div>
             </div>

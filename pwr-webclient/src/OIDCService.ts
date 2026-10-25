@@ -173,9 +173,11 @@ export class OIDCService {
     }
 
     /**
-     * Once for all calls that fail together, and not while a login started elsewhere (renewLogin) is under way
+     * Starts the login again where MSAL has no account any more although the app counts as logged in, after asking
+     * about unsaved changes (#311). Once for all calls that fail together, and not while a login started elsewhere
+     * (renewLogin) is under way
      */
-    private loginAgain(): void {
+    public loginAgain(): void {
         if (this.loginAgainPending || this.loginStarted) {
             return;
         }
@@ -189,13 +191,15 @@ export class OIDCService {
 
     /**
      * The account that is logged in, null if none is. In local dev mode the local user, who has admin rights.
+     * Without the claims of its ID token MSAL knows the account only by halves: no roles, no initials, so null too
+     * (#311).
      */
     public getCurrentAccount(): LoggedInAccount | null {
         if (CONFIG.LOCAL_DEV) {
             return {name: LOCAL_DEV_USER_NAME, username: '', roles: ['Power.User', 'Power.Admin']};
         }
         const account = this.msalInstance.accessMsal().getActiveAccount();
-        if (!account) {
+        if (!account || !account.idTokenClaims) {
             return null;
         }
         const roles = (account.idTokenClaims && account.idTokenClaims.roles) || [];
