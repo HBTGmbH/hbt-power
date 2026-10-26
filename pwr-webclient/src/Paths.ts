@@ -45,6 +45,8 @@ export class Paths {
     public static readonly USER_PROFILE_SKILLS = CONFIG.APP_PATH + '/app/:initials/profile/skills';
     public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/:initials/reports';
     public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/:initials/search';
+    /** The colleagues, whose profiles every user reads (#350) */
+    public static readonly USER_COLLEAGUES = CONFIG.APP_PATH + '/app/:initials/colleagues';
     public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/:initials/statistics/clusterinfo';
     public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/:initials/statistics/skills';
 

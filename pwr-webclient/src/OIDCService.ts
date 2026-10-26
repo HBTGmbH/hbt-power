@@ -353,7 +353,9 @@ export class OIDCService {
      */
     public getCurrentAccount(): LoggedInAccount | null {
         if (CONFIG.LOCAL_DEV) {
-            return {name: LOCAL_DEV_USER_NAME, username: '', roles: ['Power.User', 'Power.Admin']};
+            return CONFIG.LOCAL_USER
+                ? {name: LOCAL_DEV_USER_NAME, username: '', roles: ['Power.User'], initials: CONFIG.LOCAL_USER}
+                : {name: LOCAL_DEV_USER_NAME, username: '', roles: ['Power.User', 'Power.Admin']};
         }
         const account = this.msalInstance.accessMsal().getActiveAccount();
         if (!account || !account.idTokenClaims) {
@@ -368,10 +370,23 @@ export class OIDCService {
     }
 
     /**
-     * Whether the logged-in account may open the profile with these initials: an admin every one, a user only the own
-     * (#255). The services check the same; this spares the user their errors.
+     * Whether the logged-in account may open the profile with these initials: an admin every one, a consultant also
+     * those of the colleagues, only to read them (#350); an account without initials none. The services check the
+     * same; this spares the user their errors.
      */
     public mayOpenProfile(initials: string): boolean {
+        const account = this.getCurrentAccount();
+        if (!account) {
+            return false;
+        }
+        return account.roles.includes('Power.Admin') || (!!account.initials && !!initials);
+    }
+
+    /**
+     * Whether the logged-in account may change the profile with these initials, and see its profile check, view
+     * profiles and documents: an admin every one, a user only the own (#255). Every other profile it only reads (#350).
+     */
+    public mayEditProfile(initials: string): boolean {
         const account = this.getCurrentAccount();
         if (!account) {
             return false;
@@ -379,7 +394,19 @@ export class OIDCService {
         if (account.roles.includes('Power.Admin')) {
             return true;
         }
-        return !!account.initials && !!initials && account.initials.toLowerCase() === initials.toLowerCase();
+        return this.isOwnProfile(initials);
+    }
+
+    /** Whether the profile with these initials is the one of the logged-in account */
+    public isOwnProfile(initials: string): boolean {
+        const own = this.ownInitials();
+        return !!own && !!initials && own.toLowerCase() === initials.toLowerCase();
+    }
+
+    /** The initials of the own profile, undefined for an account without (#135) */
+    public ownInitials(): string | undefined {
+        const account = this.getCurrentAccount();
+        return account ? account.initials : undefined;
     }
 
     public getCurrentUserName(): string {

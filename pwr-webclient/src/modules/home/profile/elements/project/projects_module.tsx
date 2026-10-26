@@ -24,6 +24,7 @@ import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {ProjectUrlSync} from './project-url-sync';
 import {selectedRowStyle} from '../../../../general/pwr-list-table';
+import {isProfileReadOnly} from '../../../../../reducers/profile-new/ProfileAccess';
 
 interface ProjectsProps {
     projects: Array<Project>
@@ -31,6 +32,8 @@ interface ProjectsProps {
     canAddProject: boolean;
     hasSelectedProject: boolean;
     initials: string;
+    /** The profile of a colleague (#350): no adding or deleting */
+    readOnly: boolean;
 }
 
 interface ProjectsLocalProps {
@@ -69,6 +72,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
             canAddProject: !state.profileStore.selectedProject || state.profileStore.selectedProject.id !== null,
             hasSelectedProject: !!state.profileStore.selectedProject,
             initials: state.profileStore.consultant.initials,
+            readOnly: isProfileReadOnly(state),
         };
     }
 
@@ -99,12 +103,13 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
                          aria-current={selected || undefined} onClick={event => this.handleClick(index)}>
             {/* Delete as an icon in the list, as with the other entries of the profile (#145); not for a new,
                 unsaved project, which "cancel" removes. The click must not select the project. */}
+            {!this.props.readOnly &&
             <ListItemIcon className="pwr-project-list-delete" onClick={event => event.stopPropagation()}>
                 {project.id !== null && project.id !== undefined
                     ? <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
                                      onClick={() => this.props.deleteProject(this.props.initials, project.id)}/>
                     : <span/>}
-            </ListItemIcon>
+            </ListItemIcon>}
             <ListItemText primary={name}
                           secondary={<>
                               <span style={{display: 'block'}}>{period}</span>
@@ -119,6 +124,14 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
      */
     private renderNothingSelected = () => {
         const hasProjects = this.props.projects.length > 0;
+        if (this.props.readOnly) {
+            return <div className="pwr-projects-empty">
+                <Icon className="material-icons pwr-projects-empty-icon">work_outline</Icon>
+                <Typography color="textSecondary">
+                    {PowerLocalize.get(hasProjects ? 'Profile.Project.Empty.SelectToRead' : 'Profile.Project.Empty.None')}
+                </Typography>
+            </div>;
+        }
         return <div className="pwr-projects-empty">
             <Icon className="material-icons pwr-projects-empty-icon">work_outline</Icon>
             <Typography color="textSecondary">
@@ -131,6 +144,9 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
     };
 
     private renderAddProject = () => {
+        if (this.props.readOnly) {
+            return null;
+        }
         return <List>
             <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject}>
                 <ListItemIcon>
@@ -164,7 +180,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
                 <Paper>
                     {/* on top, so it is reachable without scrolling past the list */}
                     {this.renderAddProject()}
-                    <Divider/>
+                    {!this.props.readOnly && <Divider/>}
                     <List component="nav">
                         {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
                     </List>
@@ -190,7 +206,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
                         {/* The store keeps the projects newest first; sorting here would move them away from selectedProjectIndex */}
                         {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
                     </List>
-                    <Divider/>
+                    {!this.props.readOnly && <Divider/>}
                     {this.renderAddProject()}
                 </Paper>
             </div>

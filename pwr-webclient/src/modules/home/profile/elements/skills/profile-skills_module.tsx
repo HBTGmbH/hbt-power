@@ -17,12 +17,15 @@ import {PwrButton} from '../../../../general/pwr-button';
 import {ProfileSkillDialog} from './profile-skill-dialog_module';
 import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
 import {formatSkillUsage, skillUsage} from '../../../../../utils/SkillUsage';
+import {isProfileReadOnly} from '../../../../../reducers/profile-new/ProfileAccess';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
     /** The saved projects, for the time each skill was used in them (#312) */
     projects: Array<Project>;
     initials: string;
+    /** The profile of a colleague (#350): no adding, rating or deleting */
+    readOnly: boolean;
 }
 
 interface ProfileSkillsLocalProps {
@@ -72,7 +75,8 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
         return {
             skills: state.profileStore.profile.skills.sort(PROFILE_SKILLS_BY_NAME),
             projects: state.profileStore.profile.projects,
-            initials: state.profileStore.consultant.initials
+            initials: state.profileStore.consultant.initials,
+            readOnly: isProfileReadOnly(state),
         };
     }
 
@@ -133,7 +137,25 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
         this.props.deleteSkill(this.props.initials, skill);
     };
 
+    /** Name, rating, versions and use in projects, nothing to click (#350) */
+    private toReadOnlySkill = (skill: ProfileSkill) => {
+        const versions = [...skill.versions].sort((a, b) => a.localeCompare(b, 'de', {numeric: true})).join(', ');
+        return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} item style={{marginBottom: '15px'}}>
+            <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>{skill.name}</Typography>
+            <StarRating rating={skill.rating} readOnly/>
+            {versions && <Typography variant="caption" color="textSecondary" component="div">
+                {PowerLocalize.getFormatted('Profile.Skills.Versions', versions)}
+            </Typography>}
+            <Typography variant="caption" color="textSecondary" component="div">
+                {formatSkillUsage(skillUsage(skill.name, this.props.projects))}
+            </Typography>
+        </Grid>;
+    };
+
     private toSkill = (skill: ProfileSkill) => {
+        if (this.props.readOnly) {
+            return this.toReadOnlySkill(skill);
+        }
         const pending = this.state.pendingRatings.get(skill.id);
         return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}
                      alignItems={'center'} style={{marginBottom: '15px'}}>
@@ -198,15 +220,15 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
 
     render() {
         return (<Grid container spacing={1}>
-            {(this.state.addOpen || this.state.selectedSkill) &&
+            {!this.props.readOnly && (this.state.addOpen || this.state.selectedSkill) &&
             <ProfileSkillDialog skill={this.state.selectedSkill} profileSkills={this.props.skills}
                                 projects={this.props.projects}
                                 onSave={this.handleSaveSkill} onClose={this.closeDialog}/>}
-            <Grid item container xs={12} justify="flex-end">
+            {!this.props.readOnly && <Grid item container xs={12} justify="flex-end">
                 <PwrButton color="primary" variant="contained" text={PowerLocalize.get('Profile.Skills.Dialog.AddTitle')}
                            icon={<Icon className="material-icons">add</Icon>}
                            onClick={() => this.setState({addOpen: true})}/>
-            </Grid>
+            </Grid>}
             {this.toSkillOverview()}
         </Grid>);
     }

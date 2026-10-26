@@ -36,6 +36,8 @@ import {ProjectDescriptionHelp} from './project-description-help';
 import {ProjectInternalNote} from './project-internal-note';
 import {PROJECT_DESCRIPTION_LENGTH, PROJECT_NAME_LENGTH} from '../../../../../model/PwrConstants';
 import {selectedProjectHasChanged} from '../../../../../utils/PwrStoreUtils';
+import {isProfileReadOnly} from '../../../../../reducers/profile-new/ProfileAccess';
+import {ProjectReadView} from './project-read-view';
 
 interface ProjectProps {
     initials: string;
@@ -46,6 +48,8 @@ interface ProjectProps {
      * Skills of the project as saved (empty for a new project)
      */
     savedSkills: Array<ProfileSkill> | null;
+    /** The profile of a colleague (#350): the project to read, no form */
+    readOnly: boolean;
 }
 
 
@@ -90,7 +94,8 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
             initials: initials,
             editedProject: edited,
             hasChanges: selectedProjectHasChanged(state.profileStore),
-            savedSkills
+            savedSkills,
+            readOnly: isProfileReadOnly(state),
         };
     }
 
@@ -250,6 +255,9 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     render() {
         if (!this.project()) {
             return <span>{PowerLocalize.get('Profile.Project.NoneSelected')}</span>;
+        }
+        if (this.props.readOnly) {
+            return <ProjectReadView project={this.project()}/>;
         }
         return (
             <div>

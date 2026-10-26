@@ -7,13 +7,16 @@ import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import {StyledComponentProps, Theme, useTheme, withStyles} from '@material-ui/core';
 import {IconButtonClassKey} from '@material-ui/core/IconButton';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 
 interface StarRatingProps {
     rating: number;
     /** The rating is clicked but not saved yet (#320): shown faded, the stars stay usable */
     pending?: boolean;
+    /** Only shows the rating, e.g. in the profile of a colleague (#350) */
+    readOnly?: boolean;
 
-    onRatingChange(newRating: number): void;
+    onRatingChange?(newRating: number): void;
 }
 
 interface SingleButtonProps extends StyledComponentProps<IconButtonClassKey> {
@@ -52,7 +55,20 @@ const SingleButtonBase = (props: SingleButtonProps) => {
 
 const SingleButton = withStyles(styles)(SingleButtonBase);
 
+const ReadOnlyStars = (props: {rating: number}) => {
+    const theme = useTheme();
+    return <span role="img" aria-label={PowerLocalize.getFormatted('StarRating.ReadOnly', props.rating)}
+                 style={{display: 'inline-flex'}}>
+        {[1, 2, 3, 4, 5].map(position => position <= props.rating
+            ? <StarIcon key={position} style={getStyle(position, props.rating, theme)}/>
+            : <StarBorderIcon key={position} style={getStyle(position, props.rating, theme)}/>)}
+    </span>;
+};
+
 export const StarRating: React.FunctionComponent<StarRatingProps> = (props: StarRatingProps) => {
+    if (props.readOnly) {
+        return <ReadOnlyStars rating={props.rating}/>;
+    }
     return (<span style={props.pending ? {opacity: 0.5} : undefined} aria-busy={props.pending || undefined}>
             <SingleButton starRatingProps={props} position={1}/>
             <SingleButton starRatingProps={props} position={2}/>

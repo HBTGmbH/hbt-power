@@ -6,10 +6,16 @@ import {PROFILE_DESCRIPTION_LENGTH} from '../../../../model/PwrConstants';
 import {setDescription} from '../../../../reducers/profile-new/profile/actions/ProfileActions';
 import {LimitedTextField} from '../../../general/limited-text-field-module';
 import {ThunkDispatch} from 'redux-thunk';
+import {isProfileReadOnly} from '../../../../reducers/profile-new/ProfileAccess';
+import {PwrFormSubCaption} from '../../../general/pwr-typography';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import Typography from '@material-ui/core/Typography';
 
 interface ProfileDescriptionProps {
     description: string;
     maxCharacters: number;
+    /** The profile of a colleague (#350) */
+    readOnly: boolean;
 }
 
 interface ProfileDescriptionLocalProps {
@@ -40,6 +46,7 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
         return {
             description: description,
             maxCharacters: PROFILE_DESCRIPTION_LENGTH,
+            readOnly: isProfileReadOnly(state),
         };
     }
 
@@ -77,6 +84,15 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
 
 
     render() {
+        if (this.props.readOnly) {
+            // Text, no field: a colleague reads it (#350)
+            return <div>
+                <PwrFormSubCaption>{PowerLocalize.get('Profile.Description')}</PwrFormSubCaption>
+                <Typography style={{whiteSpace: 'pre-wrap'}}>
+                    {this.props.description || PowerLocalize.get('Profile.Entries.NotAvailable')}
+                </Typography>
+            </div>;
+        }
         return (
             <div onBlur={this.handleTextBlur}>
                 <LimitedTextField

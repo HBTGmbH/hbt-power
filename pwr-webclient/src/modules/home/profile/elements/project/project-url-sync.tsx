@@ -4,6 +4,7 @@ import {matchPath, useHistory, useLocation, useParams} from 'react-router-dom';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileStore} from '../../../../../reducers/profile-new/ProfileStore';
 import {Paths} from '../../../../../Paths';
+import {isProfileReadOnly} from '../../../../../reducers/profile-new/ProfileAccess';
 import {
     addNewProject,
     selectProject
@@ -64,6 +65,7 @@ export const ProjectUrlSync = () => {
     const location = useLocation();
     const {initials} = useParams<{ initials: string }>();
     const store = useSelector((state: ApplicationState) => state.profileStore);
+    const readOnly = useSelector(isProfileReadOnly);
     // A question is open (delete confirmation or unsaved changes): wait for the answer
     const deferredPending = useSelector((state: ApplicationState) =>
         !!state.deferred.deferredAction || state.navigationSlice.confirmDialogOpen);
@@ -120,6 +122,12 @@ export const ProjectUrlSync = () => {
         const wanted = parseTarget(target.current);
         const projects = store.profile.projects || [];
         const selected = store.selectedProject;
+        if (wanted.isNew && readOnly) {
+            // No new project in the profile of a colleague (#350)
+            target.current = null;
+            history.replace(Paths.build(Paths.USER_PROFILE_PROJECTS, {initials}));
+            return;
+        }
         if (wanted.isNew) {
             if (selected && selected.id !== null) {
                 dispatch(selectProject(-1));
@@ -142,7 +150,7 @@ export const ProjectUrlSync = () => {
             }
         }
         attemptedAt.current = storeUrl;
-    }, [location.pathname, storeUrl, store, deferredPending, dispatch, history, initials]);
+    }, [location.pathname, storeUrl, store, readOnly, deferredPending, dispatch, history, initials]);
 
     return null;
 };

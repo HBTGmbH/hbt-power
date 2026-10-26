@@ -1,3 +1,4 @@
+import {CONFIG} from '../../Config';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
 import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
@@ -63,7 +64,10 @@ export class CrossCuttingAsyncActionCreator {
         };
     }
 
-    public static AsyncLoadProfile(initials: string) {
+    /**
+     * The profile of a colleague is only read (#350): its statistics and view profiles are not the user's to load
+     */
+    public static AsyncLoadProfile(initials: string, readOnly: boolean = false) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
             ConsultantClient.instance().findConsultant(initials).then(consultant => {
                 if (!consultant) {
@@ -73,19 +77,24 @@ export class CrossCuttingAsyncActionCreator {
                     return;
                 }
                 dispatch(consultantUpdateAction(consultant));
-                dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-                dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
+                if (!readOnly) {
+                    dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
+                    dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
+                }
             }).catch(error => console.error('Failed to load profile', error));
         }
     }
 
     /**
-     * Local dev mode only: log in without Azure, as a user with admin rights.
+     * Local dev mode only: log in without Azure, as a user with admin rights, or as the user of CONFIG.LOCAL_USER
+     * without (#350), who like in production doesn't ask the admin check.
      */
     public static AsyncLogInLocalUser(navigateToStart: boolean) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(AdminActionCreator.AsyncValidateAuthentication());
+            if (!CONFIG.LOCAL_USER) {
+                dispatch(AdminActionCreator.AsyncValidateAuthentication());
+            }
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.SUCCESS));
             if (navigateToStart) {
                 dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.START));

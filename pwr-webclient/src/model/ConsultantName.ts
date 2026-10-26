@@ -6,4 +6,6 @@ export interface ConsultantName {
     initials: string;
     shortName: string;
     fullName: string;
+    /** Only active consultants are colleagues (#350) */
+    active: boolean;
 }

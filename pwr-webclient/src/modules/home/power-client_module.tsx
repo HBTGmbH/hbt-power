@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {PowerToolbar} from './power-toolbar_module';
-import {Route, useParams} from 'react-router-dom';
+import {matchPath, Route, useLocation, useParams} from 'react-router-dom';
 import {ViewProfileOverview} from './view/view-profile-overview_module';
 import {ConsultantSkillSearch} from '../general/search/consultant-skill-search_module.';
 import {SkillStatistics} from './statistics/skill-statistics_module';
@@ -17,36 +17,51 @@ import {OIDCService} from '../../OIDCService';
 import {Alerts} from '../../utils/Alerts';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {navigateReplacing} from '../../reducers/navigation/NavigationActionCreator';
+import {ColleaguesPage} from './colleagues/colleagues-page';
+import {ColleagueProfileNotice} from './colleagues/colleague-profile-notice';
 
 
 export const PowerClient = () => {
     const dispatch = useDispatch();
     const {initials} = useParams<{initials: string}>();
+    const {pathname} = useLocation();
     const mayOpen = OIDCService.instance().mayOpenProfile(initials);
+    // The profile of a colleague is only read (#350): no overview with its profile check, no view profiles, no documents
+    const readOnly = mayOpen && !OIDCService.instance().mayEditProfile(initials);
+    const offProfile = readOnly && !matchPath(pathname, {path: Paths.USER_PROFILE});
     useEffect(() => {
         if (!mayOpen) {
-            // Only the own profile, an admin every one (#255): one message instead of an error from every part of the page
+            // An account without own profile opens none (#255): one message instead of an error from every part of the page
             Alerts.showError(PowerLocalize.getFormatted('ProfileSelect.NotYourProfile', initials));
             navigateReplacing(Paths.START, dispatch);
             return;
         }
-        dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));
-    }, [initials, mayOpen, dispatch]);
+        dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials, readOnly));
+    }, [initials, mayOpen, readOnly, dispatch]);
+    useEffect(() => {
+        if (offProfile) {
+            navigateReplacing(Paths.build(Paths.USER_PROFILE, {initials}), dispatch);
+        }
+    }, [offProfile, initials, dispatch]);
 
-    if (!mayOpen) {
+    if (!mayOpen || offProfile) {
         return null;
     }
     return <div>
         <PowerToolbar/>
         <div style={{marginTop: '70px'}}>
-            <Route path={Paths.USER_HOME} component={PowerOverview}/>
+            {readOnly && <ColleagueProfileNotice initials={initials}/>}
             <Route path={Paths.USER_PROFILE} component={ConsultantProfile}/>
-            <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
-            <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
-            <Route path={Paths.USER_SEARCH} component={ConsultantSkillSearch}/>
-            <Route path={Paths.USER_VIEW_PROFILES} component={ViewProfilesPage}/>
-            <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
-            <Route path={Paths.USER_REPORTS} component={ReportHistory}/>
+            {!readOnly && <>
+                <Route path={Paths.USER_HOME} component={PowerOverview}/>
+                <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
+                <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
+                <Route path={Paths.USER_SEARCH} component={ConsultantSkillSearch}/>
+                <Route path={Paths.USER_COLLEAGUES} component={ColleaguesPage}/>
+                <Route path={Paths.USER_VIEW_PROFILES} component={ViewProfilesPage}/>
+                <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
+                <Route path={Paths.USER_REPORTS} component={ReportHistory}/>
+            </>}
         </div>
     </div>;
 }
