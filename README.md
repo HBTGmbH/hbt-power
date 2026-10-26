@@ -103,7 +103,7 @@ npm --prefix pwr-webclient install
 npm --prefix pwr-webclient run start:local
 ```
 
-Open [localhost:3000](http://localhost:3000). Local boot is auto-authenticated as admin
+Open [localhost:3000](http://localhost:3000). Local boot is auto-authenticated as admin. To act as a user without admin role, start it with the initials of a local consultant, e.g. `REACT_APP_LOCAL_USER=tes npm --prefix pwr-webclient run start:local`: the dev server then sends the headers the edge would set, so the services check access like in production (#350).
 
 ### Load test data (optional)
 

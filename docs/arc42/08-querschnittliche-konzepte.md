@@ -34,18 +34,18 @@ flowchart LR
   - Ein Akteur (Ersteller, Exporteur, Bestätiger) kommt nie aus Body, Pfad oder Query.
   - Ruft ein Service einen anderen im Auftrag des Benutzers, gibt er die Header weiter (Export, #214).
   - Kürzel im Pfad sagen nur, um welches Profil es geht.
-- **Nur eigene Daten** (#255): Ein `Power.User` liest und ändert nur die Daten zu seinem Kürzel, ein `Power.Admin` alle. Profile, Report, View-Profile und Statistics Service prüfen das selbst (`security/ConsultantAccess`):
-  - Ein Interceptor vergleicht die Pfadvariable `{initials}` jedes Endpunkts mit `X-Pwr-User-Initials`, ohne Groß-/Kleinschreibung.
+- **Nur eigene Daten** (#255): Ein `Power.User` liest und ändert nur die Daten zu seinem Kürzel, ein `Power.Admin` alle. Die Profile der Kollegen liest jeder Berater mit, nur lesend und ohne Geburtsdatum (#350); Pflegehinweise (Profilcheck), View-Profile, Exportdokumente und Profilstatistik bleiben beim Berater. Profile, Report, View-Profile und Statistics Service prüfen das selbst (`security/ConsultantAccess`):
+  - Ein Interceptor vergleicht die Pfadvariable `{initials}` jedes Endpunkts mit `X-Pwr-User-Initials`, ohne Groß-/Kleinschreibung. Ausgenommen sind nur Endpunkte des Profile Service, die ausdrücklich mit `@ReadableByColleagues` markiert sind (die GETs von Berater, Profil und Profilbild), und das nur für eine Anfrage mit Kürzel; ein neuer Endpunkt bleibt ohne Markierung beim Berater. Profilbilder lesen Kollegen nur von aktiven Beratern (#350).
   - Was über eine ID geladen wird (Dokument, Profilbild, View-Profil), prüft der Endpunkt am Besitzer.
   - Dokumente entstehen nur über den View-Profile Service (#262): Er lädt das View-Profil über seine ID und prüft den Besitzer. `POST /report` und `/report/preview` des Report Service weisen jede Anfrage über die Edge ab, auch eines Admins, und ebenso ein View-Profil, dessen Besitzer nicht zu den Kürzeln im Body passt.
   - Ein ganzes Profil wird nur gelesen (`GET /profiles/{initials}`), nie aus einem Body ersetzt (#261).
   - Eine Anfrage ohne `X-Pwr-User-Admin` kam nicht über die Edge (Aufruf eines anderen Service, lokal) und darf alles.
   - Eine ID im Body muss zum Profil im Pfad gehören, auch für Admins.
   - Für alle offen bleiben nach Entscheidung: Beratersuche, Namensliste, Cluster-Info und Angaben ohne Personenbezug. Personenbezogenes über andere, das nur der Admin-Bereich braucht, liegt unter `/admin`.
-  - Der Webclient öffnet einem Benutzer kein fremdes Profil (`OIDCService.mayOpenProfile`).
+  - Der Webclient öffnet einem Benutzer fremde Profile nur zum Lesen (`OIDCService.mayEditProfile`, #350): ohne Bedienelemente zum Ändern, ohne Übersicht, View-Profile und Dokumente des Kollegen; er lädt dafür auch nichts davon. Einstieg ist die Seite *Kollegen* und die Namen in Beratersuche und Cluster-Info.
 - **Binärdaten** (Profilbilder, Vorschauen) lädt der Webclient mit Token als Blob. Profilbilder dürfen privat lange gecacht werden (`Cache-Control: private, max-age=365d, immutable`, #67).
-- **Datensparsamkeit:** `GET /consultants/names` gibt allen Benutzern nur Kürzel, Kurz- und vollen Namen (#216).
-- **Lokal** gibt es keine Edge und keine Anmeldung: Man ist Admin, die Header fehlen (z. B. bleibt „Exportiert von“ leer).
+- **Datensparsamkeit:** `GET /consultants/names` gibt allen Benutzern nur Kürzel, Kurz- und vollen Namen und ob der Berater aktiv ist (#216, #350). `GET /consultants/{initials}` nennt das Geburtsdatum nur dem Berater selbst und Admins (#350).
+- **Lokal** gibt es keine Edge und keine Anmeldung: Man ist Admin, die Header fehlen (z. B. bleibt „Exportiert von“ leer). Mit `REACT_APP_LOCAL_USER=<kürzel>` ist man ein Benutzer ohne Admin-Rolle; der Dev-Server setzt dann die Header wie die Edge, und die Services prüfen wie in Produktion (#350).
 - **Lieferkette:** Actions sind nach einer festen Regel gepinnt und geprüft (actionlint, zizmor, #8). Der `publish`-Job nutzt keinen Cache.
 
 ## 8.2 Persistenz
