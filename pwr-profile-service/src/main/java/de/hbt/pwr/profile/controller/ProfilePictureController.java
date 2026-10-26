@@ -4,6 +4,7 @@ import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.ProfilePicture;
 import de.hbt.pwr.profile.security.ConsultantAccess;
+import de.hbt.pwr.profile.security.ReadableByColleagues;
 import de.hbt.pwr.profile.service.PictureService;
 import io.swagger.annotations.Api;
 import org.springframework.http.CacheControl;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,12 +45,12 @@ public class ProfilePictureController {
     }
 
     /**
-     * A user gets the own picture only, an admin every one (#255)
+     * A user gets the own picture and those of the active colleagues (#350), an admin every one (#255)
      */
     @GetMapping("/{id}")
     @ResponseBody
     public ResponseEntity<byte[]> getPicture(@PathVariable("id") String id) {
-        ConsultantAccess.check(consultantRepository.findFirstByProfilePictureId(id).map(Consultant::getInitials).orElse(null));
+        checkReadable(consultantRepository.findFirstByProfilePictureId(id));
         return pictureService.findProfilePicture(id)
                 .map(picture -> withContentType(picture)
                         .header(HttpHeaders.CACHE_CONTROL, CACHE_PICTURE_BY_ID)
@@ -56,12 +58,23 @@ public class ProfilePictureController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @ReadableByColleagues
     @GetMapping("/by-initials/{initials}")
     @ResponseBody
     public ResponseEntity<byte[]> getPictureByInitials(@PathVariable("initials") String initials) {
+        checkReadable(consultantRepository.findByInitials(initials));
         return pictureService.findByInitials(initials)
                 .map(picture -> withContentType(picture).body(picture.getImage()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Every colleague reads the picture of an active consultant, like the profile (#350); the picture of an inactive
+     * one or of none only the consultant and the admins
+     */
+    private static void checkReadable(Optional<Consultant> owner) {
+        ConsultantAccess.checkRead(owner.map(Consultant::getInitials).orElse(null),
+                owner.map(Consultant::getActive).orElse(false));
     }
 
     private ResponseEntity.BodyBuilder withContentType(ProfilePicture profilePicture) {

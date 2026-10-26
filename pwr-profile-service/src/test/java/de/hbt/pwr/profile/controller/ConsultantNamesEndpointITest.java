@@ -1,6 +1,8 @@
 package de.hbt.pwr.profile.controller;
 
 import de.hbt.pwr.profile.AbstractIntegrationTest;
+import de.hbt.pwr.profile.data.ConsultantRepository;
+import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.service.ConsultantService;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Names of the consultants for the webclient (#216): short and full name, nothing else
+ * Names of the consultants for the webclient (#216): short and full name and whether active (#350), nothing else
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,6 +37,9 @@ public class ConsultantNamesEndpointITest extends AbstractIntegrationTest {
 
     @Autowired
     private ConsultantService consultantService;
+
+    @Autowired
+    private ConsultantRepository consultantRepository;
 
     @Before
     public void createConsultants() {
@@ -52,9 +57,20 @@ public class ConsultantNamesEndpointITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void namesSayWhetherTheConsultantIsActive() throws Exception {
+        Consultant inactive = consultantRepository.findByInitials("nk2").orElseThrow();
+        inactive.setActive(false);
+        consultantRepository.save(inactive);
+
+        mockMvc.perform(get("/consultants/names"))
+                .andExpect(jsonPath("$[?(@.initials == 'nk1')].active", contains(true)))
+                .andExpect(jsonPath("$[?(@.initials == 'nk2')].active", contains(false)));
+    }
+
+    @Test
     public void namesCarryNoOtherData() throws Exception {
         mockMvc.perform(get("/consultants/names"))
-                .andExpect(jsonPath("$[0].*", hasSize(3)))
+                .andExpect(jsonPath("$[0].*", hasSize(4)))
                 .andExpect(jsonPath("$[0].birthDate").doesNotExist())
                 .andExpect(jsonPath("$[0].profile").doesNotExist());
     }
