@@ -24,7 +24,17 @@ export const StartPage = () => {
     const isAdmin = !!account && account.roles.includes('Power.Admin');
     const hasAccount = !!account;
     const ownInitials = account && account.initials;
-    const [message, setMessage] = useState(!hasAccount || ownInitials ? '' : PowerLocalize.get('ProfileSelect.NoOwnInitials'));
+    // Which account and what is missing, so the cause can be found without asking (#348)
+    const [message, setMessage] = useState(!hasAccount || ownInitials ? ''
+        : PowerLocalize.getFormatted('ProfileSelect.NoOwnInitials', account.username || account.name));
+    const claimNames = ((account && account.claimNames) || []).join(', ');
+
+    useEffect(() => {
+        if (hasAccount && !ownInitials) {
+            // Only the names: the values of the claims are personal data
+            console.warn('No claim mailnickname in the ID token, so no initials. Claims: ' + claimNames);
+        }
+    }, [hasAccount, ownInitials, claimNames]);
 
     useEffect(() => {
         if (!hasAccount) {

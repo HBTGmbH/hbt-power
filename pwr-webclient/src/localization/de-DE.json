@@ -491,7 +491,7 @@
   "ProfileSelect.NoProfileFor": "Zu „{0}“ gibt es kein Profil.",
   "ProfileSelect.NoOwnProfile": "Zu deinem Konto („{0}“) gibt es kein Profil. Wende dich an einen Admin.",
   "ProfileSelect.NotYourProfile": "Das Profil „{0}“ kannst du nicht öffnen: Du siehst nur dein eigenes Profil.",
-  "ProfileSelect.NoOwnInitials": "Zu deinem Konto ist kein Kürzel hinterlegt. Wende dich an einen Admin.",
+  "ProfileSelect.NoOwnInitials": "Zu deinem Konto „{0}“ ist kein Kürzel hinterlegt: Die Anmeldung liefert die Angabe „mailnickname“ nicht. Wende dich an einen Admin.",
   "HBT.CompanyPosition": "HBT Stellung",
   "Profile.Description": "Werbetext",
   "Tooolbar.LogOut": "Ausloggen",

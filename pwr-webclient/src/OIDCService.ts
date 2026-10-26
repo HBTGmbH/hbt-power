@@ -28,6 +28,8 @@ export interface LoggedInAccount {
     roles: Array<string>;
     /** The initials of the own profile, from the claim mailnickname; undefined if the token has none (#135) */
     initials?: string;
+    /** The names of the claims of the ID token, without their values: for the analysis when the initials are missing (#348) */
+    claimNames?: Array<string>;
 }
 
 /**
@@ -359,7 +361,10 @@ export class OIDCService {
         }
         this.remember(account);
         const roles = (account.idTokenClaims && account.idTokenClaims.roles) || [];
-        return {name: account.name, username: account.username, roles, initials: initialsClaim(account.idTokenClaims)};
+        return {
+            name: account.name, username: account.username, roles, initials: initialsClaim(account.idTokenClaims),
+            claimNames: Object.keys(account.idTokenClaims)
+        };
     }
 
     /**
