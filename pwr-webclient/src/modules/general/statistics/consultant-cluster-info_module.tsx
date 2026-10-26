@@ -3,6 +3,9 @@ import {Card, CardContent, CardHeader, List, ListItem, Popover} from '@material-
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {StringUtils} from '../../../utils/StringUtil';
 import {APIAveragedSkill, APIConsultantClusterInfo} from '../../../model/statistics/ApiMetrics';
+import {Link} from 'react-router-dom';
+import {Paths} from '../../../Paths';
+import {PwrConsultantName} from '../pwr-consultant-name';
 
 
 const randomColor = require('randomcolor');
@@ -48,8 +51,12 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
 
 
     private renderInitials = () => {
-        return this.props.info.clusterInitials.map(initials => <ListItem disabled={true}
-                                                                           key={initials}>{initials}</ListItem>);
+        // Each a link to the profile, which every user reads (#350)
+        return this.props.info.clusterInitials.map(initials => <ListItem key={initials}>
+            <Link to={Paths.build(Paths.USER_PROFILE, {initials})}>
+                <PwrConsultantName initials={initials} fullName={initials}/>
+            </Link>
+        </ListItem>);
     };
 
     private renderCommonSkills = () => {

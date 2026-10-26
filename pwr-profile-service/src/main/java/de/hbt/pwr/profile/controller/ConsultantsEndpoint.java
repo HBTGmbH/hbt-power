@@ -5,6 +5,8 @@ import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.ConsultantDTO;
 import de.hbt.pwr.profile.model.ConsultantNameDTO;
+import de.hbt.pwr.profile.security.ConsultantAccess;
+import de.hbt.pwr.profile.security.ReadableByColleagues;
 import de.hbt.pwr.profile.service.ConsultantShortNames;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,8 +22,8 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
- * What every user may read about consultants: one consultant by the initials and the names of all (#216). Listing and
- * managing them is for admins ({@link ConsultantAdminEndpoint}, #218).
+ * What every user may read about consultants: one consultant by the initials, a colleague without the birth date
+ * (#350), and the names of all (#216). Listing and managing them is for admins ({@link ConsultantAdminEndpoint}, #218).
  * <p>
  * Created by cg on 07.04.2017.
  */
@@ -37,6 +39,7 @@ public class ConsultantsEndpoint {
         this.consultantRepository = consultantRepository;
     }
 
+    @ReadableByColleagues
     @GetMapping("{initials}")
     @ApiOperation(value = "Find a consultant by his initials")
     @ApiResponses(value = {
@@ -51,7 +54,7 @@ public class ConsultantsEndpoint {
                 ConsultantDTO dto = new ConsultantDTO()
                         .toBuilder()
                         .active(res.getActive())
-                        .birthDate(res.getBirthDate())
+                        .birthDate(ConsultantAccess.mayAccess(res.getInitials()) ? res.getBirthDate() : null)
                         .title(res.getTitle())
                         .firstName(res.getFirstName())
                         .lastName(res.getLastName())

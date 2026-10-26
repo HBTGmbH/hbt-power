@@ -6,6 +6,7 @@ import de.hbt.pwr.profile.model.profile.BaseProfile;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.*;
+import de.hbt.pwr.profile.security.ReadableByColleagues;
 import de.hbt.pwr.profile.service.ConsultantService;
 import de.hbt.pwr.profile.service.ProfileEntryService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.Collection;
 
+/**
+ * The profile of a consultant, read and changed by the consultant and the admins; the colleagues only read it (#350)
+ */
 @Transactional
 @Slf4j
 @RestController
@@ -35,11 +39,13 @@ public class ProfileEntryEndpoint {
         this.profileRepository = profileRepository;
     }
 
+    @ReadableByColleagues
     @GetMapping("/fullProfile")
     public Profile getFullProfile(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials);
     }
 
+    @ReadableByColleagues
     @GetMapping("/baseProfile")
     public BaseProfile getBaseProfile(@PathVariable("initials") String initials) {
         Profile p = consultantService.getProfileByInitials(initials);
@@ -54,6 +60,7 @@ public class ProfileEntryEndpoint {
 
 
     // --------------------------- ---------------------- Languages ---------------------- ---------------------------//
+    @ReadableByColleagues
     @GetMapping("/language")
     public Collection<LanguageSkill> getLanguageSkills(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getLanguages();
@@ -73,6 +80,7 @@ public class ProfileEntryEndpoint {
     }
 
     // ------------------------- ---------------------- Qualification ---------------------- -------------------------//
+    @ReadableByColleagues
     @GetMapping("/qualification")
     public Collection<QualificationEntry> getQualificationEntries(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getQualification();
@@ -92,6 +100,7 @@ public class ProfileEntryEndpoint {
     }
 
     // --------------------------- ---------------------- Sector ---------------------- ---------------------------//
+    @ReadableByColleagues
     @GetMapping("/sector")
     public Collection<SectorEntry> getSectorEntries(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getSectors();
@@ -111,6 +120,7 @@ public class ProfileEntryEndpoint {
     }
 
     // --------------------------- ---------------------- KeySkills ---------------------- ---------------------------//
+    @ReadableByColleagues
     @GetMapping("/specialfield")
     public Collection<SpecialFieldEntry> getKeySkillEntries(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getSpecialFieldEntries();
@@ -130,6 +140,7 @@ public class ProfileEntryEndpoint {
     }
 
     // -------------------------- ---------------------- CareerEntry ---------------------- --------------------------//
+    @ReadableByColleagues
     @GetMapping("/career")
     public Collection<CareerEntry> getCareerEntries(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getCareerEntries();
@@ -149,6 +160,7 @@ public class ProfileEntryEndpoint {
     }
 
     // --------------------------- ---------------------- Training ---------------------- ---------------------------//
+    @ReadableByColleagues
     @GetMapping("/training")
     public Collection<TrainingEntry> getTrainingEntries(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getTrainingEntries();
@@ -168,6 +180,7 @@ public class ProfileEntryEndpoint {
     }
 
     // --------------------------- ---------------------- Education ---------------------- ---------------------------//
+    @ReadableByColleagues
     @GetMapping("/education")
     public Collection<EducationEntry> getEducationEntries(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getEducation();
@@ -188,6 +201,7 @@ public class ProfileEntryEndpoint {
 
     // ---------------------------- ---------------------- Skills ---------------------- ----------------------------//
 
+    @ReadableByColleagues
     @GetMapping("/skill")
     public Collection<Skill> getSkills(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getSkills();
@@ -208,6 +222,7 @@ public class ProfileEntryEndpoint {
     }
 
     // --------------------------- ---------------------- Projects ---------------------- ----------------------------//
+    @ReadableByColleagues
     @GetMapping("/project")
     public Collection<Project> getProjects(@PathVariable("initials") String initials) {
         return consultantService.getProfileByInitials(initials).getProjects();

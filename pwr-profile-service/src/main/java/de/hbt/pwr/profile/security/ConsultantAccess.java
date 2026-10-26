@@ -11,8 +11,8 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 /**
  * Who may read and change the data of a consultant (#255): a <code>Power.User</code> only the own, a
- * <code>Power.Admin</code> everyone's. The edge says who is logged in and whether the account is an admin, from the
- * verified token. It sets the admin header on every request, so a request without it did not come through the edge:
+ * <code>Power.Admin</code> everyone's; every user reads the profiles of the colleagues ({@link ReadableByColleagues},
+ * #350). The edge says who is logged in and whether the account is an admin, from the verified token. It sets the admin header on every request, so a request without it did not come through the edge:
  * a call of another service, or local development without the edge. Both may access everything.
  */
 public final class ConsultantAccess {
@@ -33,6 +33,35 @@ public final class ConsultantAccess {
         }
         String user = request.getHeader(USER_INITIALS_HEADER);
         return user != null && !user.isBlank() && initials != null && user.trim().equalsIgnoreCase(initials.trim());
+    }
+
+    /**
+     * Whether the current request may access the data of the consultant with these initials (true outside a request);
+     * a colleague who only reads may not (#350)
+     */
+    public static boolean mayAccess(String initials) {
+        HttpServletRequest request = currentRequest();
+        return request == null || mayAccess(request, initials);
+    }
+
+    /**
+     * Whether the request comes from a consultant, who reads the profiles of the colleagues (#350): an account without
+     * initials has no profile and is nobody's colleague
+     */
+    public static boolean isColleague(HttpServletRequest request) {
+        String user = request.getHeader(USER_INITIALS_HEADER);
+        return user != null && !user.isBlank();
+    }
+
+    /**
+     * Answers <code>403</code> unless the current request may read the data of the consultant with these initials:
+     * every colleague the data of an active consultant (#350), otherwise as {@link #check(String)}
+     */
+    public static void checkRead(String initials, boolean active) {
+        HttpServletRequest request = currentRequest();
+        if (request != null && !(active && isColleague(request)) && !mayAccess(request, initials)) {
+            throw new ResponseStatusException(FORBIDDEN, "Not your data");
+        }
     }
 
     /**

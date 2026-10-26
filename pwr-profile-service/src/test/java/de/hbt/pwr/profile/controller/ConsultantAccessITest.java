@@ -13,6 +13,7 @@ import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.LanguageSkill;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
 import de.hbt.pwr.profile.model.profile.entries.Project;
+import de.hbt.pwr.profile.security.ReadableByColleagues;
 import de.hbt.pwr.profile.service.ConsultantService;
 import org.junit.After;
 import org.junit.Before;
@@ -27,11 +28,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
 import static de.hbt.pwr.profile.security.ConsultantAccess.USER_ADMIN_HEADER;
 import static de.hbt.pwr.profile.security.ConsultantAccess.USER_INITIALS_HEADER;
@@ -41,12 +47,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * A user reads and changes only the own profile, an admin every one (#255); an id must belong to the profile in the
- * path, also for an admin
+ * A user changes only the own profile, an admin every one (#255); a user reads the profiles of the colleagues, but not
+ * their profile check (#350); an id must belong to the profile in the path, also for an admin
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -69,6 +77,9 @@ public class ConsultantAccessITest extends AbstractIntegrationTest {
     @Autowired
     private ConsultantRepository consultantRepository;
 
+    @Autowired
+    private RequestMappingHandlerMapping handlerMapping;
+
     private ProfilePicture otherPicture;
     private ProfilePicture ownPicture;
 
@@ -86,7 +97,7 @@ public class ConsultantAccessITest extends AbstractIntegrationTest {
         for (String initials : new String[]{"own", "oth"}) {
             Consultant consultant = consultantRepository.findByInitials(initials).orElseThrow();
             consultant.setActive(false);
-            consultantService.updatePersonalData(initials, consultant);
+            consultantRepository.save(consultant);
             consultantService.deleteConsultant(initials);
         }
     }
@@ -115,25 +126,72 @@ public class ConsultantAccessITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void userNeitherReadsNorChangesAnotherProfile() throws Exception {
-        mockMvc.perform(asUser(get("/profile/oth/fullProfile"), "own")).andExpect(status().isForbidden());
-        mockMvc.perform(asUser(get("/profiles/oth"), "own")).andExpect(status().isForbidden());
-        mockMvc.perform(asUser(get("/consultants/oth"), "own")).andExpect(status().isForbidden());
+    public void userReadsTheProfileOfAColleague() throws Exception {
+        for (String section : new String[]{"fullProfile", "baseProfile", "language", "qualification", "sector",
+                "specialfield", "career", "training", "education", "skill", "project"}) {
+            mockMvc.perform(asUser(get("/profile/oth/" + section), "own")).andExpect(status().isOk());
+        }
+        mockMvc.perform(asUser(get("/consultants/oth"), "own")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.lastName").value("Other"))
+                .andExpect(jsonPath("$.birthDate").doesNotExist());
+        mockMvc.perform(asUser(get("/profile-pictures/" + otherPicture.getId()), "own")).andExpect(status().isOk());
+        mockMvc.perform(asUser(get("/profile-pictures/by-initials/oth"), "own")).andExpect(status().isOk());
+    }
+
+    @Test
+    public void ownerAndAdminSeeTheBirthDate() throws Exception {
+        mockMvc.perform(asUser(get("/consultants/oth"), "OTH")).andExpect(jsonPath("$.birthDate").value("1990-01-01"));
+        mockMvc.perform(asAdmin(get("/consultants/oth"))).andExpect(jsonPath("$.birthDate").value("1990-01-01"));
+    }
+
+    @Test
+    public void userNeitherChangesNorChecksTheProfileOfAColleague() throws Exception {
         mockMvc.perform(asUser(get("/profile/oth/check"), "own")).andExpect(status().isForbidden());
-        mockMvc.perform(asUser(get("/profile-pictures/" + otherPicture.getId()), "own"))
-                .andExpect(status().isForbidden());
-        mockMvc.perform(asUser(get("/profile-pictures/by-initials/oth"), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(post("/profile/oth/check/confirmation"), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get("/profiles/oth"), "own")).andExpect(status().isForbidden());
         mockMvc.perform(asUser(put("/profile/oth/baseProfile"), "own")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"description\": \"geändert\"}"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(asUser(put("/profile/oth/skill"), "own")
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"Java\", \"rating\": 3}"))
                 .andExpect(status().isForbidden());
         mockMvc.perform(asUser(delete("/profile/oth/skill/1"), "own")).andExpect(status().isForbidden());
 
         assertThat(consultantService.getProfileByInitials("oth").getDescription()).isNotEqualTo("geändert");
+        assertThat(consultantService.getProfileByInitials("oth").getSkills()).isEmpty();
+    }
+
+    @Test
+    public void userReadsNoPictureOfAnInactiveColleague() throws Exception {
+        Consultant other = consultantRepository.findByInitials("oth").orElseThrow();
+        other.setActive(false);
+        consultantRepository.save(other);
+
+        mockMvc.perform(asUser(get("/profile-pictures/" + otherPicture.getId()), "own"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get("/profile-pictures/by-initials/oth"), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asAdmin(get("/profile-pictures/" + otherPicture.getId()))).andExpect(status().isOk());
+    }
+
+    /**
+     * Colleagues only read (#350): an endpoint they may reach changes nothing
+     */
+    @Test
+    public void onlyReadingEndpointsAreOpenToColleagues() {
+        Map<RequestMappingInfo, HandlerMethod> handlers = handlerMapping.getHandlerMethods();
+        assertThat(handlers.entrySet())
+                .filteredOn(handler -> handler.getValue().hasMethodAnnotation(ReadableByColleagues.class))
+                .isNotEmpty()
+                .allSatisfy(handler -> assertThat(handler.getKey().getMethodsCondition().getMethods())
+                        .containsExactly(RequestMethod.GET));
     }
 
     @Test
     public void userWithoutInitialsGetsNoProfile() throws Exception {
         mockMvc.perform(get("/profile/own/fullProfile").header(USER_ADMIN_HEADER, "false"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/consultants/own").header(USER_ADMIN_HEADER, "false")).andExpect(status().isForbidden());
+        mockMvc.perform(get("/profile-pictures/" + ownPicture.getId()).header(USER_ADMIN_HEADER, "false"))
                 .andExpect(status().isForbidden());
     }
 

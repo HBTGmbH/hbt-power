@@ -26,10 +26,17 @@ module.exports = function (app) {
         target: 'http://localhost:9000',
         pathRewrite: {'^/api': ''},
     }));
+    // REACT_APP_LOCAL_USER=<initials>: a user without admin role (#350); the headers the edge sets from the token, so
+    // the services check like in production. Without, no headers: a call not through the edge, which may do everything.
+    const localUser = (process.env.REACT_APP_LOCAL_USER || '').trim();
+    const userHeaders = localUser
+        ? {'X-Pwr-User-Login': localUser + '@localhost', 'X-Pwr-User-Initials': localUser, 'X-Pwr-User-Admin': 'false'}
+        : {};
     Object.entries(SERVICES).forEach(([service, port]) => {
         app.use(`/api/${service}`, createProxyMiddleware({
             target: `http://localhost:${port}`,
             pathRewrite: {[`^/api/${service}`]: ''},
+            headers: userHeaders,
         }));
     });
 };

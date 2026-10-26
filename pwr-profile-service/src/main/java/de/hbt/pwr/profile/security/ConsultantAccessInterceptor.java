@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.security;
 
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -10,7 +11,8 @@ import java.util.Map;
 /**
  * Checks the consultant a path names (the variable <code>{initials}</code>) before the controller runs (#255), so
  * every endpoint with initials in its path is covered, also a new one. Data found by an id is checked where it is
- * loaded, with {@link ConsultantAccess#check(String)}.
+ * loaded, with {@link ConsultantAccess#check(String)}. Endpoints marked {@link ReadableByColleagues} every user may
+ * read (#350).
  */
 public class ConsultantAccessInterceptor implements HandlerInterceptor {
 
@@ -19,9 +21,15 @@ public class ConsultantAccessInterceptor implements HandlerInterceptor {
         @SuppressWarnings("unchecked")
         Map<String, String> variables =
                 (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (variables != null && variables.containsKey("initials")) {
+        if (variables != null && variables.containsKey("initials")
+                && !(readableByColleagues(handler) && ConsultantAccess.isColleague(request))) {
             ConsultantAccess.check(variables.get("initials"));
         }
         return true;
+    }
+
+    private static boolean readableByColleagues(Object handler) {
+        return handler instanceof HandlerMethod
+                && ((HandlerMethod) handler).hasMethodAnnotation(ReadableByColleagues.class);
     }
 }

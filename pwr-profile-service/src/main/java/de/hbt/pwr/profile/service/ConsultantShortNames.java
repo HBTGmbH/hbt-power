@@ -26,7 +26,7 @@ public final class ConsultantShortNames {
                 .collect(Collectors.toList());
         return consultants.stream()
                 .map(consultant -> new ConsultantNameDTO(consultant.getInitials(), shortName(consultant, active),
-                        fullName(consultant)))
+                        fullName(consultant), BooleanUtils.isTrue(consultant.getActive())))
                 .collect(Collectors.toList());
     }
 

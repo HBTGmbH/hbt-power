@@ -7,6 +7,8 @@ import {StatisticsServiceClient} from '../../../clients/StatisticsServiceClient'
 import {SkillServiceClient} from '../../../clients/SkillServiceClient';
 import {compareNames} from '../../../utils/Comparators';
 import {PwrConsultantName} from '../pwr-consultant-name';
+import {Link} from 'react-router-dom';
+import {Paths} from '../../../Paths';
 
 
 interface ConsultantSkillInfo {
@@ -100,9 +102,11 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
             res += ': ';
             res += skill.rating;
         });
-        // The short name (#216), the full name with the initials in the tooltip
+        // The short name (#216), the full name with the initials in the tooltip; a link to the profile (#350)
         return <>
-            <PwrConsultantName initials={consultant.initials} fullName={consultant.fullName}/>
+            <Link to={Paths.build(Paths.USER_PROFILE, {initials: consultant.initials})}>
+                <PwrConsultantName initials={consultant.initials} fullName={consultant.fullName}/>
+            </Link>
             {res}
         </>;
     };

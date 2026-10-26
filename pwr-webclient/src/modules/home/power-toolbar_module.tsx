@@ -21,6 +21,7 @@ import {matchPath, withRouter} from 'react-router-dom';
 import {ProfileStore} from '../../reducers/profile-new/ProfileStore';
 import {projectsUrl} from './profile/elements/project/project-url-sync';
 import {PwrRequestProgress} from '../general/pwr-request-progress';
+import {OIDCService} from '../../OIDCService';
 
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
@@ -118,7 +119,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
      */
     private changeConsultant = (initials: string) => {
         const pagesForAnyConsultant = [Paths.USER_HOME, Paths.USER_PROFILE, Paths.USER_PROFILE_PROJECTS, Paths.USER_PROFILE_SKILLS,
-            Paths.USER_REPORTS, Paths.USER_VIEW_PROFILES, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS];
+            Paths.USER_REPORTS, Paths.USER_VIEW_PROFILES, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS, Paths.USER_COLLEAGUES];
         const pathname = this.props.location.pathname;
         let currentPage = pagesForAnyConsultant.find(path => matchPath(pathname, {path, exact: true}));
         if (!currentPage && matchPath(pathname, {path: Paths.USER_PROFILE_PROJECTS})) {
@@ -184,7 +185,12 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         </MenuItem>;
     };
 
-    private renderMenu = (initials: string) => {
+    /**
+     * @param initials of the profile open on the page, which the base data sections show
+     * @param home initials of the pages of the user: the own while reading a colleague's profile (#350), which has no
+     * overview, view profiles or documents for the user, otherwise those of the open profile
+     */
+    private renderMenu = (initials: string, home: string) => {
         return (<div>
 
                 <Menu
@@ -195,7 +201,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 >
                     <MenuItem
                         key={'1'}
-                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_HOME, {initials}))}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_HOME, {initials: home}))}
                     >
                         <ListItemIcon>
                             <Icon className="material-icons">home</Icon>
@@ -227,7 +233,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     {/* One entry for the page with all view profiles (#213), there even without any */}
                     <MenuItem key={'3'}
                               selected={!!matchPath(this.props.location.pathname, {path: Paths.USER_VIEW_PROFILES})}
-                              onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_VIEW_PROFILES, {initials}))}>
+                              onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_VIEW_PROFILES, {initials: home}))}>
                         <ListItemIcon>
                             <Icon className="material-icons">remove_red_eye</Icon>
                         </ListItemIcon>
@@ -247,7 +253,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             <MenuItem
                                 key="Menu.Statistics.Network.Clusterinfo"
                                 className="pwr-menu-subitem"
-                                onClick={() => this.loadConsultantClusterInfo(initials)}
+                                onClick={() => this.loadConsultantClusterInfo(home)}
                             >
                                 <ListItemIcon>
                                     <Icon className="material-icons">info</Icon>
@@ -259,7 +265,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             <MenuItem
                                 key="Menu.Statistics.Skills"
                                 className="pwr-menu-subitem"
-                                onClick={() => this.loadSkillStatistics(initials)}
+                                onClick={() => this.loadSkillStatistics(home)}
                             >
                                 <ListItemIcon>
                                     <Icon className="material-icons">palette</Icon>
@@ -272,7 +278,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     ]}
                     <MenuItem
                         key={'6'}
-                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_REPORTS, {initials}))}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_REPORTS, {initials: home}))}
                     >
                         <ListItemIcon>
                             <Icon className="material-icons">folder</Icon>
@@ -284,7 +290,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     </MenuItem>
                     <MenuItem
                         key={'7'}
-                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_SEARCH, {initials}))}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_SEARCH, {initials: home}))}
                     >
                         <ListItemIcon>
                             <Icon className="material-icons">search</Icon>
@@ -293,6 +299,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             {PowerLocalize.get('Menu.Search')}
                         </ListItemText>
 
+                    </MenuItem>
+                    {/* The profiles of the colleagues, to read (#350) */}
+                    <MenuItem key={'7b'}
+                              selected={!!matchPath(this.props.location.pathname, {path: Paths.USER_COLLEAGUES})}
+                              onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_COLLEAGUES, {initials: home}))}>
+                        <ListItemIcon>
+                            <Icon className="material-icons">groups</Icon>
+                        </ListItemIcon>
+                        <ListItemText>
+                            {PowerLocalize.get('Menu.Colleagues')}
+                        </ListItemText>
                     </MenuItem>
                     <Divider/>
                     {/* Only on narrow screens, where the info icon in the app bar is hidden (#127) */}
@@ -331,6 +348,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
      */
     render() {
         const initials = this.props.match.params.initials;
+        const readOnly = !OIDCService.instance().mayEditProfile(initials);
+        const home = readOnly ? OIDCService.instance().ownInitials() || initials : initials;
         return (
             <div>
                 <AppBar color={'primary'}>
@@ -346,7 +365,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 <Icon className="material-icons">menu</Icon>
                             </IconButton>
                         </Tooltip>
-                        {this.renderMenu(initials)}
+                        {this.renderMenu(initials, home)}
                         <AppInfoDialog open={this.state.appInfoOpen} onClose={() => this.setState({appInfoOpen: false})}/>
 
                         <PwrBrand/>

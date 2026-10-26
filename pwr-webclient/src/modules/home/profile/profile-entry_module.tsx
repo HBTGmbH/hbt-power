@@ -15,11 +15,14 @@ import {Theme, withTheme} from '@material-ui/core';
 import {PwrFormSubCaption} from '../../general/pwr-typography';
 import {Comparators} from '../../../utils/Comparators';
 import {ThunkDispatch} from 'redux-thunk';
+import {isProfileReadOnly} from '../../../reducers/profile-new/ProfileAccess';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
     suggestions: Array<string>;
     initials: string;
+    /** The profile of a colleague (#350): no adding, changing or deleting */
+    readOnly: boolean;
 }
 
 interface ProfileEntryLocalProps {
@@ -81,6 +84,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
             allEntries: entries,
             suggestions: suggestionNames,
             initials: initials,
+            readOnly: isProfileReadOnly(state),
         };
     }
 
@@ -117,7 +121,23 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         return Comparators.compareProfileEntries(this.props.type, entry1, entry2);
     };
 
+    private renderReadOnlyElement = (entry: ProfileEntry) => {
+        return <Grid key={entry.id} item container alignItems={'flex-end'} spacing={0}>
+            <Grid item className="pwr-profile-entry-name" xs={12}>
+                <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>
+                    {entry.nameEntity.name}
+                </Typography>
+            </Grid>
+            <Grid item xs={12}>
+                {this.props.renderSingleElementInfo(entry, entry.id)}
+            </Grid>
+        </Grid>;
+    };
+
     private renderSingleElement = (entry: ProfileEntry) => {
+        if (this.props.readOnly) {
+            return this.renderReadOnlyElement(entry);
+        }
         return (
             <Grid key={entry.id} item container spacing={0}>
                 <Grid item xs={2} sm={2} md={1} lg={1} xl={1}>
@@ -156,8 +176,9 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     render() {
         return (
             <div className="pwr-profile-entry-container">
+                {!this.props.readOnly &&
                 <ProfileEntryDialog open={this.state.open} onClose={this.handleDialogOnClose} type={this.props.type}
-                                    entry={this.state.selectEntry}/>
+                                    entry={this.state.selectEntry}/>}
                 <Grid container spacing={0} alignItems={'flex-start'}>
                     {/* Heading and add button in one row; the button right-aligned with the divider (edge="end") */}
                     <Grid item xs={12} container alignItems={'center'} wrap={'nowrap'}>
@@ -166,17 +187,18 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                                 {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
                             </PwrFormSubCaption>
                         </Grid>
-                        <Grid item>
+                        {!this.props.readOnly && <Grid item>
                             <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
                                            iconButtonProps={{edge: 'end'}}
                                            onClick={this.handleNewButton}/>
-                        </Grid>
+                        </Grid>}
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* Speaks to the consultant ("du"), not to a colleague reading it (#350) */}
+                    {!this.props.readOnly && <Grid item xs={12}>
                         <p>
                             {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Info`)}
                         </p>
-                    </Grid>
+                    </Grid>}
                     <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                         <Divider variant={'fullWidth'}
                                  style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
