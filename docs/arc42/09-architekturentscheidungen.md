@@ -24,7 +24,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 | [11](#adr-11-birt-für-dokumente-docx-gespeichert-pdf-vorschau-live) | BIRT für Dokumente, DOCX gespeichert, PDF-Vorschau live | gilt, Ablösung untersucht | #64, #66, #155 |
 | [12](#adr-12-lizenzierte-schrift-nie-im-repository-oder-image) | Lizenzierte Schrift nie im Repository oder Image | gilt | #81, #82 |
 | [13](#adr-13-skill-namen-aliase-normalisierung-auf-den-baum-groß-kleinschreibung) | Skill-Namen: Aliase, Normalisierung auf den Baum, Groß-/Kleinschreibung | gilt | #27, #207, #208, #215 |
-| [14](#adr-14-skill-suche-mit-hibernate-search-und-lucene) | Skill-Suche mit Hibernate Search und Lucene | übernommen | #32, #33, #74 |
+| [14](#adr-14-skill-suche-mit-hibernate-search-und-lucene) | Skill-Suche mit Hibernate Search und Lucene | übernommen | #32, #33, #74, #352 |
 | [15](#adr-15-kurznamen-der-berater-zentral-berechnet) | Kurznamen der Berater zentral berechnet | gilt | #216 |
 | [16](#adr-16-localdate-als-string-im-webclient) | `LocalDate` als String im Webclient | gilt | #24, #26 |
 | [17](#adr-17-vorerst-jdk-13-und-spring-boot-22) | Vorerst JDK 13 und Spring Boot 2.2 | gilt, Upgrade vorgeschlagen | #51 |
@@ -211,6 +211,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - Hibernate Search 5 mit einem Lucene-Index im Dateisystem, der bei jedem Start neu aufgebaut wird.
   - Treffer in dieser Reihenfolge: genau, Wortanfang, unscharf (#32). Aliase und Übersetzungen sind durchsuchbar.
   - Die Tests nutzen einen Index im Speicher (#74).
+  - Suche und Vorschläge lesen nur den Index: Name und Aliase sind darin gespeichert, die Datenbank wird nicht gefragt (#352).
 - **Konsequenzen:**
   - Der Start dauert länger, dafür gibt es keinen eigenen Suchdienst.
   - Ein Ranking nach Beliebtheit ist offen (#33).
