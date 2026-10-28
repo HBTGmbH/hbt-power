@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.DisjunctionMaxQuery;
 import org.apache.lucene.search.Query;
@@ -35,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -52,11 +54,21 @@ public class SkillSearcherService {
     /** A match by alias counts a bit less than the same match by name: J brings Java before JavaScript (alias JS) */
     private static final float ALIAS_BOOST = 0.5f;
 
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
     public SkillSearcherService(final EntityManagerFactory entityManagerFactory) {
-        entityManager = entityManagerFactory.createEntityManager();
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
+    /** An EntityManager of its own per call: it is not thread-safe, and requests search at the same time (#352) */
+    private <T> T withSearch(Function<FullTextEntityManager, T> work) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            return work.apply(Search.getFullTextEntityManager(entityManager));
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Transactional
@@ -67,35 +79,40 @@ public class SkillSearcherService {
     }
 
     void buildSearchIndexSync() throws InterruptedException {
-        FullTextEntityManager em = Search.getFullTextEntityManager(entityManager);
-        em.createIndexer().startAndWait();
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            Search.getFullTextEntityManager(entityManager).createIndexer().startAndWait();
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<String> searchSkill(String searchTerm, int maxResults) {
-        return search(searchTerm, maxResults).stream().map(hit -> hit.name).collect(Collectors.toList());
+        return withSearch(em -> search(em, searchTerm, maxResults).stream().map(hit -> hit.name).collect(Collectors.toList()));
     }
 
     /**
      * Like {@link #searchSkill(String, int)}, with the alias that matched the search term better than the name
      */
     public List<SkillSuggestion> suggestSkills(String searchTerm, int maxResults) {
-        List<Hit> hits = search(searchTerm, maxResults);
-        if (hits.isEmpty()) {
-            return emptyList();
-        }
-        FullTextEntityManager em = Search.getFullTextEntityManager(entityManager);
-        MatchLevel level = new MatchLevel(em, searchTerm);
-        return hits.stream()
-                .map(hit -> new SkillSuggestion(hit.name, matchingAlias(level, hit, em.find(Skill.class, hit.id))))
-                .collect(Collectors.toList());
+        return withSearch(em -> {
+            List<Hit> hits = search(em, searchTerm, maxResults);
+            if (hits.isEmpty()) {
+                return emptyList();
+            }
+            MatchLevel level = new MatchLevel(em, searchTerm);
+            return hits.stream()
+                    .map(hit -> new SkillSuggestion(hit.name, matchingAlias(level, hit)))
+                    .collect(Collectors.toList());
+        });
     }
 
-    private static String matchingAlias(MatchLevel level, Hit hit, Skill skill) {
-        if (skill == null || skill.getAliases() == null || skill.getAliases().isEmpty()) {
+    private static String matchingAlias(MatchLevel level, Hit hit) {
+        if (hit.aliases.isEmpty()) {
             return null;
         }
         double byName = level.of(hit.name);
-        return skill.getAliases().stream()
+        return hit.aliases.stream()
                 .filter(alias -> level.of(alias) > byName)
                 .max(Comparator.comparingDouble(level::of).thenComparing(Comparator.comparingInt(String::length).reversed()))
                 .map(String::trim)
@@ -103,21 +120,22 @@ public class SkillSearcherService {
     }
 
     private static class Hit {
-        private final Integer id;
         private final String name;
+        /** From the index, which stores them for this: the search reads no database (#352) */
+        private final List<String> aliases;
 
-        private Hit(Integer id, String name) {
-            this.id = id;
+        private Hit(String name, List<String> aliases) {
             this.name = name;
+            this.aliases = aliases;
         }
     }
 
-    private List<Hit> search(String searchTerm, int maxResults) {
+    private List<Hit> search(FullTextEntityManager em, String searchTerm, int maxResults) {
         if (!StringUtils.hasText(searchTerm)) {
             return emptyList();
         }
         try {
-            return doSearch(searchTerm, maxResults);
+            return doSearch(em, searchTerm, maxResults);
         } catch (EmptyQueryException emptyQueryException) {
             // This happens when the query consists of one of lucenes "stop-words". In this case, we just return an empty list
             return emptyList();
@@ -125,8 +143,7 @@ public class SkillSearcherService {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Hit> doSearch(String searchTerm, int maxResults) throws EmptyQueryException {
-        FullTextEntityManager em = Search.getFullTextEntityManager(entityManager);
+    private List<Hit> doSearch(FullTextEntityManager em, String searchTerm, int maxResults) throws EmptyQueryException {
         QueryBuilder queryBuilder = em.getSearchFactory().buildQueryBuilder().forEntity(Skill.class).get();
         List<String> words = Arrays.stream(WORD_SEPARATOR.split(searchTerm.trim()))
                 .filter(word -> !word.isEmpty())
@@ -160,10 +177,11 @@ public class SkillSearcherService {
         Set<String> names = new HashSet<>();
         return ((List<Object[]>) em.createFullTextQuery(query.createQuery(), Skill.class)
                 .setMaxResults(maxResults)
-                .setProjection(ProjectionConstants.ID, Skill.FIELD_NAME)
+                .setProjection(Skill.FIELD_NAME, ProjectionConstants.DOCUMENT)
                 .getResultList())
                 .stream()
-                .map(row -> new Hit((Integer) row[0], row[1].toString()))
+                // all aliases only through the document: a projection of a field with several values returns one
+                .map(row -> new Hit(row[0].toString(), Arrays.asList(((Document) row[1]).getValues(Skill.FIELD_ALIAS_NAME))))
                 .filter(hit -> names.add(hit.name))
                 .collect(Collectors.toList());
     }

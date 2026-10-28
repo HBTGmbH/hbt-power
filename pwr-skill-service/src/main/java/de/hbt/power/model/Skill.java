@@ -158,7 +158,8 @@ public class Skill {
     // than the same word start as a name ("Kubernetes").
     @IndexedEmbedded(prefix = "")
     @Fields({
-            @Field(name = FIELD_ALIAS_NAME, analyzer = @Analyzer(definition = NAME_ANALYZER)),
+            // stored: the suggestions read the alias that matched from the index, not from the database (#352)
+            @Field(name = FIELD_ALIAS_NAME, analyzer = @Analyzer(definition = NAME_ANALYZER), store = Store.YES),
             @Field(name = FIELD_ALIAS_AUTOCOMPLETE, analyzer = @Analyzer(definition = AUTOCOMPLETE_ANALYZER)),
             @Field(name = FIELD_ALIAS_EXACT, analyzer = @Analyzer(definition = EXACT_ANALYZER))
     })

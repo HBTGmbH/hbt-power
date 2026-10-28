@@ -3,8 +3,11 @@ package de.hbt.power.service;
 import de.hbt.power.model.LocalizedQualifier;
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
+import de.hbt.power.model.dto.SkillSuggestion;
 import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +18,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.persistence.EntityManagerFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -39,6 +50,9 @@ public class SkillAliasITest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     private MockMvc mockMvc;
 
@@ -286,6 +300,56 @@ public class SkillAliasITest {
         mockMvc.perform(get("/skill/suggestions").param("searchterm", "Kubernetes").param("maxResults", "5"))
                 .andExpect(jsonPath("$[0].name").value("Kubernetes"))
                 .andExpect(jsonPath("$[0].matchingAlias").doesNotExist());
+    }
+
+    @Test
+    public void suggestions_showAChangedAliasAtOnce() throws Exception {
+        addAlias(kubernetes, "Steuermann");
+        assertThat(skillSearcherService.suggestSkills("steuermann", 5))
+                .extracting(SkillSuggestion::getMatchingAlias).containsExactly("Steuermann");
+
+        mockMvc.perform(delete("/admin/skill/{id}/alias", kubernetes.getId()).param("alias", "Steuermann"))
+                .andExpect(status().isOk());
+        addAlias(kubernetes, "Steuerrad");
+
+        assertThat(skillSearcherService.suggestSkills("steuerrad", 5))
+                .extracting(SkillSuggestion::getMatchingAlias).containsExactly("Steuerrad");
+    }
+
+    @Test
+    public void suggestions_readNoDatabase() throws Exception {
+        addAlias(kubernetes, "Steuermann");
+        Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        try {
+            statistics.clear();
+            assertThat(skillSearcherService.suggestSkills("steuermann", 5))
+                    .extracting(SkillSuggestion::getMatchingAlias).containsExactly("Steuermann");
+            assertThat(statistics.getPrepareStatementCount()).isZero();
+        } finally {
+            statistics.setStatisticsEnabled(false);
+        }
+    }
+
+    @Test
+    public void suggestions_atTheSameTime_allSucceed() throws Exception {
+        for (int i = 0; i < 20; i++) {
+            skill("Kube Tool " + i, containers);
+        }
+        skillSearcherService.buildSearchIndexSync();
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        try {
+            List<Future<List<SkillSuggestion>>> results = new ArrayList<>();
+            for (int i = 0; i < 400; i++) {
+                String searchTerm = i % 2 == 0 ? "Kube" : "Tool " + (i % 20);
+                results.add(executor.submit(() -> skillSearcherService.suggestSkills(searchTerm, 20)));
+            }
+            for (Future<List<SkillSuggestion>> result : results) {
+                assertThat(result.get(30, TimeUnit.SECONDS)).isNotEmpty();
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Test
