@@ -22,24 +22,19 @@ interface ProfileDescriptionLocalProps {
 
 }
 
-interface ProfileDescriptionState {
-    dirty: boolean;
-}
-
 interface ProfileDescriptionDispatch {
     saveDescription(description: string): void;
 
     setDescription(description: string): void;
 }
 
-class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch, ProfileDescriptionState> {
+class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch> {
 
-    constructor(props: ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch) {
-        super(props);
-        this.state = {
-            dirty: false
-        };
-    }
+    /**
+     * No state: a setState while typing renders the field again before react-redux passes the new text down, with the
+     * old one, and the cursor jumps to the end (#354)
+     */
+    private dirty = false;
 
     public static mapStateToProps(state: ApplicationState, localProps: ProfileDescriptionLocalProps): ProfileDescriptionProps {
         const description = 'n/a' && state.profileStore.profile.description;
@@ -58,12 +53,10 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
     }
 
     private handleSave = () => {
-        if (this.state.dirty) {
+        if (this.dirty) {
             this.props.saveDescription(this.props.description);
             // We'll just assume that the save is always successful (for now).
-            this.setState({
-                dirty: false
-            });
+            this.dirty = false;
         }
     };
 
@@ -73,9 +66,7 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
 
     private handleTextChange = (value: string) => {
         this.props.setDescription(value);
-        this.setState({
-            dirty: true
-        });
+        this.dirty = true;
     };
 
     private progressValue = () => {
