@@ -104,6 +104,7 @@ A PR only shows checks for the folders it touches. Workflow changes must pass ac
 ## GitHub workflow
 
 - **Repository:** `HBTGmbH/hbt-power` (take the owner from `git remote get-url origin`). It is **public**.
+- **Hackathon fork:** this checkout (`HBTGmbH/hbt-power-hack26`) is a fork of [`HBTGmbH/hbt-power`](https://github.com/HBTGmbH/hbt-power). Issue numbers in the code and docs (`#NNN`, e.g. the open ones in `docs/arc42/11-risiken-und-technische-schulden.md`) refer to the upstream repository: look them up with `gh issue view NNN --repo HBTGmbH/hbt-power` and link them as `HBTGmbH/hbt-power#NNN`.
 - **No operating environment details on GitHub:** no host names, deployment or management URLs, tenant/client IDs, connection strings, secrets, or queries against live systems in issues, PRs, commit messages, code, comments, docs or screenshots. Write „the production environment“, `<host>` instead. A later edit doesn't help: GitHub keeps the edit history and git keeps the commit.
 - **Issue structure:** current behaviour (*Ist-Zustand*, with references into the code), desired behaviour (*Wunsch*), and acceptance criteria as a checklist. Mockups (ASCII sketch or screenshot of the local webclient with seed data) and ` ```mermaid ` diagrams are welcome, e.g. a `sequenceDiagram` when a change crosses services, but not required.
 - **Issue type:** set after creation via GraphQL: `Task` `IT_kwDOAYn5ks4AV-6C`, `Bug` `IT_kwDOAYn5ks4AV-6D`, `Feature` `IT_kwDOAYn5ks4AV-6H`.
