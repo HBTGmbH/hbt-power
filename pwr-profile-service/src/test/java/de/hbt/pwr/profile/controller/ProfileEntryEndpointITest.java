@@ -22,6 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -81,11 +83,15 @@ public class ProfileEntryEndpointITest extends AbstractIntegrationTest {
     @Test
     public void saveProjectToProfile() {
         Project project = new Project();
+        // The database keeps less precision than LocalDateTime.now() has (Windows: 100 ns), so start at the full second
+        LocalDateTime before = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
         project = endpoint.updateProject("abc", project);
         Profile p = consultantService.getProfileByInitials("abc");
+        LocalDateTime after = LocalDateTime.now();
         assertThat(p.getProjects()).hasSize(1);
-        assertThat(p.getProjects()).usingFieldByFieldElementComparator().contains(project);
+        assertThat(p.getProjects()).usingElementComparatorIgnoringFields("lastEdited").contains(project);
+        assertThat(p.getProjects().iterator().next().getLastEdited()).isBetween(before, after);
     }
 
 

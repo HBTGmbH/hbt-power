@@ -70,18 +70,25 @@ class PdfFontsTest {
 
     @Test
     void writesAliasesAndFontPathsForBirt() {
-        String xml = PdfFonts.fontsConfigXml(List.of(Path.of("/fonts"), Path.of("/usr/share/fonts/pwr-fallback")),
-                Map.of("Simplon Norm", "Simplon Norm HBT Regular"));
+        Path fonts = Path.of("/fonts");
+        Path fallback = Path.of("/usr/share/fonts/pwr-fallback");
+        String xml = PdfFonts.fontsConfigXml(List.of(fonts, fallback), Map.of("Simplon Norm", "Simplon Norm HBT Regular"));
 
+        // The paths are written absolute: /fonts on Linux and macOS, C:\fonts on Windows
         assertThat(xml).contains("<mapping name=\"Simplon Norm\" font-family=\"Simplon Norm HBT Regular\"/>",
-                "<path path=\"/fonts\"/>", "<path path=\"/usr/share/fonts/pwr-fallback\"/>");
+                "<path path=\"" + fonts.toAbsolutePath() + "\"/>", "<path path=\"" + fallback.toAbsolutePath() + "\"/>");
     }
 
     @Test
-    void escapesPathsInTheConfiguration() {
-        String xml = PdfFonts.fontsConfigXml(List.of(Path.of("/fonts/A & B \"<x>\"")), Map.of());
+    void escapesPathsAndNamesInTheConfiguration() {
+        // Windows allows no " < > in a path, so the path only carries the &, the names carry the rest
+        Path fonts = Path.of("/fonts/A & B");
+        String xml = PdfFonts.fontsConfigXml(List.of(fonts), Map.of("A & B \"<x>\"", "C \"<y>\" & D"));
 
-        assertThat(xml).contains("<path path=\"/fonts/A &amp; B &quot;&lt;x&gt;&quot;\"/>");
+        assertThat(xml).contains(
+                "<path path=\"" + fonts.toAbsolutePath().toString().replace("&", "&amp;") + "\"/>",
+                "<mapping name=\"A &amp; B &quot;&lt;x&gt;&quot;\" font-family=\"C &quot;&lt;y&gt;&quot; &amp; D\"/>");
+        assertThat(xml).doesNotContain("A & B");
     }
 
     @Test
