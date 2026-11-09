@@ -16,6 +16,7 @@ The architecture (context, building blocks, runtime flows, deployment, decisions
 
 ## Prerequisites
 
+
 Works on macOS (Apple Silicon and Intel), Linux and Windows.
 
 - **JDK 13**, e.g. Azul Zulu 13 (IntelliJ: *File → Project Structure → SDKs → + → Download JDK*, or [azul.com/downloads](https://www.azul.com/downloads/?version=java-13-mts&package=jdk), native builds for arm64 and x64).
