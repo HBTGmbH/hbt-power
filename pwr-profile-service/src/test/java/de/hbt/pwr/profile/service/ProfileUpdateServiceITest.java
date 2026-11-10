@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -476,8 +477,14 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
      * B) The name entites get peristed correctly
      * C) Potential conflicts get resolved correctly
      * => Full integrative testing of the profile import
+     * <p>
+     * Not transactional: the import only works when every step commits. What it commits would stay in the H2
+     * database the other test classes share (sectors "Sector1", "Sector2" …) and fail their checks of which elements
+     * exist, depending on the order the classes run in. So the context, and with it the in-memory database, is
+     * thrown away afterwards.
      */
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testImportValidProfileWithNewProfiles() {
         Profile profile = new Profile();
         profile = profileRepository.saveAndFlush(profile);

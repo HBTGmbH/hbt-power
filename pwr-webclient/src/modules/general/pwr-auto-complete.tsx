@@ -132,6 +132,13 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
     };
 
     handleSuggestionDisplay = (searchTerm: string, filteredData: Array<string>) => {
+        if (this.props.multi) {
+            // A chip field offers what was typed as last entry, so a name no suggestion has can be added too. Not when
+            // an entry has the name in another case: names compare ignoring case (#207)
+            const typed = (searchTerm || '').trim();
+            const known = this.props.data.some(value => value.toLowerCase() === typed.toLowerCase());
+            return typed === '' || known ? filteredData : [...filteredData, typed];
+        }
         if (filteredData.indexOf(searchTerm) < 0) {
             return [searchTerm, ...filteredData];
         }
@@ -201,6 +208,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                 variant="filled"
                 clearInputValueOnChange
                 onUpdateInput={onChange}
+                onAdd={onAdd}
                 onDelete={onDelete}
                 value={chips}
                 inputRef={ref}
@@ -211,7 +219,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
     renderSuggestion = (suggestion, {query, isHighlighted}) => {
         // Hide only the search term prepended by handleSuggestionDisplay, not a real entry that equals it
-        if (suggestion === query && this.props.data.indexOf(suggestion) < 0) {
+        if (!this.props.multi && suggestion === query && this.props.data.indexOf(suggestion) < 0) {
             return null;
         }
         const hint = this.props.suggestionHint ? this.props.suggestionHint(suggestion) : this.aliasHint(suggestion, query);
@@ -262,6 +270,8 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
             onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
             onSuggestionSelected: this.handleSuggestionSelected,
+            // In a chip field one entry is always selected, and Enter makes it a chip
+            highlightFirstSuggestion: !!this.props.multi,
             getSuggestionValue: (v) => v,
             // New function on every render: react-autosuggest only re-renders an item when its props change, so the
             // prepended (hidden) search term would stay hidden once the same text arrives as a real entry in data
@@ -270,6 +280,9 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
         const onlyChipProps = {
             onDelete: (chip, index) => this.props.onRemove(chip),
+            // Enter without an open list adds what was typed; with a selected entry Autosuggest adds that one and
+            // prevents the default, so ChipInput doesn't add a second chip
+            onAdd: (chip) => this.props.onAdd && this.props.onAdd(chip),
         };
 
         const basicInputProps = {
